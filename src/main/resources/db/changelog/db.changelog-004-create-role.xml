@@ -1,0 +1,35 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
+
+    <changeSet id="004" author="Colin">
+        <dropForeignKeyConstraint baseTableName="product_category" constraintName="fk_pc_category"/>
+
+        <!-- 1. Remove 'role' column from account table -->
+        <dropColumn tableName="account" columnName="role"/>
+
+        <!-- 2. Create 'roles' table -->
+        <createTable tableName="roles">
+            <column name="role_id" type="CHAR(36)">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_roles"/>
+            </column>
+            <column name="role_name" type="VARCHAR(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+        </createTable>
+
+        <!-- 3. Create 'account_roles' table -->
+        <createTable tableName="account_roles">
+            <column name="account_id" type="CHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role_id" type="CHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+
+</databaseChangeLog>

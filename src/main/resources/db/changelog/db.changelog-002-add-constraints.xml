@@ -1,0 +1,68 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
+
+    <changeSet id="002" author="Colin">
+
+        <!-- Primary Keys -->
+        <addPrimaryKey tableName="account" columnNames="id" constraintName="pk_account"/>
+        <addPrimaryKey tableName="category" columnNames="category_id"  constraintName="pk_category"/>
+        <addPrimaryKey tableName="product" columnNames="id" constraintName="pk_product"/>
+        <addPrimaryKey tableName="product_category" columnNames="product_id,category_id" constraintName="pk_product_category"/>
+        <addPrimaryKey tableName="user_favorite" columnNames="user_id,product_id" constraintName="pk_user_favorite"/>
+        <addPrimaryKey tableName="order" columnNames="id" constraintName="pk_order"/>
+        <addPrimaryKey tableName="order_item" columnNames="id" constraintName="pk_order_item"/>
+        <addPrimaryKey tableName="notification" columnNames="id" constraintName="pk_notification"/>
+
+        <!-- Foreign Keys -->
+        <addForeignKeyConstraint baseTableName="product_category"
+                                 baseColumnNames="product_id"
+                                 referencedTableName="product"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_pc_product"/>
+
+        <addForeignKeyConstraint baseTableName="product_category"
+                                 baseColumnNames="category_id"
+                                 referencedTableName="category"
+                                 referencedColumnNames="category_id"
+                                 constraintName="fk_pc_category"/>
+
+        <addForeignKeyConstraint baseTableName="user_favorite"
+                                 baseColumnNames="user_id"
+                                 referencedTableName="account"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_uf_user"/>
+
+        <addForeignKeyConstraint baseTableName="user_favorite"
+                                 baseColumnNames="product_id"
+                                 referencedTableName="product"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_uf_product"/>
+
+        <addForeignKeyConstraint baseTableName="order"
+                                 baseColumnNames="customer_id"
+                                 referencedTableName="account"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_order_customer"/>
+
+        <addForeignKeyConstraint baseTableName="order_item"
+                                 baseColumnNames="order_id"
+                                 referencedTableName="order"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_orderitem_order"/>
+
+        <addForeignKeyConstraint baseTableName="order_item"
+                                 baseColumnNames="product_id"
+                                 referencedTableName="product"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_orderitem_product"/>
+
+        <addForeignKeyConstraint baseTableName="notification"
+                                 baseColumnNames="recipient_id"
+                                 referencedTableName="account"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_notification_recipient"/>
+    </changeSet>
+</databaseChangeLog>

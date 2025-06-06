@@ -1,0 +1,33 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
+
+    <changeSet id="005" author="Colin">
+        <!-- 4. Add Foreign Keys for 'account_roles' -->
+        <addForeignKeyConstraint
+                baseTableName="account_roles"
+                baseColumnNames="account_id"
+                referencedTableName="account"
+                referencedColumnNames="id"
+                constraintName="fk_ar_account"
+                onDelete="CASCADE"/>
+
+        <addForeignKeyConstraint
+                baseTableName="account_roles"
+                baseColumnNames="role_id"
+                referencedTableName="roles"
+                referencedColumnNames="role_id"
+                constraintName="fk_ar_role"
+                onDelete="CASCADE"/>
+
+        <!-- 5. Add composite primary key to account_roles -->
+        <addPrimaryKey
+                tableName="account_roles"
+                columnNames="account_id,role_id"
+                constraintName="pk_account_roles"/>
+    </changeSet>
+
+
+</databaseChangeLog>
