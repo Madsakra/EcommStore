@@ -1,12 +1,11 @@
 package com.example.product_store.store.category;
 
 import com.example.product_store.store.category.model.Category;
-import com.example.product_store.store.category.model.CategoryDTO;
+import com.example.product_store.store.category.dto.CategoryDTO;
 import com.example.product_store.store.category.service.*;
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

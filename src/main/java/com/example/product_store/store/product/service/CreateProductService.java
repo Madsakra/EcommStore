@@ -4,7 +4,7 @@ import com.example.product_store.Command;
 import com.example.product_store.store.product.ProductRepository;
 import com.example.product_store.store.product.ProductValidator;
 import com.example.product_store.store.product.model.Product;
-import com.example.product_store.store.product.model.ProductDTO;
+import com.example.product_store.store.product.dto.ProductDTO;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 

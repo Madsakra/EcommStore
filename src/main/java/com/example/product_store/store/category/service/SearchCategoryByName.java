@@ -2,7 +2,7 @@ package com.example.product_store.store.category.service;
 
 import com.example.product_store.Query;
 import com.example.product_store.store.category.CategoryRepository;
-import com.example.product_store.store.category.model.CategoryDTO;
+import com.example.product_store.store.category.dto.CategoryDTO;
 import java.util.List;
 import org.springframework.stereotype.Service;
 

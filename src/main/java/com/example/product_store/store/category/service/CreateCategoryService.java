@@ -5,7 +5,7 @@ import com.example.product_store.Command;
 import com.example.product_store.store.category.CategoryRepository;
 import com.example.product_store.store.category.CategoryValidator;
 import com.example.product_store.store.category.model.Category;
-import com.example.product_store.store.category.model.CategoryDTO;
+import com.example.product_store.store.category.dto.CategoryDTO;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 

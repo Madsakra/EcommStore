@@ -15,6 +15,9 @@ public interface AccountRepository extends JpaRepository<Account, String> {
   // CUSTOM JPA QUERY
   // TO FOLLOW ENTITY CLASS NAMING CONVENTION
   @EntityGraph(attributePaths = "roles")
-  @Query("from Account where email = :u or userName = :u")
-  Optional<Account> findUserByEmailOrUserName(@Param("u") String u);
+  @Query("from Account where email = :i or userName = :i")
+  Optional<Account> findUserByEmailOrUserName(@Param("i") String i);
+
+
+
 }

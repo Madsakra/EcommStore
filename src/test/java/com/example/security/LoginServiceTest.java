@@ -23,6 +23,8 @@ public class LoginServiceTest {
 
   @InjectMocks private LoginService loginService;
 
+
+  // TEST USER EXISTS
   @Test
   public void testLoadUserByUsername_UserExists() {
     // Arrange

@@ -1,10 +1,12 @@
-package com.example.product_store.store.product.model;
+package com.example.product_store.store.product.dto;
 
-import com.example.product_store.store.category.model.CategoryDTO;
+import com.example.product_store.store.category.dto.CategoryDTO;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import com.example.product_store.store.product.model.Product;
 import lombok.Data;
 
 @Data

@@ -2,9 +2,8 @@ package com.example.product_store.store.product;
 
 
 import com.example.product_store.store.product.model.Product;
-import com.example.product_store.store.product.model.ProductDTO;
+import com.example.product_store.store.product.dto.ProductDTO;
 import com.example.product_store.store.product.service.*;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

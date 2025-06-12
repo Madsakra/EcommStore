@@ -7,7 +7,7 @@ import com.example.product_store.store.category.CategoryValidator;
 import com.example.product_store.store.category.UpdateCategoryCommand;
 import com.example.product_store.store.category.exceptions.CategoryNotFoundException;
 import com.example.product_store.store.category.model.Category;
-import com.example.product_store.store.category.model.CategoryDTO;
+import com.example.product_store.store.category.dto.CategoryDTO;
 import java.util.Optional;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;

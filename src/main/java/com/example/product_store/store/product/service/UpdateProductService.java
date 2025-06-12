@@ -7,7 +7,7 @@ import com.example.product_store.store.product.ProductValidator;
 import com.example.product_store.store.product.UpdateProductCommand;
 import com.example.product_store.store.product.exceptions.ProductNotFoundException;
 import com.example.product_store.store.product.model.Product;
-import com.example.product_store.store.product.model.ProductDTO;
+import com.example.product_store.store.product.dto.ProductDTO;
 import java.util.Optional;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;

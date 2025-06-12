@@ -1,6 +1,8 @@
-package com.example.product_store.store.category.model;
+package com.example.product_store.store.category.dto;
 
 import java.io.Serializable;
+
+import com.example.product_store.store.category.model.Category;
 import lombok.Data;
 
 @Data
