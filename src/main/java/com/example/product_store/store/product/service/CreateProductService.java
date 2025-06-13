@@ -6,6 +6,7 @@ import com.example.product_store.store.product.ProductValidator;
 import com.example.product_store.store.product.model.Product;
 import com.example.product_store.store.product.dto.ProductDTO;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -22,6 +23,10 @@ public class CreateProductService implements Command<Product, ProductDTO> {
   @Override
   @CacheEvict(cacheNames = "getAllProducts", key = "'allProducts'")
   public ProductDTO execute(Product product) {
+
+    // get hold of the current user UUID THROUGH THE JWT, via context provider
+    String jti = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    product.setCreatedBy(jti);
 
     productValidator.execute(product, false);
     Product savedProduct = productRepository.save(product);

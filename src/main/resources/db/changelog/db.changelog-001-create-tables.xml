@@ -43,8 +43,7 @@
 
         <!-- User_Favorite -->
         <createTable tableName="user_favorite">
-            <column name="user_id" type="CHAR(36)">
-
+            <column name="account_id" type="CHAR(36)">
             </column>
             <column name="product_id" type="CHAR(36)">
 

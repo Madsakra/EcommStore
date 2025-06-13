@@ -11,7 +11,7 @@
         <addPrimaryKey tableName="category" columnNames="category_id"  constraintName="pk_category"/>
         <addPrimaryKey tableName="product" columnNames="id" constraintName="pk_product"/>
         <addPrimaryKey tableName="product_category" columnNames="product_id,category_id" constraintName="pk_product_category"/>
-        <addPrimaryKey tableName="user_favorite" columnNames="user_id,product_id" constraintName="pk_user_favorite"/>
+        <addPrimaryKey tableName="user_favorite" columnNames="account_id,product_id" constraintName="pk_user_favorite"/>
         <addPrimaryKey tableName="order" columnNames="id" constraintName="pk_order"/>
         <addPrimaryKey tableName="order_item" columnNames="id" constraintName="pk_order_item"/>
         <addPrimaryKey tableName="notification" columnNames="id" constraintName="pk_notification"/>
@@ -30,7 +30,7 @@
                                  constraintName="fk_pc_category"/>
 
         <addForeignKeyConstraint baseTableName="user_favorite"
-                                 baseColumnNames="user_id"
+                                 baseColumnNames="account_id"
                                  referencedTableName="account"
                                  referencedColumnNames="id"
                                  constraintName="fk_uf_user"/>

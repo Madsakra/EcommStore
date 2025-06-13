@@ -17,7 +17,4 @@ public interface AccountRepository extends JpaRepository<Account, String> {
   @EntityGraph(attributePaths = "roles")
   @Query("from Account where email = :i or userName = :i")
   Optional<Account> findUserByEmailOrUserName(@Param("i") String i);
-
-
-
 }

@@ -11,4 +11,8 @@
     <include file="db/changelog/db.changelog-003-product-constraints.xml"/>
     <include file="db/changelog/db.changelog-004-create-role.xml"/>
     <include file="db/changelog/db.changelog-005-roles-constraints.xml"/>
+    <include file="db/changelog/db.changelog-006-product-creator.xml"/>
+    <include file="db/changelog/db.changelog-007-product-constraints.xml"/>
+    <include file="db/changelog/db.changelog-008-insert-roles.xml"/>
+
 </databaseChangeLog>

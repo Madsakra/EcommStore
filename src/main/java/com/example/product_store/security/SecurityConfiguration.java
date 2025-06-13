@@ -1,6 +1,7 @@
 package com.example.product_store.security;
 
 import com.example.product_store.security.jwt.JwtAuthenticationFilter;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -11,6 +12,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
@@ -30,18 +32,36 @@ public class SecurityConfiguration {
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
     return httpSecurity
-        .csrf(AbstractHttpConfigurer::disable)
+        .csrf(AbstractHttpConfigurer::disable) // Disables CSRF
         .authorizeHttpRequests(
             authorize -> {
               authorize.requestMatchers("/auth/**").permitAll();
-              authorize.requestMatchers("/admin/category/**").hasAuthority("ROLE_ADMIN");
-
+              authorize.requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN");
+              authorize.requestMatchers("/user/**").hasAuthority("ROLE_USER");
               authorize.anyRequest().authenticated();
-            })
+            }).exceptionHandling(exception->
+                    exception.accessDeniedHandler(customAccessDeniedHandler()))
+        .logout(
+            logout ->
+                logout
+                    .logoutUrl("/auth/logout")
+                    .logoutSuccessHandler(
+                        (request, response, authentication) -> {
+                          response.setStatus(HttpServletResponse.SC_OK);
+                          response.getWriter().write("Logout successful");
+                        })
+                    .invalidateHttpSession(true)
+                    // SERVER CAN ONLY DELETE COOKIES, BUT IF CLIENT KEEPS IT, THEY STILL CAN ACCESS
+                    .deleteCookies("JSESSIONID")
+                    .permitAll() // Allow everyone to access logout
+            )
         .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
         .build();
   }
-
+    @Bean
+    public AccessDeniedHandler customAccessDeniedHandler() {
+        return new CustomAccessDeniedHandler();
+    }
   @Bean
   public JwtAuthenticationFilter jwtAuthenticationFilter() {
     return new JwtAuthenticationFilter();

@@ -20,6 +20,9 @@ public class Product {
   private Integer stock;
   private Double price;
 
+  @Column(name="created_by")
+  private String createdBy;
+
   @ManyToMany
   @JoinTable(
       name = "product_category",

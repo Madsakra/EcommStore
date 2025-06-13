@@ -1,5 +1,8 @@
 package com.example.product_store.store.product;
 
+import com.example.product_store.store.category.CategoryRepository;
+import com.example.product_store.store.category.model.Category;
+import com.example.product_store.store.product.exceptions.ProductNotFoundException;
 import com.example.product_store.store.product.exceptions.ProductNotValidException;
 import com.example.product_store.store.product.model.Product;
 import io.micrometer.common.util.StringUtils;
@@ -9,9 +12,11 @@ import org.springframework.stereotype.Component;
 public class ProductValidator {
 
   private final ProductRepository productRepository;
+  private final CategoryRepository categoryRepository;
 
-  public ProductValidator(ProductRepository productRepository) {
+  public ProductValidator(ProductRepository productRepository, CategoryRepository categoryRepository) {
     this.productRepository = productRepository;
+      this.categoryRepository = categoryRepository;
   }
 
   public void execute(Product product, boolean isUpdate) {
@@ -31,5 +36,19 @@ public class ProductValidator {
     if (!isUpdate && productRepository.existsByTitleAndPrice(product.getTitle(), product.getPrice())) {
       throw new ProductNotValidException("Duplicate product exists!");
     }
+
+
+    if (!product.getCategories().isEmpty())
+    {
+      // CHECK CATEGORY ALSO
+      for (Category cat: product.getCategories()){
+        if (!categoryRepository.existsById(cat.getId()))
+        {
+          throw new ProductNotValidException("Failed to create product due to invalid category");
+        }
+      }
+    }
+
+
   }
 }

@@ -1,0 +1,20 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
+
+    <changeSet id="07" author="Colin">
+
+        <!-- Step 2: Add the foreign key constraint -->
+        <addForeignKeyConstraint
+                baseTableName="product"
+                baseColumnNames="created_by"
+                referencedTableName="account"
+                referencedColumnNames="id"
+                constraintName="fk_pr_product"
+                onDelete="CASCADE"/>
+    </changeSet>
+
+
+</databaseChangeLog>

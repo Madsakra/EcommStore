@@ -18,6 +18,8 @@ public class ProductDTO implements Serializable {
   private Integer stock;
   private Double price;
   private List<CategoryDTO> categories;
+  private String createdBy;
+
 
   public ProductDTO(Product product) {
     this.id = product.getId();
@@ -25,6 +27,7 @@ public class ProductDTO implements Serializable {
     this.description = product.getDescription();
     this.stock = product.getStock();
     this.price = product.getPrice();
+    this.createdBy = product.getCreatedBy();
     this.categories =
         product.getCategories() != null
             ? product.getCategories().stream().map(CategoryDTO::new).collect(Collectors.toList())

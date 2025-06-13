@@ -5,7 +5,7 @@ import static org.mockito.Mockito.*;
 
 import com.example.product_store.security.AccountRepository;
 import com.example.product_store.security.model.Account;
-import com.example.product_store.security.model.MyUserDetails;
+
 import com.example.product_store.security.service.LoginService;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -27,18 +27,18 @@ public class LoginServiceTest {
   // TEST USER EXISTS
   @Test
   public void testLoadUserByUsername_UserExists() {
-    // Arrange
-    String loginIdentifier = "colin@gmail.com";
-    Account account = new Account();
-    when(accountRepository.findUserByEmailOrUserName(loginIdentifier))
-        .thenReturn(Optional.of(account));
+    // ARRANGE
+    Account mockAccount = new Account();
+    mockAccount.setUserName("johnDoe");
+    mockAccount.setPassword("$2a$10$examplehash21412");
+
+    when(accountRepository.findUserByEmailOrUserName("johnDoe")).thenReturn(Optional.of(mockAccount));
 
     // ACT
-    UserDetails userDetails = loginService.loadUserByUsername(loginIdentifier);
+    UserDetails userDetails =  loginService.loadUserByUsername("johnDoe");
 
     // ASSERT
-    assertNotNull(userDetails);
-    assertInstanceOf(MyUserDetails.class, userDetails);
+    assertEquals("johnDoe",userDetails.getUsername());
   }
 
   @Test

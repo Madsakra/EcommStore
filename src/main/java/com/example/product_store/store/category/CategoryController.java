@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/admin/category")
+@RequestMapping("/admin")
 
 public class CategoryController {
 
@@ -33,35 +33,35 @@ public class CategoryController {
   }
 
   // GET ALL PRODUCTS
-  @GetMapping("/getAll")
+  @GetMapping("/getCategories")
   public ResponseEntity<List<CategoryDTO>> getCategories() {
     List<CategoryDTO> categoryDTOS = getCategoriesService.execute(null);
     return ResponseEntity.status(HttpStatus.OK).body(categoryDTOS);
   }
 
   // SEARCH BY CATEGORY NAME
-  @GetMapping("/search/{categoryName}")
+  @GetMapping("/searchCategory/{categoryName}")
   public ResponseEntity<List<CategoryDTO>> getCategoriesByName(@PathVariable String categoryName) {
     List<CategoryDTO> categoryDTOS = searchCategoryByName.execute(categoryName);
     return ResponseEntity.status(HttpStatus.OK).body(categoryDTOS);
   }
 
   // CREATE NEW PRODUCT
-  @PostMapping("/create")
+  @PostMapping("/createCategory")
   public ResponseEntity<CategoryDTO> createCategories(@RequestBody Category category) {
     CategoryDTO categoryDTO = createCategoryService.execute(category);
     return ResponseEntity.status(HttpStatus.CREATED).body(categoryDTO);
   }
 
   // DELETE PRODUCT
-  @DeleteMapping("/delete/{id}")
+  @DeleteMapping("/deleteCategory/{id}")
   public ResponseEntity<Void> deleteCategory(@PathVariable String id) {
     deleteCategoryService.execute(id);
     return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
   }
 
   // UPDATE Categories
-  @PutMapping("/update/{id}")
+  @PutMapping("/updateCategory/{id}")
   public ResponseEntity<CategoryDTO> updateCategoryDTO(@PathVariable String id, @RequestBody Category category) {
     CategoryDTO categoryDTO = updateCategoryService.execute(new UpdateCategoryCommand(id, category));
     return ResponseEntity.status(HttpStatus.OK).body(categoryDTO);

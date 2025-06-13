@@ -34,6 +34,9 @@ public class MyUserDetails implements UserDetails {
     return account.getPassword();
   }
 
+
+  public String getId(){return account.getId();}
+
   @Override
   public String getUsername() {
     return account.getUserName();

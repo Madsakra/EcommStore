@@ -6,7 +6,7 @@ import com.example.product_store.security.model.Account;
 import com.example.product_store.security.model.LoginRequest;
 import com.example.product_store.security.model.LoginResponse;
 import com.example.product_store.security.model.MyUserDetails;
-import com.example.product_store.security.service.CreateNewAccountService;
+import com.example.product_store.security.service.CreateAccountService;
 import com.example.product_store.security.service.GetRolesService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,9 +24,9 @@ public class AuthController {
 
     private final GetRolesService getRolesService;
     private final AuthenticationManager manager;
-    private final CreateNewAccountService createNewAccountService;
+    private final CreateAccountService createNewAccountService;
 
-    public AuthController(GetRolesService getRolesService, AuthenticationManager manager, CreateNewAccountService createNewAccountService) {
+    public AuthController(GetRolesService getRolesService, AuthenticationManager manager, CreateAccountService createNewAccountService) {
         this.getRolesService = getRolesService;
         this.manager = manager;
         this.createNewAccountService = createNewAccountService;

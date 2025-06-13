@@ -24,6 +24,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     final String authHeader = request.getHeader("Authorization");
     final String jwt;
     final String username;
+    final String jti;
 
     // 1. Check for auth header and bearer prefix
     if (authHeader == null || !authHeader.startsWith("Bearer ")) {
@@ -38,6 +39,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       Claims claims = JwtUtil.getClaims(jwt);
       username = claims.getSubject();
 
+      jti = claims.getId();
       // 3. CRITICAL: CHECK IF USER IS NOT ALREADY AUTHENTICATED
       if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
         // 4. Get the authorities from the token's claims
@@ -48,7 +50,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // 5. Create the Authentication object
         UsernamePasswordAuthenticationToken authToken =
             new UsernamePasswordAuthenticationToken(
-                username, // Use username as the principal
+                jti, // store user uuid as principal
                 null, // No credentials needed as we are using JWT
                 grantedAuthorities // The user's authorities
                 );

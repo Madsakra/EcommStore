@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/store")
 public class ProductController {
 
     private final GetProductsService getProductsService;
@@ -34,38 +33,42 @@ public class ProductController {
         this.updateProductService = updateProductService;
     }
 
+    // GENERAL ENDPOINT
     // GET ALL PRODUCTS
-    @GetMapping("/all-products")
+    @GetMapping("/store/all-products")
     public ResponseEntity<List<ProductDTO>> getProducts(){
         List<ProductDTO>  products = getProductsService.execute(null);
         return ResponseEntity.status(HttpStatus.OK).body(products);
     }
 
-
-    // CREATE NEW PRODUCT
-    @PostMapping("/create")
-    public ResponseEntity<ProductDTO> createProduct(@RequestBody Product product){
-        ProductDTO productDTO = createProductService.execute(product);
-        return ResponseEntity.status(HttpStatus.CREATED).body(productDTO);
-    }
-
+    // ONLY FOR USERS
     // SEARCH PRODUCT BY TITLE
-    @GetMapping("/searchTitle/{title}")
+    @GetMapping("/user/store/searchTitle/{title}")
     public ResponseEntity<List<ProductDTO>> searchProductByTitle(@PathVariable String title){
         List<ProductDTO> products = searchProductService.execute(title);
         return ResponseEntity.status(HttpStatus.OK).body(products);
     }
 
-
+    // ONLY FOR USERS
     // SEARCH PRODUCT BY DESCRIPTION
-    @GetMapping("/searchDes/{description}")
+    @GetMapping("/user/store/searchDes/{description}")
     public ResponseEntity<List<ProductDTO>> searchProductByDescription(@PathVariable String description){
         List<ProductDTO> products = searchProductService.searchProductByDescription(description);
         return ResponseEntity.ok(products);
     }
 
+
+    // ONLY FOR ADMINS
+    // CREATE NEW PRODUCT
+    @PostMapping("/admin/createProduct")
+    public ResponseEntity<ProductDTO> createProduct(@RequestBody Product product){
+        ProductDTO productDTO = createProductService.execute(product);
+        return ResponseEntity.status(HttpStatus.CREATED).body(productDTO);
+    }
+
     // UPDATE PRODUCT
-    @PutMapping("/update/{id}")
+    // CHALLENGE - > ONLY CAN UPDATE IF PRODUCT BELONGS TO ADMIN
+    @PutMapping("/admin/update/{id}")
     public ResponseEntity<ProductDTO> updateProductDTO(@PathVariable String id, @RequestBody Product product){
         ProductDTO productDTO = updateProductService.execute(new UpdateProductCommand(id,product));
         return ResponseEntity.status(HttpStatus.OK).body(productDTO);
@@ -73,7 +76,8 @@ public class ProductController {
 
 
     // DELETE PRODUCT
-    @DeleteMapping("/delete/{id}")
+    // CHALLENGE - > ONLY CAN DELETE IF PRODUCT BELONGS TO ADMIN
+    @DeleteMapping("/admin/deleteProduct/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable String id){
         deleteProductService.execute(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

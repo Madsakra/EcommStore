@@ -10,13 +10,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class CreateNewAccountService implements Command<Account, String> {
+public class CreateAccountService implements Command<Account, String> {
 
   private final AccountRepository accountRepository;
   private final PasswordEncoder encoder;
   private final AccountValidator accountValidator;
 
-  public CreateNewAccountService(
+  public CreateAccountService(
       AccountRepository accountRepository,
       PasswordEncoder passwordEncoder,
       AccountValidator accountValidator) {
@@ -28,7 +28,6 @@ public class CreateNewAccountService implements Command<Account, String> {
   @Override
   public String execute(Account account) {
     Optional<Account> optionalAccount = accountRepository.findByUserName(account.getUserName());
-
     if (optionalAccount.isPresent()) {
       throw new AccountAlreadyExistsException("An account with this username already exists.");
     }

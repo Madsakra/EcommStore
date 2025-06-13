@@ -32,6 +32,7 @@ public class JwtUtil {
         .issuedAt(new Date())
         .expiration(Date.from(Instant.now().plus(expiration)))
         .signWith(getSigningKey())
+        .id(myUserDetails.getId())
         .compact();
   }
 
