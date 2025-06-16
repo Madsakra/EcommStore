@@ -8,4 +8,7 @@
     <!-- Include the initial schema -->
     <include file="db/changelog/generated-changelog.xml"/>
     <include file="db/changelog/db.changelog-001-insert-roles.xml"/>
+    <include file="db/changelog/db.changelog-002-insert-accounts.xml"/>
+    <include file="db/changelog/db.changelog-003-insert-account-roles.xml"/>
+    <include file="db/changelog/db.changelog-004-insert-categories.xml"/>
 </databaseChangeLog>

@@ -1,0 +1,32 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
+
+    <changeSet id="04" author="Colin">
+
+        <insert tableName="category">
+            <column name="category_id" value="12d23454-7c3b-468a-9ac3-e954acd161cb"/>
+            <column name="category_name" value="Video Games"/>
+        </insert>
+
+        <insert tableName="category">
+            <column name="category_id" value="7e2ddf27-dbef-4ea8-aefb-ae3124d19e89"/>
+            <column name="category_name" value="Gadgets"/>
+        </insert>
+
+        <insert tableName="category">
+            <column name="category_id" value="943c9da4-5310-4734-9143-c7bad679924b"/>
+            <column name="category_name" value="Books"/>
+        </insert>
+
+        <insert tableName="category">
+            <column name="category_id" value="f88ca5b7-31b5-4f53-af55-25479e6ee067"/>
+            <column name="category_name" value="Computers"/>
+        </insert>
+
+
+    </changeSet>
+
+</databaseChangeLog>

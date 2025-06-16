@@ -1,0 +1,33 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
+
+    <changeSet id="02" author="Colin">
+
+        <insert tableName="account">
+            <column name="id" value="07ea61cb-d9ac-44bc-9d29-85b79a862327"/>
+            <column name="username" value="admin4"/>
+            <column name="email" value="colin4@gmail.com"/>
+            <column name="password_hash" value="$2a$10$pdTS1vuTsHNZES2zQj1V7.91wtTiNMOCZ3HCshoYejJnq9w4H.icK"/>
+        </insert>
+
+        <insert tableName="account">
+            <column name="id" value="1a014560-4e27-442a-9312-efa1928362e4"/>
+            <column name="username" value="user3"/>
+            <column name="email" value="colin3@gmail.com"/>
+            <column name="password_hash" value="$2a$10$F4y3LhIuMi4Ga/YmlG3ZaeHVJsQ4oWsxtYnP99blCvM7tl/yezWtG"/>
+        </insert>
+
+        <insert tableName="account">
+            <column name="id" value="2afde1c1-f6c9-4eb9-b8db-5af14774074a"/>
+            <column name="username" value="superAdmin88"/>
+            <column name="email" value="colin88@gmail.com"/>
+            <column name="password_hash" value="$2a$10$cfqeYka08EiOp9qEeMaTju2Vp3PeMOKD8LBvkgZGV2q5LZjy.mSQu"/>
+        </insert>
+
+
+    </changeSet>
+
+</databaseChangeLog>

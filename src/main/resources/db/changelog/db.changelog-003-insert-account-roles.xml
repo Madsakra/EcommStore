@@ -1,0 +1,27 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
+
+    <changeSet id="03" author="Colin">
+
+        <insert tableName="account_roles">
+            <column name="account_id" value="07ea61cb-d9ac-44bc-9d29-85b79a862327"/>
+            <column name="role_id" value="68dcc5fc-467e-11f0-a0ac-94bc185c64f"/>
+        </insert>
+
+        <insert tableName="account_roles">
+            <column name="account_id" value="1a014560-4e27-442a-9312-efa1928362e4"/>
+            <column name="role_id" value="68dcbcd8-467e-11f0-a0ac-94bcf185c64f"/>
+        </insert>
+
+        <insert tableName="account_roles">
+            <column name="account_id" value="2afde1c1-f6c9-4eb9-b8db-5af14774074a"/>
+            <column name="role_id" value="68dcc5fc-467e-11f0-a0ac-94bc185c64g"/>
+        </insert>
+
+
+    </changeSet>
+
+</databaseChangeLog>
