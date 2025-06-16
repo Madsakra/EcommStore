@@ -118,6 +118,19 @@
 	<build>
 		<plugins>
 			<plugin>
+				<groupId>org.liquibase</groupId>
+				<artifactId>liquibase-maven-plugin</artifactId>
+				<version>4.28.0</version>
+				<configuration>
+					<changeLogFile>src/main/resources/db/changelog/db.changelog-master.xml</changeLogFile>
+					<outputChangeLogFile>src/main/resources/db/changelog/generated-changelog.xml</outputChangeLogFile> <!-- 👈 Add this -->
+					<url>jdbc:mysql://localhost:3306/product_store</url>
+					<username>root</username>
+					<password>P@ssw0rd7169I#</password>
+					<driver>com.mysql.cj.jdbc.Driver</driver>
+				</configuration>
+			</plugin>
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>

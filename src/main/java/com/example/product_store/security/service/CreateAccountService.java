@@ -32,6 +32,10 @@ public class CreateAccountService implements Command<Account, String> {
       throw new AccountAlreadyExistsException("An account with this username already exists.");
     }
 
+    // ✅ Validate raw user input first
+    accountValidator.execute(account);
+
+    // ✅ Then encode the password after validation passes
     Account newAccount =
         new Account(
             null,
@@ -39,7 +43,7 @@ public class CreateAccountService implements Command<Account, String> {
             account.getEmail(),
             encoder.encode(account.getPassword()),
             account.getRoles());
-    accountValidator.execute(newAccount);
+
     accountRepository.save(newAccount);
     return "User Created Successfully";
   }

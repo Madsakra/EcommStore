@@ -37,7 +37,6 @@ public class SecurityConfiguration {
             authorize -> {
               authorize.requestMatchers("/auth/**").permitAll();
               authorize.requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN");
-              authorize.requestMatchers("/user/**").hasAuthority("ROLE_USER");
               authorize.anyRequest().authenticated();
             }).exceptionHandling(exception->
                     exception.accessDeniedHandler(customAccessDeniedHandler()))

@@ -14,6 +14,11 @@
             <column name="role_id" value="68dcc5fc-467e-11f0-a0ac-94bc185c64f"/>
             <column name="role_name" value="ADMIN"/>
         </insert>
+
+        <insert tableName="roles">
+            <column name="role_id" value="68dcc5fc-467e-11f0-a0ac-94bc185c64g"/>
+            <column name="role_name" value="SUPER_ADMIN"/>
+        </insert>
     </changeSet>
 
 </databaseChangeLog>

@@ -35,24 +35,24 @@ public class ProductController {
 
     // GENERAL ENDPOINT
     // GET ALL PRODUCTS
-    @GetMapping("/store/all-products")
+    @GetMapping("/products")
     public ResponseEntity<List<ProductDTO>> getProducts(){
         List<ProductDTO>  products = getProductsService.execute(null);
         return ResponseEntity.status(HttpStatus.OK).body(products);
     }
 
-    // ONLY FOR USERS
+
     // SEARCH PRODUCT BY TITLE
-    @GetMapping("/user/store/searchTitle/{title}")
-    public ResponseEntity<List<ProductDTO>> searchProductByTitle(@PathVariable String title){
+    @GetMapping("/products/title/{title}")
+    public ResponseEntity<List<ProductDTO>> searchProductByTitle(@PathVariable("title") String title){
         List<ProductDTO> products = searchProductService.execute(title);
         return ResponseEntity.status(HttpStatus.OK).body(products);
     }
 
-    // ONLY FOR USERS
+
     // SEARCH PRODUCT BY DESCRIPTION
-    @GetMapping("/user/store/searchDes/{description}")
-    public ResponseEntity<List<ProductDTO>> searchProductByDescription(@PathVariable String description){
+    @GetMapping("/products/description/{description}")
+    public ResponseEntity<List<ProductDTO>> searchProductByDescription(@PathVariable("description") String description){
         List<ProductDTO> products = searchProductService.searchProductByDescription(description);
         return ResponseEntity.ok(products);
     }
@@ -60,7 +60,7 @@ public class ProductController {
 
     // ONLY FOR ADMINS
     // CREATE NEW PRODUCT
-    @PostMapping("/admin/createProduct")
+    @PostMapping("/admin/products")
     public ResponseEntity<ProductDTO> createProduct(@RequestBody Product product){
         ProductDTO productDTO = createProductService.execute(product);
         return ResponseEntity.status(HttpStatus.CREATED).body(productDTO);
@@ -68,8 +68,8 @@ public class ProductController {
 
     // UPDATE PRODUCT
     // CHALLENGE - > ONLY CAN UPDATE IF PRODUCT BELONGS TO ADMIN
-    @PutMapping("/admin/update/{id}")
-    public ResponseEntity<ProductDTO> updateProductDTO(@PathVariable String id, @RequestBody Product product){
+    @PutMapping("/admin/products/{id}")
+    public ResponseEntity<ProductDTO> updateProductDTO(@PathVariable("id") String id, @RequestBody Product product){
         ProductDTO productDTO = updateProductService.execute(new UpdateProductCommand(id,product));
         return ResponseEntity.status(HttpStatus.OK).body(productDTO);
     }
@@ -77,8 +77,8 @@ public class ProductController {
 
     // DELETE PRODUCT
     // CHALLENGE - > ONLY CAN DELETE IF PRODUCT BELONGS TO ADMIN
-    @DeleteMapping("/admin/deleteProduct/{id}")
-    public ResponseEntity<Void> deleteProduct(@PathVariable String id){
+    @DeleteMapping("/admin/products/{id}")
+    public ResponseEntity<Void> deleteProduct(@PathVariable("id") String id){
         deleteProductService.execute(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

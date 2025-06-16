@@ -33,36 +33,36 @@ public class CategoryController {
   }
 
   // GET ALL PRODUCTS
-  @GetMapping("/getCategories")
+  @GetMapping("/categories")
   public ResponseEntity<List<CategoryDTO>> getCategories() {
     List<CategoryDTO> categoryDTOS = getCategoriesService.execute(null);
     return ResponseEntity.status(HttpStatus.OK).body(categoryDTOS);
   }
 
   // SEARCH BY CATEGORY NAME
-  @GetMapping("/searchCategory/{categoryName}")
-  public ResponseEntity<List<CategoryDTO>> getCategoriesByName(@PathVariable String categoryName) {
+  @GetMapping("/categories/{categoryName}")
+  public ResponseEntity<List<CategoryDTO>> getCategoriesByName(@PathVariable("categoryName") String categoryName) {
     List<CategoryDTO> categoryDTOS = searchCategoryByName.execute(categoryName);
     return ResponseEntity.status(HttpStatus.OK).body(categoryDTOS);
   }
 
-  // CREATE NEW PRODUCT
-  @PostMapping("/createCategory")
+  // CREATE NEW CATEGORY
+  @PostMapping("/categories")
   public ResponseEntity<CategoryDTO> createCategories(@RequestBody Category category) {
     CategoryDTO categoryDTO = createCategoryService.execute(category);
     return ResponseEntity.status(HttpStatus.CREATED).body(categoryDTO);
   }
 
-  // DELETE PRODUCT
-  @DeleteMapping("/deleteCategory/{id}")
-  public ResponseEntity<Void> deleteCategory(@PathVariable String id) {
+  // DELETE CATEGORY
+  @DeleteMapping("/categories/{id}")
+  public ResponseEntity<Void> deleteCategory(@PathVariable("id") String id) {
     deleteCategoryService.execute(id);
     return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
   }
 
   // UPDATE Categories
-  @PutMapping("/updateCategory/{id}")
-  public ResponseEntity<CategoryDTO> updateCategoryDTO(@PathVariable String id, @RequestBody Category category) {
+  @PutMapping("/categories/{id}")
+  public ResponseEntity<CategoryDTO> updateCategoryDTO(@PathVariable("id") String id, @RequestBody Category category) {
     CategoryDTO categoryDTO = updateCategoryService.execute(new UpdateCategoryCommand(id, category));
     return ResponseEntity.status(HttpStatus.OK).body(categoryDTO);
   }
