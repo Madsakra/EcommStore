@@ -1,13 +1,13 @@
 package com.example.product_store.store.category.service;
 
-import com.example.product_store.Query;
+import com.example.product_store.QueryBinder;
 import com.example.product_store.store.category.CategoryRepository;
 import com.example.product_store.store.category.dto.CategoryDTO;
 import java.util.List;
 import org.springframework.stereotype.Service;
 
 @Service
-public class SearchCategoryByName implements Query<String, List<CategoryDTO>> {
+public class SearchCategoryByName implements QueryBinder<String, List<CategoryDTO>> {
 
   private final CategoryRepository categoryRepository;
 

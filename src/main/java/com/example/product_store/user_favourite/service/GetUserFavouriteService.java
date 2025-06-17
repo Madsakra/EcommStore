@@ -1,5 +1,5 @@
 package com.example.product_store.user_favourite.service;
-import com.example.product_store.Query;
+import com.example.product_store.QueryBinder;
 import com.example.product_store.security.AccountRepository;
 import com.example.product_store.security.errors.AccountNotValidException;
 import com.example.product_store.security.model.Account;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public class GetUserFavouriteService implements Query<Void, UserFavouriteDTO> {
+public class GetUserFavouriteService implements QueryBinder<Void, UserFavouriteDTO> {
 
     private final AccountRepository accountRepository;
 

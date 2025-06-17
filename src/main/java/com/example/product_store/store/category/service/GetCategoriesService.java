@@ -1,7 +1,7 @@
 package com.example.product_store.store.category.service;
 
 import com.example.product_store.CacheConstants;
-import com.example.product_store.Query;
+import com.example.product_store.QueryBinder;
 import com.example.product_store.store.category.CategoryRepository;
 import com.example.product_store.store.category.model.Category;
 import com.example.product_store.store.category.dto.CategoryDTO;
@@ -10,7 +10,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @Service
-public class GetCategoriesService implements Query<Void, List<CategoryDTO>> {
+public class GetCategoriesService implements QueryBinder<Void, List<CategoryDTO>> {
 
   private final CategoryRepository categoryRepository;
 

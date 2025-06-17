@@ -1,13 +1,13 @@
 package com.example.product_store.store.product.service;
 
-import com.example.product_store.Query;
+import com.example.product_store.QueryBinder;
 import com.example.product_store.store.product.ProductRepository;
 import com.example.product_store.store.product.dto.ProductDTO;
 import java.util.List;
 import org.springframework.stereotype.Service;
 
 @Service
-public class SearchProductService implements Query<String, List<ProductDTO>> {
+public class SearchProductService implements QueryBinder<String, List<ProductDTO>> {
 
   private final ProductRepository productRepository;
 

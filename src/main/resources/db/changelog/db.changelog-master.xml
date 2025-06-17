@@ -11,4 +11,6 @@
     <include file="db/changelog/db.changelog-002-insert-accounts.xml"/>
     <include file="db/changelog/db.changelog-003-insert-account-roles.xml"/>
     <include file="db/changelog/db.changelog-004-insert-categories.xml"/>
+    <include file="db/changelog/db.changelog-005-insert-products.xml"/>
+    <include file="db/changelog/db.changelog-006-insert-product_category.xml"/>
 </databaseChangeLog>

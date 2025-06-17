@@ -2,6 +2,7 @@ package com.example.product_store;
 
 import com.example.product_store.security.errors.AccountAlreadyExistsException;
 import com.example.product_store.security.errors.AccountNotValidException;
+import com.example.product_store.store.product.exceptions.InvalidPageRequestException;
 import com.example.product_store.store.product.exceptions.ProductNotValidException;
 import com.example.product_store.store.product.exceptions.UnauthorizedManagement;
 import java.util.HashMap;
@@ -52,6 +53,11 @@ public class GlobalExceptionHandler {
   @ExceptionHandler
   public ResponseEntity<Map<String,Object>> handleProductException(ProductNotValidException ex){
     return buildResponseError("Failed to create product",ex.getMessage(),HttpStatus.BAD_REQUEST);
+  }
+
+  @ExceptionHandler
+  public ResponseEntity<Map<String,Object>> handlePageException(InvalidPageRequestException ex){
+    return buildResponseError("Failed to fetch produccts", ex.getMessage(), HttpStatus.BAD_REQUEST);
   }
 
 }

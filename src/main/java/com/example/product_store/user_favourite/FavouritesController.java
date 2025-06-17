@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
+@RestController("/user")
 public class FavouritesController {
 
   private final GetUserFavouriteService getUserFavouriteService;

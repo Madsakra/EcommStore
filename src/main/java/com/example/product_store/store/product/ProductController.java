@@ -1,14 +1,18 @@
 package com.example.product_store.store.product;
 
 
+
 import com.example.product_store.store.product.model.Product;
 import com.example.product_store.store.product.dto.ProductDTO;
 import com.example.product_store.store.product.service.*;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+
 import java.util.List;
+
 
 @RestController
 public class ProductController {
@@ -36,10 +40,24 @@ public class ProductController {
     // GENERAL ENDPOINT
     // GET ALL PRODUCTS
     @GetMapping("/products")
-    public ResponseEntity<List<ProductDTO>> getProducts(){
-        List<ProductDTO>  products = getProductsService.execute(null);
-        return ResponseEntity.status(HttpStatus.OK).body(products);
+    public ResponseEntity<List<ProductDTO>> getProducts(
+            @RequestParam(required = false) Integer page,
+            @RequestParam(required = false) Integer size,
+            @RequestParam(required = false, defaultValue = "false") boolean all
+    ){
+
+        if (all){
+            List<ProductDTO>  products = getProductsService.execute(null);
+            return ResponseEntity.status(HttpStatus.OK).body(products);
+        }
+
+        int p = page !=null ? page :0;
+        int s = size !=null ? size :10;
+
+        Page<ProductDTO> pagedProducts = getProductsService.getPagedProducts(p,s);
+        return ResponseEntity.status(HttpStatus.OK).body(pagedProducts.stream().toList());
     }
+
 
 
     // SEARCH PRODUCT BY TITLE
