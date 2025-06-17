@@ -1,13 +1,7 @@
 package com.example.product_store.store.product.service;
 
 
-import co.elastic.clients.elasticsearch._types.FieldValue;
-import co.elastic.clients.elasticsearch.ElasticsearchClient;
-import co.elastic.clients.elasticsearch._types.SortOptions;
-import co.elastic.clients.elasticsearch._types.SortOrder;
-import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
-import co.elastic.clients.elasticsearch.core.SearchResponse;
-import co.elastic.clients.json.JsonData;
+
 import com.example.product_store.QueryBinder;
 import com.example.product_store.store.product.ProductRepository;
 import com.example.product_store.store.product.exceptions.InvalidPageRequestException;

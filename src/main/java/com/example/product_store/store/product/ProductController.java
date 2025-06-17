@@ -41,9 +41,9 @@ public class ProductController {
     // GET ALL PRODUCTS
     @GetMapping("/products")
     public ResponseEntity<List<ProductDTO>> getProducts(
-            @RequestParam(required = false) Integer page,
-            @RequestParam(required = false) Integer size,
-            @RequestParam(required = false, defaultValue = "false") boolean all
+            @RequestParam(name="page",required = false) Integer page,
+            @RequestParam(name="size",required = false) Integer size,
+            @RequestParam(name="all",required = false, defaultValue = "false") boolean all
     ){
 
         if (all){
