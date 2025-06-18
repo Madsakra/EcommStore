@@ -50,6 +50,7 @@ public class CreateOrderService implements Command<List<OrderCreationRequest>, O
   @Override
   @Transactional
   public OrderDTO execute(List<OrderCreationRequest> orderCreationRequests) {
+
       // collector for total costs of products
       BigDecimal tabulated = BigDecimal.ZERO;
 
@@ -108,7 +109,7 @@ public class CreateOrderService implements Command<List<OrderCreationRequest>, O
 
           // CREATE ORDER ITEM OUT OF THE INFO ABOVE
           OrderItem orderItem = new OrderItem();
-          orderItem.setOrderId(savedOrder.getId());
+          orderItem.setOrder(currentOrder);
           orderItem.setProductId(product.getId());
           orderItem.setQuantity(request.getQuantity());
           orderItem.setPriceAtPurchase(fullCost);
@@ -126,7 +127,7 @@ public class CreateOrderService implements Command<List<OrderCreationRequest>, O
 
       // EXIT LOOP, SET TABULATED COSTS TO ORDER
       savedOrder.setTotalPrice(tabulated);
-      savedOrder.setItems(orderItems);
+      savedOrder.setOrderItems(orderItems);
 
       logger.info("Order after Loop: {}",savedOrder);
       orderRepository.save(savedOrder); // persist the updated totalPrice

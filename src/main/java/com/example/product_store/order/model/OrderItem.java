@@ -3,6 +3,7 @@ package com.example.product_store.order.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 
@@ -14,11 +15,6 @@ public class OrderItem {
   @GeneratedValue(strategy = GenerationType.UUID)
   private String id;
 
-  @Column(name = "order_id")
-  private String orderId;
-
-
-
   @Column(name = "product_id")
   private String productId;
 
@@ -27,4 +23,9 @@ public class OrderItem {
   @Column(name = "price_at_purchase")
   private BigDecimal priceAtPurchase;
 
+
+  @ManyToOne
+  @JoinColumn(name="order_id",referencedColumnName = "id")
+  @ToString.Exclude
+  private Order order;
 }

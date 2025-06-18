@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Data;
+import lombok.ToString;
 
 @Data
 @Entity
@@ -27,8 +28,9 @@ public class Order {
   @Column(name = "created_at")
   private LocalDateTime createdAt;
 
-  @OneToMany
-  private List<OrderItem> items = new ArrayList<>();
+  @OneToMany(mappedBy = "order",cascade = CascadeType.ALL,orphanRemoval = true)
+  @ToString.Exclude
+  private List<OrderItem> orderItems = new ArrayList<>();
 
 
 }
