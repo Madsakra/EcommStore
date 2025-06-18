@@ -2,6 +2,8 @@ package com.example.product_store.store.product.model;
 
 import com.example.product_store.store.category.model.Category;
 import jakarta.persistence.*;
+
+import java.math.BigDecimal;
 import java.util.List;
 import lombok.Data;
 
@@ -18,7 +20,7 @@ public class Product {
   private String title;
   private String description;
   private Integer stock;
-  private Double price;
+  private BigDecimal price;
 
   @Column(name="created_by")
   private String createdBy;

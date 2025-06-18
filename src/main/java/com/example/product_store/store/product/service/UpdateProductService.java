@@ -29,8 +29,8 @@ public class UpdateProductService implements Command<UpdateProductCommand, Produ
 
   @Override
   @Caching(
-      evict = {@CacheEvict(cacheNames = CacheConstants.GET_ALL_PRODUCTS, key = CacheConstants.ALL_PRODUCTS_KEY)},
-      put = {@CachePut(cacheNames = CacheConstants.GET_ALL_PRODUCTS, key = CacheConstants.ALL_PRODUCTS_KEY)})
+      evict = {@CacheEvict(cacheNames = CacheConstants.GET_ALL_PRODUCTS, allEntries = true)},
+        put = {@CachePut(cacheNames = CacheConstants.GET_ALL_PRODUCTS, key = "'allProducts'")})
   public ProductDTO execute(UpdateProductCommand command) {
 
 
@@ -53,6 +53,7 @@ public class UpdateProductService implements Command<UpdateProductCommand, Produ
       }
 
       product.setId(command.getId());
+      product.setCreatedBy(jti);
       productValidator.execute(product, true);
       productRepository.save(product);
       return new ProductDTO(product);

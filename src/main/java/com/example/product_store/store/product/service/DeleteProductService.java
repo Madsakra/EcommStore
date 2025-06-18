@@ -1,5 +1,6 @@
 package com.example.product_store.store.product.service;
 
+import com.example.product_store.CacheConstants;
 import com.example.product_store.Command;
 import com.example.product_store.store.product.ProductRepository;
 import com.example.product_store.store.product.exceptions.ProductNotFoundException;
@@ -23,8 +24,7 @@ public class DeleteProductService implements Command<String, Void> {
   @Override
   @Caching(
       evict = {
-        @CacheEvict(cacheNames = "product", allEntries = true),
-        @CacheEvict(cacheNames = "getAllProducts", key = "'allProducts'")
+        @CacheEvict(cacheNames = CacheConstants.GET_ALL_PRODUCTS, allEntries = true)
       })
   public Void execute(String id) {
     Optional<Product> productOptional = productRepository.findById(id);

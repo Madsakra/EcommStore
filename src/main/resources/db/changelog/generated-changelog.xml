@@ -11,6 +11,7 @@
             <column name="username" type="VARCHAR(100)"/>
             <column name="email" type="VARCHAR(100)"/>
             <column name="password_hash" type="VARCHAR(255)"/>
+            <column name="balance" type="DECIMAL(10, 2)"/>
         </createTable>
     </changeSet>
     <changeSet author="axmen (generated)" id="1750060828006-2">
@@ -43,7 +44,7 @@
         </createTable>
     </changeSet>
     <changeSet author="axmen (generated)" id="1750060828006-5">
-        <createTable tableName="order">
+        <createTable tableName="orders">
             <column name="id" type="CHAR(36)">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
@@ -53,7 +54,7 @@
         </createTable>
     </changeSet>
     <changeSet author="axmen (generated)" id="1750060828006-6">
-        <createTable tableName="order_item">
+        <createTable tableName="order_items">
             <column name="id" type="CHAR(36)">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
@@ -116,17 +117,17 @@
         </createIndex>
     </changeSet>
     <changeSet author="axmen (generated)" id="1750060828006-13">
-        <createIndex associatedWith="" indexName="fk_order_customer" tableName="order">
+        <createIndex associatedWith="" indexName="fk_order_customer" tableName="orders">
             <column name="customer_id"/>
         </createIndex>
     </changeSet>
     <changeSet author="axmen (generated)" id="1750060828006-14">
-        <createIndex associatedWith="" indexName="fk_orderitem_order" tableName="order_item">
+        <createIndex associatedWith="" indexName="fk_orderitem_order" tableName="order_items">
             <column name="order_id"/>
         </createIndex>
     </changeSet>
     <changeSet author="axmen (generated)" id="1750060828006-15">
-        <createIndex associatedWith="" indexName="fk_orderitem_product" tableName="order_item">
+        <createIndex associatedWith="" indexName="fk_orderitem_product" tableName="order_items">
             <column name="product_id"/>
         </createIndex>
     </changeSet>
@@ -163,18 +164,18 @@
                                  referencedTableName="account" validate="true"/>
     </changeSet>
     <changeSet author="axmen (generated)" id="1750060828006-22">
-        <addForeignKeyConstraint baseColumnNames="customer_id" baseTableName="order" constraintName="fk_order_customer"
+        <addForeignKeyConstraint baseColumnNames="customer_id" baseTableName="orders" constraintName="fk_order_customer"
                                  deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
                                  referencedColumnNames="id" referencedTableName="account" validate="true"/>
     </changeSet>
     <changeSet author="axmen (generated)" id="1750060828006-23">
-        <addForeignKeyConstraint baseColumnNames="order_id" baseTableName="order_item"
+        <addForeignKeyConstraint baseColumnNames="order_id" baseTableName="order_items"
                                  constraintName="fk_orderitem_order" deferrable="false" initiallyDeferred="false"
                                  onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id"
-                                 referencedTableName="order" validate="true"/>
+                                 referencedTableName="orders" validate="true"/>
     </changeSet>
     <changeSet author="axmen (generated)" id="1750060828006-24">
-        <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="order_item"
+        <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="order_items"
                                  constraintName="fk_orderitem_product" deferrable="false" initiallyDeferred="false"
                                  onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id"
                                  referencedTableName="product" validate="true"/>

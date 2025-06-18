@@ -17,6 +17,7 @@
             <column name="id" value="1a014560-4e27-442a-9312-efa1928362e4"/>
             <column name="username" value="user3"/>
             <column name="email" value="colin3@gmail.com"/>
+            <column name="balance" value="3000"/>
             <column name="password_hash" value="$2a$10$F4y3LhIuMi4Ga/YmlG3ZaeHVJsQ4oWsxtYnP99blCvM7tl/yezWtG"/>
         </insert>
 

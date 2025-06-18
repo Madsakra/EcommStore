@@ -2,6 +2,7 @@ package com.example.product_store.store.product.dto;
 
 import com.example.product_store.store.category.dto.CategoryDTO;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,7 +17,7 @@ public class ProductDTO implements Serializable {
   private String title;
   private String description;
   private Integer stock;
-  private Double price;
+  private BigDecimal price;
   private List<CategoryDTO> categories;
   private String createdBy;
 

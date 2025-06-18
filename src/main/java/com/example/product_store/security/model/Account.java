@@ -3,6 +3,7 @@ package com.example.product_store.security.model;
 import com.example.product_store.store.product.model.Product;
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 import lombok.AllArgsConstructor;
@@ -53,4 +54,5 @@ public class Account {
           inverseJoinColumns = @JoinColumn(name = "product_id")
   )
   private Set<Product> favouriteProducts = new HashSet<>();
+  private BigDecimal balance;
 }

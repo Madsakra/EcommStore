@@ -8,6 +8,8 @@ import com.example.product_store.store.product.model.Product;
 import io.micrometer.common.util.StringUtils;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+
 @Component
 public class ProductValidator {
 
@@ -29,7 +31,7 @@ public class ProductValidator {
       throw new ProductNotValidException("Product stock should not be 0 or negative");
     }
 
-    if (product.getPrice() <= 0) {
+    if (product.getPrice().compareTo(BigDecimal.valueOf(0))<=0) {
       throw new ProductNotValidException("Product price should not be 0 or negative");
     }
 

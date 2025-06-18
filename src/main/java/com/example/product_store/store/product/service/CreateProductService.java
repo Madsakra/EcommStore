@@ -21,7 +21,7 @@ public class CreateProductService implements Command<Product, ProductDTO> {
   }
 
   @Override
-  @CacheEvict(cacheNames = "getAllProducts", key = "'allProducts'")
+  @CacheEvict(cacheNames = "getAllProducts", allEntries = true)
   public ProductDTO execute(Product product) {
 
     // get hold of the current user UUID THROUGH THE JWT, via context provider
