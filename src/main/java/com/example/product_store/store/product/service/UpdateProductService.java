@@ -59,6 +59,6 @@ public class UpdateProductService implements Command<UpdateProductCommand, Produ
       return new ProductDTO(product);
     }
 
-    throw new ProductNotFoundException();
+    throw new ProductNotFoundException("Product does not exist based on id!");
   }
 }

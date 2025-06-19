@@ -16,6 +16,7 @@ public class Order {
 
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
+  @Column(name="order_id")
   private String id;
 
 

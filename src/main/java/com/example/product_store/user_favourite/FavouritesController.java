@@ -9,7 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@RestController("/user")
+@RestController
+@RequestMapping("/user")
 public class FavouritesController {
 
   private final GetUserFavouriteService getUserFavouriteService;

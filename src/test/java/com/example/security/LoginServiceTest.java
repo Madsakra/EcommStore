@@ -3,10 +3,10 @@ package com.example.security;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import com.example.product_store.security.AccountRepository;
-import com.example.product_store.security.model.Account;
+import com.example.product_store.authentication.repositories.AccountRepository;
+import com.example.product_store.authentication.model.Account;
 
-import com.example.product_store.security.service.LoginService;
+import com.example.product_store.authentication.service.LoginService;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

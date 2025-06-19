@@ -27,9 +27,11 @@ public interface ProductRepository extends JpaRepository<Product, String>, JpaSp
   List<Product> findByDescriptionContaining(String description);
 
 
-  // FOR PROCESSING ORDERS
+  // for processing orders
+  // prevent overselling
   @Lock(LockModeType.PESSIMISTIC_WRITE)
-  @Query("SELECT p FROM Product p WHERE p.id = :id")
-  Optional<Product> findByIdForUpdate(@Param("id") String id);
+  @Query("SELECT p FROM Product p WHERE p.id IN :ids")
+  List<Product> findAllByIdForUpdate(@Param("ids") List<String> ids);
+
 
 }

@@ -45,7 +45,7 @@
     </changeSet>
     <changeSet author="axmen (generated)" id="1750060828006-5">
         <createTable tableName="orders">
-            <column name="id" type="CHAR(36)">
+            <column name="order_id" type="CHAR(36)">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
             <column name="customer_id" type="CHAR(36)"/>
@@ -55,7 +55,7 @@
     </changeSet>
     <changeSet author="axmen (generated)" id="1750060828006-6">
         <createTable tableName="order_items">
-            <column name="id" type="CHAR(36)">
+            <column name="order_item_id" type="CHAR(36)">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
             <column name="order_id" type="CHAR(36)"/>
@@ -171,7 +171,7 @@
     <changeSet author="axmen (generated)" id="1750060828006-23">
         <addForeignKeyConstraint baseColumnNames="order_id" baseTableName="order_items"
                                  constraintName="fk_orderitem_order" deferrable="false" initiallyDeferred="false"
-                                 onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id"
+                                 onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="order_id"
                                  referencedTableName="orders" validate="true"/>
     </changeSet>
     <changeSet author="axmen (generated)" id="1750060828006-24">

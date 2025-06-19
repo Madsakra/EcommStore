@@ -32,6 +32,6 @@ public class DeleteCategoryService implements Command<String, Void> {
       return null;
     }
 
-    throw new ProductNotFoundException();
+    throw new ProductNotFoundException("Product does not exist based on id!");
   }
 }

@@ -1,17 +1,24 @@
 package com.example.product_store;
 
-import com.example.product_store.security.errors.AccountAlreadyExistsException;
-import com.example.product_store.security.errors.AccountNotValidException;
+import com.example.product_store.order.errors.InsufficientBalanceException;
+import com.example.product_store.order.errors.ProductStockException;
+import com.example.product_store.authentication.errors.AccountAlreadyExistsException;
+import com.example.product_store.authentication.errors.AccountNotValidException;
+import com.example.product_store.authentication.errors.InvalidRoleIdException;
+import com.example.product_store.authentication.errors.RoleMismatchException;
 import com.example.product_store.store.product.exceptions.InvalidPageRequestException;
+import com.example.product_store.store.product.exceptions.ProductNotFoundException;
 import com.example.product_store.store.product.exceptions.ProductNotValidException;
 import com.example.product_store.store.product.exceptions.UnauthorizedManagement;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -57,7 +64,48 @@ public class GlobalExceptionHandler {
 
   @ExceptionHandler
   public ResponseEntity<Map<String,Object>> handlePageException(InvalidPageRequestException ex){
-    return buildResponseError("Failed to fetch produccts", ex.getMessage(), HttpStatus.BAD_REQUEST);
+    return buildResponseError("Failed to fetch products", ex.getMessage(), HttpStatus.BAD_REQUEST);
+  }
+
+  @ExceptionHandler
+  public ResponseEntity<Map<String,Object>> handleProductNotFoundException(ProductNotFoundException ex){
+    return buildResponseError("Product not found",ex.getMessage(),HttpStatus.NOT_FOUND);
+  }
+
+  @ExceptionHandler
+  public ResponseEntity<Map<String,Object>> handleInsufficientStock(ProductStockException ex){
+    return buildResponseError("Insufficient Stock error",ex.getMessage(),HttpStatus.CONFLICT);
+  }
+
+  @ExceptionHandler
+  public ResponseEntity<Map<String,Object>> handleInsufficientBal(InsufficientBalanceException ex){
+    return buildResponseError("Insufficient Balance in account", ex.getMessage(), HttpStatus.CONFLICT);
+  }
+
+  @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+  public ResponseEntity<String> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
+    return ResponseEntity.badRequest().body("Invalid type for parameter: " + ex.getName());
+  }
+
+  @ExceptionHandler(HttpMessageNotReadableException.class)
+  public ResponseEntity<String> handleJsonParseError(HttpMessageNotReadableException ex) {
+    return ResponseEntity.badRequest().body("Malformed JSON request: " + ex.getMessage());
+  }
+
+  @ExceptionHandler(Exception.class)
+  public ResponseEntity<String> handleGeneralError(Exception ex) {
+    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected error: " + ex.getMessage());
+  }
+
+
+  @ExceptionHandler(InvalidRoleIdException.class)
+  public ResponseEntity<Map<String,Object>> handleInvalidRoleException(InvalidRoleIdException ex){
+    return buildResponseError("Invalid Role id", ex.getMessage(), HttpStatus.CONFLICT);
+  }
+
+  @ExceptionHandler(RoleMismatchException.class)
+  public ResponseEntity<Map<String,Object>> handleRoleMismatchException(RoleMismatchException ex){
+    return buildResponseError("Role name and id mismatch", ex.getMessage(), HttpStatus.CONFLICT);
   }
 
 }
