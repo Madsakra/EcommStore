@@ -2,12 +2,14 @@ package com.example.product_store.order.dto;
 
 import com.example.product_store.order.model.Order;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
+@NoArgsConstructor
 public class OrderDTO implements Serializable {
     private String id;
     private String customerId;

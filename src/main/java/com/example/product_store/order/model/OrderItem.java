@@ -2,6 +2,7 @@ package com.example.product_store.order.model;
 
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.ToString;
 
@@ -9,7 +10,7 @@ import java.math.BigDecimal;
 
 @Entity
 @Data
-@Table(name = "order_items")
+@AllArgsConstructor
 public class OrderItem {
 
   // auto generated id

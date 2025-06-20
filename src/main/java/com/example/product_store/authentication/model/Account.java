@@ -25,6 +25,7 @@ public class Account {
     this.password = password;
     this.roles = roles;
     this.favouriteProducts = new HashSet<>();
+    this.balance = BigDecimal.valueOf(0);
   }
 
   @Id
