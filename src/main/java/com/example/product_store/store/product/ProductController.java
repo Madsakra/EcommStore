@@ -1,6 +1,7 @@
 package com.example.product_store.store.product;
 
 import com.example.product_store.store.product.dto.ProductDTO;
+import com.example.product_store.store.product.exceptions.InvalidPageRequestException;
 import com.example.product_store.store.product.model.Product;
 import com.example.product_store.store.product.model.ProductFilter;
 import com.example.product_store.store.product.service.*;
@@ -45,6 +46,16 @@ public class ProductController {
       @RequestParam(name="page",defaultValue = "0") int page,
       @RequestParam(name="size",defaultValue = "10") int size
       ) {
+    // CHECK IF PAGE NUMBER IS NULL OR NEGATIVE
+    if (page < 0){
+      throw new InvalidPageRequestException("Page number cannot be negative.");
+    }
+
+    // CHECK IF PAGE SIZE IS NEGATIVE
+    if (size < 0){
+      throw new InvalidPageRequestException("Page size cannot be negative.");
+    }
+
     ProductFilter productFilter = new ProductFilter();
     productFilter.setMinPrice(minPrice);
     productFilter.setMaxPrice(maxPrice);

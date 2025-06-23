@@ -7,11 +7,9 @@ import com.example.product_store.authentication.dto.LoginRequestDTO;
 import com.example.product_store.authentication.errors.InvalidUserDetailsException;
 import com.example.product_store.authentication.jwt.JwtUtil;
 import com.example.product_store.authentication.jwt.MyUserDetails;
-import com.example.product_store.authentication.repositories.AccountRepository;
-import com.example.product_store.authentication.model.Account;
+
 
 import com.example.product_store.authentication.service.LoginService;
-import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -21,8 +19,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 @ExtendWith(MockitoExtension.class)
 public class LoginServiceTest {

@@ -62,7 +62,6 @@ public class GetProductsService {
     }
 
 
-
     // FILTER BY CATEGORY FIRST (IF HAVE)
     if (productFilter.getCategoryIds() != null && !productFilter.getCategoryIds().isEmpty()) {
       for (String id : productFilter.getCategoryIds()) {

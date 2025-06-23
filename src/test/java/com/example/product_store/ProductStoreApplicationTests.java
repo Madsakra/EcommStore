@@ -8,6 +8,7 @@ class ProductStoreApplicationTests {
 
 	@Test
 	void contextLoads() {
+		// sanity check, no weird bugs / compilation issues
 	}
 
 }
