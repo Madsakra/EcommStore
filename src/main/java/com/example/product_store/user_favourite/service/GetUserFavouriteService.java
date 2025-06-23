@@ -1,7 +1,8 @@
 package com.example.product_store.user_favourite.service;
 
 import com.example.product_store.QueryBinder;
-import com.example.product_store.authentication.errors.AccountNotValidException;
+
+import com.example.product_store.authentication.errors.AccountNotFoundException;
 import com.example.product_store.authentication.model.Account;
 import com.example.product_store.authentication.repositories.AccountRepository;
 import com.example.product_store.user_favourite.dto.UserFavouriteDTO;
@@ -32,7 +33,7 @@ public class GetUserFavouriteService implements QueryBinder<Void, UserFavouriteD
 
     // 2. Use the current user id to fetch his account
     Account account =
-        accountRepository.findById(jti).orElseThrow(() -> new AccountNotValidException("Account not found"));
+        accountRepository.findById(jti).orElseThrow(() -> new AccountNotFoundException("Account not found"));
 
     logger.info("Account {} retrieved for in GetUserFavouriteService", jti);
 

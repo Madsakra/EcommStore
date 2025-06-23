@@ -7,18 +7,12 @@ import com.example.product_store.store.product.model.Product;
 import java.math.BigDecimal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
 public class BalanceReductionService {
 
   public Logger logger = LoggerFactory.getLogger(BalanceReductionService.class);
-  private final KafkaTemplate<String, String> kafkaTemplate;
-
-    public BalanceReductionService(KafkaTemplate<String, String> kafkaTemplate) {
-        this.kafkaTemplate = kafkaTemplate;
-    }
 
     public BigDecimal execute(Account account, Product product, OrderCreationRequest request) {
     // GET THE FULL COSTS FOR EACH BATCH OF ITEMS

@@ -75,7 +75,7 @@ public class AccountValidator {
     // CHECK FOR ROLES
     Set<Role> inputRoles = account.getRoles();
     for (Role role : inputRoles) {
-      logger.debug("Validating role: ID={}, Name={}", role.getRoleId(), role.getRoleName());
+      logger.info("Validating role: ID={}, Name={}", role.getRoleId(), role.getRoleName());
 
       Role dbRole = roleRepository.findById(role.getRoleId())
               .orElseThrow(() -> {
@@ -89,7 +89,7 @@ public class AccountValidator {
         throw new RoleMismatchException("Role name mismatch for ID: " + role.getRoleId());
       }
 
-      logger.debug("Role validated successfully: {}", dbRole);
+      logger.info("Role validated successfully: {}", dbRole);
     }
 
     logger.info("Account payload fully validated");

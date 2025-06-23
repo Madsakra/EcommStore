@@ -10,16 +10,21 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.crypto.SecretKey;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.GrantedAuthority;
 
 public class JwtUtil {
 
   // SECRET KEY - to be thrown to ENV
+  public static final Logger logger = LoggerFactory.getLogger(JwtUtil.class);
   private static final String secretKey = System.getenv("JWT_SECRET");
   // Duration of jwt token: 15 minutes
   private static final Duration expiration = Duration.ofMinutes(15);
 
   public static String generateToken(MyUserDetails myUserDetails) {
+
     List<String> roles =
         myUserDetails.getAuthorities().stream()
             .map(GrantedAuthority::getAuthority)

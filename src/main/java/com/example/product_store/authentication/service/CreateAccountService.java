@@ -37,7 +37,7 @@ public class CreateAccountService implements Command<Account, AccountDTO> {
     // TO CHECK WHETHER ACCOUNT EXIST
     boolean accountExist = accountRepository.existsByUserNameOrEmail(account.getUserName(),account.getEmail());
 
-    logger.info("After checking account repository, account exist: {}",accountExist);
+
 
     // IF ACCOUNT EXIST, THROW ERROR
     // DISPLAY ERROR TO CLIENT THROUGH GLOBAL EXCEPTION HANDLER

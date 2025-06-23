@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Util {
+public class ErrorResponseTemplate {
     // TEMPLATE FOR BUILDING ERROR RESPONSE
     public static ResponseEntity<Map<String, Object>> buildResponseError(
             String error, String message, HttpStatus status) {

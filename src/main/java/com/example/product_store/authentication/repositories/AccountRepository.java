@@ -20,7 +20,8 @@ public interface AccountRepository extends JpaRepository<Account, String> {
   boolean existsByUserNameOrEmail(String userName, String email);
 
   // CUSTOM JPA QUERY
-  // TO FOLLOW ENTITY CLASS NAMING CONVENTION
+  // USED FOR LOGGING IN
+  // CHECK WHETHER USER EXISTS WITH USERNAME / EMAIL
   @EntityGraph(attributePaths = "roles")
   @Query("from Account where email = :u or userName = :u")
   Optional<Account> findUserByEmailOrUserName(@Param("u") String u);

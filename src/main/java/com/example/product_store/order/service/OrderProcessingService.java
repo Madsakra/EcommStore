@@ -4,7 +4,7 @@ import com.example.product_store.Command;
 import com.example.product_store.authentication.model.Account;
 import com.example.product_store.authentication.service.RetrieveAccountService;
 import com.example.product_store.order.OrderCreationRequest;
-import com.example.product_store.order.dto.KafkaOrderGroup;
+
 import com.example.product_store.order.dto.KafkaOrderItem;
 import com.example.product_store.order.dto.OrderDTO;
 import com.example.product_store.order.model.Order;
@@ -13,7 +13,7 @@ import com.example.product_store.order.repositories.OrderItemRepository;
 import com.example.product_store.order.repositories.OrderRepository;
 import com.example.product_store.store.product.model.Product;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,7 +31,7 @@ public class OrderProcessingService implements Command<List<OrderCreationRequest
   private final ProductValidationService productValidationService;
   private final StockReductionService stockReductionService;
   private final BalanceReductionService balanceReductionService;
-  private final KafkaAdminProducerService kafkaAdminProducerService;
+
 
 
   private final OrderRepository orderRepository;
@@ -42,14 +42,14 @@ public class OrderProcessingService implements Command<List<OrderCreationRequest
           RetrieveAccountService retrieveAccountService,
           ProductValidationService productValidationService,
           StockReductionService stockReductionService,
-          BalanceReductionService balanceReductionService, KafkaAdminProducerService kafkaAdminProducerService,
+          BalanceReductionService balanceReductionService,
           OrderRepository orderRepository,
           OrderItemRepository orderItemRepository) {
     this.stockReductionService = stockReductionService;
     this.retrieveAccountService = retrieveAccountService;
     this.productValidationService = productValidationService;
     this.balanceReductionService = balanceReductionService;
-      this.kafkaAdminProducerService = kafkaAdminProducerService;
+
       this.orderRepository = orderRepository;
     this.orderItemRepository = orderItemRepository;
   }
@@ -121,19 +121,7 @@ public class OrderProcessingService implements Command<List<OrderCreationRequest
     logger.info("Order saved: {}, in OrderProcessingService", savedOrder);
 
 
-    // LOOP THROUGH THE KAFKA ORDER ITEM MAP TO SEND NOTIFICATION TO A SINGLE ADMIN
-    for (Map.Entry<String,List<KafkaOrderItem>> entry: orderItemMap.entrySet()){
-      String adminId = entry.getKey();
-      List<KafkaOrderItem> kafkaOrderItems = entry.getValue();
 
-
-
-      KafkaOrderGroup kafkaOrderGroup = new KafkaOrderGroup(adminId,savedOrder.getId(),kafkaOrderItems, LocalDateTime.now());
-
-      logger.info("Order Group To be Sent In Order Processing Service: {}",kafkaOrderGroup);
-      kafkaAdminProducerService.sendAdminOrderGroup(kafkaOrderGroup);
-
-    }
 
 
     // SAVE THE ORDER IN MY SQL

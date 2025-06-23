@@ -1,9 +1,7 @@
 package com.example.product_store.order;
 
-import com.example.product_store.order.dto.KafkaOrderGroup;
-import com.example.product_store.order.dto.KafkaOrderItem;
+
 import com.example.product_store.order.dto.OrderDTO;
-import com.example.product_store.order.service.AdminOrderListenerService;
 import com.example.product_store.order.service.OrderProcessingService;
 import java.util.List;
 import org.springframework.http.HttpStatus;
@@ -13,10 +11,9 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class OrderController {
   private final OrderProcessingService orderProcessingService;
-  private final AdminOrderListenerService listener;
-  public OrderController(OrderProcessingService orderProcessingService, AdminOrderListenerService listener) {
+
+  public OrderController(OrderProcessingService orderProcessingService) {
     this.orderProcessingService = orderProcessingService;
-      this.listener = listener;
   }
 
   @PostMapping("/user/order")
@@ -27,8 +24,8 @@ public class OrderController {
 
   // FOR ADMINS TO GET ORDER
   @GetMapping("/{adminId}")
-  public List<KafkaOrderGroup> getOrders(@PathVariable String adminId) {
-    return listener.getOrdersByAdminId(adminId);
+  public Void getOrders(@PathVariable String adminId) {
+    return null;
   }
 
 

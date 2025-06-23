@@ -9,6 +9,7 @@ import com.example.product_store.authentication.dto.LoginRequestDTO;
 import com.example.product_store.authentication.jwt.MyUserDetails;
 import com.example.product_store.authentication.service.CreateAccountService;
 import com.example.product_store.authentication.service.GetRolesService;
+import com.example.product_store.authentication.service.LoginService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -26,11 +27,16 @@ public class AuthController {
     private final GetRolesService getRolesService;
     private final AuthenticationManager manager;
     private final CreateAccountService createNewAccountService;
+    private final LoginService loginService;
 
-    public AuthController(GetRolesService getRolesService, AuthenticationManager manager, CreateAccountService createNewAccountService) {
+    public AuthController(GetRolesService getRolesService,
+                          AuthenticationManager manager,
+                          CreateAccountService createNewAccountService,
+                          LoginService loginService) {
         this.getRolesService = getRolesService;
         this.manager = manager;
         this.createNewAccountService = createNewAccountService;
+        this.loginService = loginService;
     }
 
     // GET ALL ROLES, DISPLAY ON FRONTEND REGISTRATION AS SELECTION
@@ -51,14 +57,7 @@ public class AuthController {
     // LOGIN
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginRequestDTO loginRequestDTO) {
-        UsernamePasswordAuthenticationToken token =
-                new UsernamePasswordAuthenticationToken(
-                        loginRequestDTO.getIdentifier(), loginRequestDTO.getPassword());
-        // this will fault if credentials not valid
-        Authentication authentication = manager.authenticate(token);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        String jwtToken = JwtUtil.generateToken((MyUserDetails) authentication.getPrincipal());
+        String jwtToken = loginService.execute(loginRequestDTO);
         return ResponseEntity.ok(new LoginResponseDTO(jwtToken));
     }
 

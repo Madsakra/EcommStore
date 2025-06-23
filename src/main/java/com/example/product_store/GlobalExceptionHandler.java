@@ -2,10 +2,6 @@ package com.example.product_store;
 
 import com.example.product_store.order.errors.InsufficientBalanceException;
 import com.example.product_store.order.errors.ProductStockException;
-import com.example.product_store.authentication.errors.AccountAlreadyExistsException;
-import com.example.product_store.authentication.errors.AccountNotValidException;
-import com.example.product_store.authentication.errors.InvalidRoleIdException;
-import com.example.product_store.authentication.errors.RoleMismatchException;
 import com.example.product_store.store.product.exceptions.InvalidPageRequestException;
 import com.example.product_store.store.product.exceptions.ProductNotFoundException;
 import com.example.product_store.store.product.exceptions.ProductNotValidException;
@@ -15,7 +11,6 @@ import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
@@ -34,22 +29,11 @@ public class GlobalExceptionHandler {
   }
 
 
-  @ExceptionHandler(AccountAlreadyExistsException.class)
-  public ResponseEntity<Map<String, Object>> handleAccountAlreadyExistException(
-      AccountAlreadyExistsException ex) {
-    return buildResponseError("Account Exists Error", ex.getMessage(), HttpStatus.CONFLICT);
-  }
 
-  @ExceptionHandler(AuthenticationException.class)
-  public ResponseEntity<Map<String, Object>> handleAuthException(AuthenticationException ex) {
-    return buildResponseError("Authentication Failed", ex.getMessage(), HttpStatus.UNAUTHORIZED);
-  }
 
-  @ExceptionHandler(AccountNotValidException.class)
-  public ResponseEntity<Map<String, Object>> handleAccountNotValidException(
-      AccountNotValidException ex) {
-    return buildResponseError("Account not valid Error", ex.getMessage(), HttpStatus.UNAUTHORIZED);
-  }
+
+
+
 
   @ExceptionHandler(UnauthorizedManagement.class)
   public ResponseEntity<Map<String, Object>> handleUnauthorizedManagementException(
@@ -92,20 +76,9 @@ public class GlobalExceptionHandler {
     return ResponseEntity.badRequest().body("Malformed JSON request: " + ex.getMessage());
   }
 
-  @ExceptionHandler(Exception.class)
-  public ResponseEntity<String> handleGeneralError(Exception ex) {
-    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected error: " + ex.getMessage());
-  }
 
 
-  @ExceptionHandler(InvalidRoleIdException.class)
-  public ResponseEntity<Map<String,Object>> handleInvalidRoleException(InvalidRoleIdException ex){
-    return buildResponseError("Invalid Role id", ex.getMessage(), HttpStatus.CONFLICT);
-  }
 
-  @ExceptionHandler(RoleMismatchException.class)
-  public ResponseEntity<Map<String,Object>> handleRoleMismatchException(RoleMismatchException ex){
-    return buildResponseError("Role name and id mismatch", ex.getMessage(), HttpStatus.CONFLICT);
-  }
+
 
 }

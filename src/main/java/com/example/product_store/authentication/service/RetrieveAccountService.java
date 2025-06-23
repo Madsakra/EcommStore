@@ -1,7 +1,7 @@
 package com.example.product_store.authentication.service;
 
 import com.example.product_store.Command;
-import com.example.product_store.authentication.errors.AccountNotValidException;
+import com.example.product_store.authentication.errors.AccountNotFoundException;
 import com.example.product_store.authentication.model.Account;
 import com.example.product_store.authentication.repositories.AccountRepository;
 import org.slf4j.Logger;
@@ -15,6 +15,7 @@ import java.util.Optional;
 public class RetrieveAccountService implements Command<Void, Account> {
 
     // Microservice to help fetch account information (UUID specifically) based on jwt
+    // returns entire account
     private final AccountRepository accountRepository;
     private static final Logger logger = LoggerFactory.getLogger(RetrieveAccountService.class);
 
@@ -29,8 +30,8 @@ public class RetrieveAccountService implements Command<Void, Account> {
         Optional<Account> account = accountRepository.findByIdForUpdate(userId);
 
         if (account.isEmpty()){
-                logger.warn("User not found in Retrieve Account Microservice");
-                throw new AccountNotValidException("User not found");
+                logger.warn("User {} not found in Retrieve Account Microservice",userId);
+                throw new AccountNotFoundException("Account with username: "+userId+" not found." );
         }
 
         return account.get();
