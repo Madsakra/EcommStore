@@ -66,18 +66,28 @@ public class ProductController {
   }
 
   // SEARCH PRODUCT BY TITLE
-  @GetMapping("/products/title/{title}")
-  public ResponseEntity<List<ProductDTO>> searchProductByTitle(@PathVariable("title") String title) {
-    List<ProductDTO> products = searchProductService.execute(title);
+  // OPTIONAL TO USE DESCRIPTION
+  @GetMapping("/products/search")
+  public ResponseEntity<List<ProductDTO>> searchProduct(
+          @RequestParam(name = "title") String title,
+          @RequestParam(name="description",required = false) String description,
+          @RequestParam(name = "minPrice", required = false) BigDecimal minPrice,
+          @RequestParam(name = "maxPrice", required = false) BigDecimal maxPrice,
+          @RequestParam(name = "categoryIds", required = false) List<String> categoryIds,
+          @RequestParam(name="page",defaultValue = "0") int page,
+          @RequestParam(name="size",defaultValue = "10") int size
+          ) {
+    ProductFilter productFilter = new ProductFilter();
+    productFilter.setMinPrice(minPrice);
+    productFilter.setMaxPrice(maxPrice);
+    productFilter.setCategoryIds(categoryIds);
+    productFilter.setTitle(title);
+    productFilter.setDescription(description);
+    List<ProductDTO> products = searchProductService.execute(productFilter,PageRequest.of(page,size));
     return ResponseEntity.status(HttpStatus.OK).body(products);
   }
 
-  // SEARCH PRODUCT BY DESCRIPTION
-  @GetMapping("/products/description/{description}")
-  public ResponseEntity<List<ProductDTO>> searchProductByDescription(@PathVariable("description") String description) {
-    List<ProductDTO> products = searchProductService.searchProductByDescription(description);
-    return ResponseEntity.ok(products);
-  }
+
 
   // ONLY FOR ADMINS
   // CREATE NEW PRODUCT

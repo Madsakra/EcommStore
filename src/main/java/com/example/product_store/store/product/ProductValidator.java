@@ -23,33 +23,35 @@ public class ProductValidator {
 
   public void execute(Product product, boolean isUpdate) {
 
-    if (StringUtils.isEmpty(product.getTitle())) {
-      throw new ProductNotValidException("Product Title is empty");
+    if (product.getTitle() == null ||product.getTitle().isBlank()) {
+      throw new ProductNotValidException("Product Title should not be empty or null!");
     }
 
-    if (product.getStock() <= 0) {
-      throw new ProductNotValidException("Product stock should not be 0 or negative");
+    if ( product.getStock() == null || product.getStock() < 0) {
+      throw new ProductNotValidException("Product stock should not be null or negative");
     }
 
-    if (product.getPrice().compareTo(BigDecimal.valueOf(0))<=0) {
-      throw new ProductNotValidException("Product price should not be 0 or negative");
+    if ( product.getPrice() == null || product.getPrice().compareTo(BigDecimal.valueOf(0))<=0) {
+      throw new ProductNotValidException("Product price should not be 0, null or negative");
     }
 
     if (!isUpdate && productRepository.existsByTitleAndPrice(product.getTitle(), product.getPrice())) {
       throw new ProductNotValidException("Duplicate product exists!");
     }
 
+    if (product.getCategories().isEmpty()){
+      throw new ProductNotValidException("Product does not have any categories!");
+    }
 
-    if (!product.getCategories().isEmpty())
-    {
-      // CHECK CATEGORY ALSO
-      for (Category cat: product.getCategories()){
+
+    // CHECK CATEGORY ALSO
+    for (Category cat: product.getCategories()){
         if (!categoryRepository.existsById(cat.getId()))
         {
           throw new ProductNotValidException("Failed to create product due to invalid category");
         }
       }
-    }
+
 
 
   }

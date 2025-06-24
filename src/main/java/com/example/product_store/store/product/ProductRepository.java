@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Optional;
 
 import jakarta.persistence.LockModeType;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Lock;
@@ -21,11 +24,7 @@ public interface ProductRepository extends JpaRepository<Product, String>, JpaSp
 
   // SPRING DATA JPA
   // SEARCH BY TITLE
-  List<Product> findByTitleContaining(String title);
-
-  // SEARCH BY Description
-  List<Product> findByDescriptionContaining(String description);
-
+  Page<Product> findByTitleContaining(String title, Specification specification, Pageable pageable);
 
   // for processing orders
   // prevent overselling

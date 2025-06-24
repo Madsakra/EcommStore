@@ -32,5 +32,15 @@ public class ProductSpecification {
         ));
     }
 
+    // FOR SEARCHING TITLE: ADD ON SPECIFICATION
+    public static Specification<Product> titleContains(String title) {
+        return (root, query, cb) -> cb.like(cb.lower(root.get("title")), "%" + title.toLowerCase() + "%");
+    }
+
+    // FOR SEARCHING DESCRIPTION: ADD ON SPECIFICATION\
+    public static Specification<Product> descriptionContaining(String description){
+        return (root, query, cb) -> cb.like(cb.lower(root.get("description")), "%" + description.toLowerCase() + "%");
+
+    }
 
 }
