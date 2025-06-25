@@ -25,13 +25,13 @@ public class RetrieveAccountService implements Command<Void, Account> {
 
     @Override
     public Account execute(Void input) {String userId = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        logger.info("User id found: {}", userId);
+        logger.info("Account id found: {}", userId);
 
         Optional<Account> account = accountRepository.findByIdForUpdate(userId);
 
         if (account.isEmpty()){
-                logger.warn("User {} not found in Retrieve Account Microservice",userId);
-                throw new AccountNotFoundException("Account with username: "+userId+" not found." );
+                logger.warn("RetrieveAccountService: unable to identify account with ID: {}",userId);
+                throw new AccountNotFoundException("Account with id: "+userId+" not found." );
         }
 
         return account.get();

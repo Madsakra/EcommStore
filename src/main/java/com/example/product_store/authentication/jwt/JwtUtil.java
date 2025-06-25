@@ -1,5 +1,6 @@
 package com.example.product_store.authentication.jwt;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -19,7 +20,9 @@ public class JwtUtil {
 
   // SECRET KEY - to be thrown to ENV
   public static final Logger logger = LoggerFactory.getLogger(JwtUtil.class);
-  private static final String secretKey = System.getenv("JWT_SECRET");
+  static Dotenv dotenv = Dotenv.load();
+
+  private static final String secretKey = dotenv.get("JWT_SECRET");
   // Duration of jwt token: 15 minutes
   private static final Duration expiration = Duration.ofMinutes(15);
 

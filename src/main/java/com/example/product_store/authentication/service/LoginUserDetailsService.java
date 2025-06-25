@@ -30,11 +30,11 @@ public class LoginUserDetailsService implements UserDetailsService {
         Optional<Account> optionalAccount =
                 accountRepository.findUserByEmailOrUserName(loginIdentifier);
         if (optionalAccount.isEmpty()) {
-            logger.warn("LoginService: User not found with identifier: {}", loginIdentifier);
+            logger.warn("LoginService: Account with identifier: {} not found", loginIdentifier);
             throw new AccountNotFoundException("Account does not exist!");
         }
         Account account = optionalAccount.get();
-        logger.info("LoginService: User found with ID: {}", account.getId());
+        logger.info("LoginService: Account Id: {} found", account.getId());
         return new MyUserDetails(account);
     }
 

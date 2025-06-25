@@ -1,6 +1,4 @@
 package com.example.product_store.store.product.exceptions;
-
-import com.example.product_store.store.product.ErrorMessages;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 

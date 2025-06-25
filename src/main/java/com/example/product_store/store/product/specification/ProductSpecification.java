@@ -6,7 +6,7 @@ import jakarta.persistence.criteria.Join;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.math.BigDecimal;
-
+// CLASS THAT BUILDS FILTER FOR JPA TO PROCESS
 public class ProductSpecification {
 
     // CATEGORIES

@@ -31,7 +31,7 @@ public class GetProductsService {
   @Cacheable(cacheNames = "getAllProducts", keyGenerator = "productFilterKeyGenerator")
   public List<ProductDTO> execute(ProductFilter productFilter, Pageable pageable) {
 
-    // CONVERT THE PRODUCT FILTER (PAYLOAD FROM CLIENT) TO PRODUCT SPECIFICATION FOR JPA
+    // CONVERT THE PRODUCT FILTER (PAYLOAD FROM CLIENT) TO PRODUCT SPECIFICATION FOR JPA TO FILTER
     Specification<Product> spec = getProductSpecificationService.execute(productFilter);
 
     Page<Product> products = productRepository.findAll(spec, pageable);
