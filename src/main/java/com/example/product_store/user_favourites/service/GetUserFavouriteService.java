@@ -1,11 +1,11 @@
-package com.example.product_store.user_favourite.service;
+package com.example.product_store.user_favourites.service;
 
 import com.example.product_store.QueryBinder;
 
 import com.example.product_store.authentication.errors.AccountNotFoundException;
 import com.example.product_store.authentication.model.Account;
 import com.example.product_store.authentication.repositories.AccountRepository;
-import com.example.product_store.user_favourite.dto.UserFavouriteDTO;
+import com.example.product_store.user_favourites.dto.UserFavouriteDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
@@ -33,7 +33,7 @@ public class GetUserFavouriteService implements QueryBinder<Void, UserFavouriteD
 
     // 2. Use the current user id to fetch his account
     Account account =
-        accountRepository.findById(jti).orElseThrow(() -> new AccountNotFoundException("Account not found"));
+        accountRepository.findById(jti).orElseThrow(() -> new AccountNotFoundException("Account not found based on current user ID"));
 
     logger.info("Account {} retrieved for in GetUserFavouriteService", jti);
 

@@ -1,10 +1,11 @@
-package com.example.product_store.user_favourite.service;
+package com.example.product_store.user_favourites.service;
 
 import com.example.product_store.Command;
 import com.example.product_store.authentication.errors.AccountNotFoundException;
 import com.example.product_store.authentication.model.Account;
 import com.example.product_store.authentication.repositories.AccountRepository;
 import com.example.product_store.store.product.ProductRepository;
+import com.example.product_store.store.product.exceptions.ProductNotFoundException;
 import com.example.product_store.store.product.exceptions.ProductNotValidException;
 import com.example.product_store.store.product.model.Product;
 import org.slf4j.Logger;
@@ -33,7 +34,7 @@ public class DeleteUserFavouriteService implements Command<String, Void> {
     // 1. Frontend will enter the id of the client in the endpoint path variable
     // 2. Check the product repository if the product exist
     Product product =
-        productRepository.findById(id).orElseThrow(() -> new ProductNotValidException("Product has an invalid id"));
+        productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException("Product not found with the given id"));
 
     logger.info("Product {} exist and ready to be added to favourites in DeleteUserFavouriteService", id);
 
@@ -42,7 +43,7 @@ public class DeleteUserFavouriteService implements Command<String, Void> {
 
     // 4. Use the current user id to fetch his account
     Account account =
-        accountRepository.findById(jti).orElseThrow(() -> new AccountNotFoundException("Account not found"));
+        accountRepository.findById(jti).orElseThrow(() -> new AccountNotFoundException("Account not found with current JWT"));
 
     logger.info("Account {} exist and ready to delete favourites in DeleteUserFavouriteService", jti);
 

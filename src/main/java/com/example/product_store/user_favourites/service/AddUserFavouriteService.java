@@ -1,4 +1,4 @@
-package com.example.product_store.user_favourite.service;
+package com.example.product_store.user_favourites.service;
 
 import com.example.product_store.Command;
 
@@ -6,9 +6,10 @@ import com.example.product_store.authentication.errors.AccountNotFoundException;
 import com.example.product_store.authentication.model.Account;
 import com.example.product_store.authentication.repositories.AccountRepository;
 import com.example.product_store.store.product.ProductRepository;
+import com.example.product_store.store.product.exceptions.ProductNotFoundException;
 import com.example.product_store.store.product.exceptions.ProductNotValidException;
 import com.example.product_store.store.product.model.Product;
-import com.example.product_store.user_favourite.dto.UserFavouriteDTO;
+import com.example.product_store.user_favourites.dto.UserFavouriteDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
@@ -37,7 +38,7 @@ public class AddUserFavouriteService implements Command<String, UserFavouriteDTO
     // 1. Frontend will enter the id of the client in the endpoint path variable
     // 2. Check the product repository if the product exist
     Product product =
-        productRepository.findById(id).orElseThrow(() -> new ProductNotValidException("Product has an invalid id"));
+        productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException("Product not found with the given id"));
 
     logger.info("Product {} exist and ready to be added to favourites in AddUserFavouriteService", id);
 
@@ -46,7 +47,7 @@ public class AddUserFavouriteService implements Command<String, UserFavouriteDTO
 
     // 4. Use the current user id to fetch his account
     Account account =
-        accountRepository.findById(jti).orElseThrow(() -> new AccountNotFoundException("Account not found"));
+        accountRepository.findById(jti).orElseThrow(() -> new AccountNotFoundException("Account not found with current JWT"));
 
     logger.info("Account {} exist and ready to add favourites in AddUserFavouriteService", jti);
 

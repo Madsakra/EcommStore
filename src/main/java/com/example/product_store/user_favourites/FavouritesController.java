@@ -1,12 +1,11 @@
-package com.example.product_store.user_favourite;
+package com.example.product_store.user_favourites;
 
-import com.example.product_store.user_favourite.dto.UserFavouriteDTO;
-import com.example.product_store.user_favourite.service.AddUserFavouriteService;
-import com.example.product_store.user_favourite.service.DeleteUserFavouriteService;
-import com.example.product_store.user_favourite.service.GetUserFavouriteService;
+import com.example.product_store.user_favourites.dto.UserFavouriteDTO;
+import com.example.product_store.user_favourites.service.AddUserFavouriteService;
+import com.example.product_store.user_favourites.service.DeleteUserFavouriteService;
+import com.example.product_store.user_favourites.service.GetUserFavouriteService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

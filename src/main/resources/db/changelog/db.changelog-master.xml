@@ -13,4 +13,5 @@
     <include file="db/changelog/db.changelog-004-insert-categories.xml"/>
     <include file="db/changelog/db.changelog-005-insert-products.xml"/>
     <include file="db/changelog/db.changelog-006-insert-product_category.xml"/>
+    <include file="db/changelog/db.changelog-007-notifications.xml"/>
 </databaseChangeLog>

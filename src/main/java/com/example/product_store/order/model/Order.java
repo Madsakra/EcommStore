@@ -1,6 +1,7 @@
 package com.example.product_store.order.model;
 
 import com.example.product_store.authentication.model.Account;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
@@ -34,6 +35,7 @@ public class Order {
 
   @OneToMany(mappedBy = "order",cascade = CascadeType.ALL,orphanRemoval = true)
   @ToString.Exclude
+  @JsonIgnore
   private List<OrderItem> orderItems = new ArrayList<>();
 
   // for creating orders

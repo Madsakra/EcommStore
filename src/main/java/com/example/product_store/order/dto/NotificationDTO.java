@@ -4,15 +4,18 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class KafkaOrderGroup {
+public class NotificationDTO {
     private String adminId;
     private String batchOrderId;
-    private List<KafkaOrderItem> kafkaOrderItems;
+    private String clientId;
+
+    private BigDecimal totalPaid;
     private LocalDateTime createdAt;
+    private String orderStatus;
 }

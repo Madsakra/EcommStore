@@ -5,7 +5,7 @@ import com.example.product_store.authentication.model.Account;
 import com.example.product_store.authentication.service.RetrieveAccountService;
 import com.example.product_store.order.OrderCreationRequest;
 
-import com.example.product_store.order.dto.KafkaOrderItem;
+import com.example.product_store.order.dto.NotificationOrderItem;
 import com.example.product_store.order.dto.OrderDTO;
 import com.example.product_store.order.model.Order;
 import com.example.product_store.order.model.OrderItem;
@@ -31,7 +31,7 @@ public class OrderProcessingService implements Command<List<OrderCreationRequest
   private final ProductValidationService productValidationService;
   private final StockReductionService stockReductionService;
   private final BalanceReductionService balanceReductionService;
-
+  private final NotificationService notificationService;
 
 
   private final OrderRepository orderRepository;
@@ -42,13 +42,14 @@ public class OrderProcessingService implements Command<List<OrderCreationRequest
           RetrieveAccountService retrieveAccountService,
           ProductValidationService productValidationService,
           StockReductionService stockReductionService,
-          BalanceReductionService balanceReductionService,
+          BalanceReductionService balanceReductionService, NotificationService notificationService,
           OrderRepository orderRepository,
           OrderItemRepository orderItemRepository) {
     this.stockReductionService = stockReductionService;
     this.retrieveAccountService = retrieveAccountService;
     this.productValidationService = productValidationService;
     this.balanceReductionService = balanceReductionService;
+      this.notificationService = notificationService;
 
       this.orderRepository = orderRepository;
     this.orderItemRepository = orderItemRepository;
@@ -75,15 +76,12 @@ public class OrderProcessingService implements Command<List<OrderCreationRequest
     // ALSO CHECK IF USER PAYLOAD IS ACCURATE
     Map<String, Product> productMap = productValidationService.execute(orderCreationRequests);
 
-    // MAP WILL HAVE THE FOLLOWING STRUCTURE:
-    // {
-    //   adminId:[
-    //     productId: xxxx
-    //    quantityOrdered: 2
-    //    priceAtPurchase: 20.00
-    //   ]
-    // }
-    Map<String, List<KafkaOrderItem>> orderItemMap = new HashMap<>();
+
+
+    // Add this outside the loop
+    Map<String, BigDecimal> purchasesMap = new HashMap<>();
+
+
 
     // LOOP THROUGH USER PAYLOAD
     for (OrderCreationRequest request : orderCreationRequests) {
@@ -93,8 +91,6 @@ public class OrderProcessingService implements Command<List<OrderCreationRequest
       String adminId = product.getCreatedBy();
 
 
-      List<KafkaOrderItem> kafkaOrderItems = orderItemMap.computeIfAbsent(adminId, key->new ArrayList<>());
-
       // GET THE FULL COSTS
       // DEDUCT FROM USER ACCOUNT IN MICROSERVICE
       BigDecimal batchCost = balanceReductionService.execute(account, product, request);
@@ -103,10 +99,9 @@ public class OrderProcessingService implements Command<List<OrderCreationRequest
       // REDUCE STOCK FIRST
       stockReductionService.execute(product, request);
 
-      KafkaOrderItem kafkaOrderItem = new KafkaOrderItem(product.getId(),request.getQuantity(),batchCost);
-      kafkaOrderItems.add(kafkaOrderItem);
 
-      orderItemMap.put(adminId,kafkaOrderItems);
+      // Update total cost per admin (O(1) operation)
+      purchasesMap.merge(adminId, batchCost, BigDecimal::add);
 
     }
 
@@ -120,9 +115,7 @@ public class OrderProcessingService implements Command<List<OrderCreationRequest
     Order savedOrder = orderRepository.save(currentOrder);
     logger.info("Order saved: {}, in OrderProcessingService", savedOrder);
 
-
-
-
+    notificationService.execute(purchasesMap,savedOrder.getId(),account.getId());
 
     // SAVE THE ORDER IN MY SQL
     // SEND THE ORDER SUMMARY TO THE CUSTOMER

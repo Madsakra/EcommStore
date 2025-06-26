@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class KafkaOrderItem {
+public class NotificationOrderItem {
   private String productId;
   private Integer quantityOrdered;
   private BigDecimal priceAtPurchase;

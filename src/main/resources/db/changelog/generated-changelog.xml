@@ -1,7 +1,7 @@
 <?xml version="1.1" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
                    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
-                   xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
     <changeSet author="axmen (generated)" id="1750060828006-1">
         <createTable tableName="account">
@@ -32,17 +32,7 @@
             <column name="category_name" type="VARCHAR(100)"/>
         </createTable>
     </changeSet>
-    <changeSet author="axmen (generated)" id="1750060828006-4">
-        <createTable tableName="notification">
-            <column name="id" type="CHAR(36)">
-                <constraints nullable="false" primaryKey="true"/>
-            </column>
-            <column name="recipient_id" type="CHAR(36)"/>
-            <column name="message" type="TEXT"/>
-            <column name="is_read" type="TINYINT(3)"/>
-            <column name="created_at" type="timestamp"/>
-        </createTable>
-    </changeSet>
+
     <changeSet author="axmen (generated)" id="1750060828006-5">
         <createTable tableName="orders">
             <column name="order_id" type="CHAR(36)">
@@ -106,16 +96,15 @@
             </column>
         </createTable>
     </changeSet>
+
+
+
     <changeSet author="axmen (generated)" id="1750060828006-11">
         <createIndex associatedWith="" indexName="fk_ar_role" tableName="account_roles">
             <column name="role_id"/>
         </createIndex>
     </changeSet>
-    <changeSet author="axmen (generated)" id="1750060828006-12">
-        <createIndex associatedWith="" indexName="fk_notification_recipient" tableName="notification">
-            <column name="recipient_id"/>
-        </createIndex>
-    </changeSet>
+
     <changeSet author="axmen (generated)" id="1750060828006-13">
         <createIndex associatedWith="" indexName="fk_order_customer" tableName="orders">
             <column name="customer_id"/>
@@ -156,12 +145,6 @@
         <addForeignKeyConstraint baseColumnNames="role_id" baseTableName="account_roles" constraintName="fk_ar_role"
                                  deferrable="false" initiallyDeferred="false" onDelete="CASCADE" onUpdate="RESTRICT"
                                  referencedColumnNames="role_id" referencedTableName="roles" validate="true"/>
-    </changeSet>
-    <changeSet author="axmen (generated)" id="1750060828006-21">
-        <addForeignKeyConstraint baseColumnNames="recipient_id" baseTableName="notification"
-                                 constraintName="fk_notification_recipient" deferrable="false" initiallyDeferred="false"
-                                 onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id"
-                                 referencedTableName="account" validate="true"/>
     </changeSet>
     <changeSet author="axmen (generated)" id="1750060828006-22">
         <addForeignKeyConstraint baseColumnNames="customer_id" baseTableName="orders" constraintName="fk_order_customer"

@@ -1,4 +1,4 @@
-package com.example.product_store.user_favourite.dto;
+package com.example.product_store.user_favourites.dto;
 
 import com.example.product_store.authentication.model.Account;
 import com.example.product_store.store.product.dto.ProductDTO;
