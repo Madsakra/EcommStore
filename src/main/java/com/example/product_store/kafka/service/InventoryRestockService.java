@@ -27,7 +27,7 @@ public class InventoryRestockService {
     this.rollBackInventory = rollBackInventory;
   }
 
-  @KafkaListener(topics = "inventory-commands", groupId = "saga-group")
+
   public void execute(InventoryCompletedEvent inventoryCompletedEvent) {
     logger.info(
             "Received Order at RollBackService. Time of receipt:{}",

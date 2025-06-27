@@ -43,4 +43,6 @@ public class KafkaConfig {
     public NewTopic inventoryTopic(){
         return new NewTopic("inventory-events",3,(short) 1);
     }
+
+
 }
