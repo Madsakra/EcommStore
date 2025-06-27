@@ -2,7 +2,7 @@ package com.example.product_store.order.service;
 
 import com.example.product_store.CacheConstants;
 import com.example.product_store.order.OrderCreationRequest;
-import com.example.product_store.order.errors.ProductStockException;
+import com.example.product_store.kafka.exceptions.ProductStockException;
 import com.example.product_store.store.product.model.Product;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

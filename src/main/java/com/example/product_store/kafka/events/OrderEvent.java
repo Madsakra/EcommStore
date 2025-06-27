@@ -1,4 +1,4 @@
-package com.example.product_store.order.kafka.events;
+package com.example.product_store.kafka.events;
 
 import lombok.Data;
 

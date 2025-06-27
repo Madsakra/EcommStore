@@ -5,7 +5,7 @@ import com.example.product_store.order.dto.OrderDTO;
 import com.example.product_store.order.service.OrderProcessingService;
 import java.util.List;
 
-import com.example.product_store.order.kafka.service.OrderServiceDemo;
+import com.example.product_store.kafka.service.OrderService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class OrderController {
   private final OrderProcessingService orderProcessingService;
-  public OrderController(OrderProcessingService orderProcessingService, OrderServiceDemo orderServiceDemo) {
+  public OrderController(OrderProcessingService orderProcessingService, OrderService orderService) {
     this.orderProcessingService = orderProcessingService;
   }
 

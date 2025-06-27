@@ -1,4 +1,4 @@
-package com.example.product_store.order.kafka.dto;
+package com.example.product_store.kafka.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

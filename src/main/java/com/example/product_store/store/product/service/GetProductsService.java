@@ -4,6 +4,8 @@ import com.example.product_store.store.product.ProductRepository;
 import com.example.product_store.store.product.dto.ProductDTO;
 import com.example.product_store.store.product.model.Product;
 import com.example.product_store.store.product.model.ProductFilter;
+
+import java.time.LocalDateTime;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +38,7 @@ public class GetProductsService {
 
     Page<Product> products = productRepository.findAll(spec, pageable);
     List<ProductDTO> productDTOS = products.stream().map(ProductDTO::new).toList();
-    logger.info("Returned ProductDTOS: {}", productDTOS);
+    logger.info("Returning ProductsDTO at GetProductsService: {}", LocalDateTime.now());
 
     return productDTOS;
   }

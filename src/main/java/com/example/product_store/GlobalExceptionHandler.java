@@ -1,7 +1,7 @@
 package com.example.product_store;
 
-import com.example.product_store.order.errors.InsufficientBalanceException;
-import com.example.product_store.order.errors.ProductStockException;
+import com.example.product_store.kafka.exceptions.InsufficientBalanceException;
+import com.example.product_store.kafka.exceptions.ProductStockException;
 import com.example.product_store.store.product.exceptions.InvalidPageRequestException;
 import com.example.product_store.store.product.exceptions.ProductNotFoundException;
 import com.example.product_store.store.product.exceptions.ProductNotValidException;

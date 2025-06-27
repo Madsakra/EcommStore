@@ -2,7 +2,7 @@ package com.example.product_store.order.service;
 
 import com.example.product_store.authentication.model.Account;
 import com.example.product_store.order.OrderCreationRequest;
-import com.example.product_store.order.errors.InsufficientBalanceException;
+import com.example.product_store.kafka.exceptions.InsufficientBalanceException;
 import com.example.product_store.store.product.model.Product;
 import java.math.BigDecimal;
 import org.slf4j.Logger;

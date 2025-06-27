@@ -77,7 +77,7 @@ public class OrderProcessingService implements Command<List<OrderCreationRequest
     Map<String, Product> productMap = productValidationService.execute(orderCreationRequests);
 
 
-
+    // for sending admin notifications
     // Add this outside the loop
     Map<String, BigDecimal> purchasesMap = new HashMap<>();
 

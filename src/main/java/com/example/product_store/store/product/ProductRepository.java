@@ -29,8 +29,12 @@ public interface ProductRepository extends JpaRepository<Product, String>, JpaSp
   // for processing orders
   // prevent overselling
   @Lock(LockModeType.PESSIMISTIC_WRITE)
+  List<Product> findAllById(Iterable<String> ids);
+
   @Query("SELECT p FROM Product p WHERE p.id IN :ids")
   List<Product> findAllByIdForUpdate(@Param("ids") List<String> ids);
+
+
 
 
 }

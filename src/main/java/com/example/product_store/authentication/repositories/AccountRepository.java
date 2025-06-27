@@ -29,7 +29,6 @@ public interface AccountRepository extends JpaRepository<Account, String> {
 
   // FOR UPDATING ACCOUNT BALANCE
   // PREVENT CONCURRENT UPDATE CRASH
-  @Lock(LockModeType.PESSIMISTIC_WRITE)
   @Query("SELECT a FROM Account a WHERE a.id = :id")
   Optional<Account> findByIdForUpdate(@Param("id") String id);
 }
