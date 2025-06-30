@@ -27,7 +27,7 @@ public class RollBackPayment {
       account.setBalance(
           account.getBalance().add(paymentCompletedEvent.getBalanceReduced()));
       accountRepository.save(account);
-      logger.info("Refunded user: {} ${}", account.getId(), account.getBalance());
+      logger.info("Refunded user: {} ${}", account.getId(), paymentCompletedEvent.getBalanceReduced());
     }
 
     return null;

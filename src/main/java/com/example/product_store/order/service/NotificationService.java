@@ -36,7 +36,7 @@ public class NotificationService {
               clientId,
               totalCost,
               LocalDateTime.now(),
-              "Processing");
+              "Success");
       notifications.add(notification);
 
       logger.info(

@@ -41,6 +41,7 @@
             <column name="customer_id" type="CHAR(36)"/>
             <column name="total_price" type="DECIMAL(10, 2)"/>
             <column name="created_at" type="timestamp"/>
+            <column name="status" type="CHAR(36)"/>
         </createTable>
     </changeSet>
     <changeSet author="axmen (generated)" id="1750060828006-6">

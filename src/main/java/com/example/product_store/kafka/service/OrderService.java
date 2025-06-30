@@ -4,6 +4,8 @@ package com.example.product_store.kafka.service;
 import com.example.product_store.authentication.model.Account;
 import com.example.product_store.authentication.service.RetrieveAccountService;
 
+import com.example.product_store.kafka.enums.OrderStatus;
+import com.example.product_store.kafka.events.OrderCompletionEvent;
 import com.example.product_store.kafka.events.OrderCreatedEvent;
 import com.example.product_store.order.OrderCreationRequest;
 import com.example.product_store.order.model.Order;
@@ -15,14 +17,12 @@ import com.example.product_store.store.product.model.Product;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @Service
@@ -33,23 +33,27 @@ public class OrderService {
     private final RetrieveAccountService retrieveAccountService;
     private final ProductValidationService productValidationService;
 
-
+    // for sending admin notifications
+    // used in listener
+    private Map<String, BigDecimal> purchasesMap = new HashMap<>();
+    private String currentUserId;
 
     private final OrderRepository orderRepository;
-    private final OrderItemRepository orderItemRepository;
-    private static final Logger logger = LoggerFactory.getLogger(OrderProcessingService.class);
+    private final NotificationService notificationService;
+
+    private static final Logger logger = LoggerFactory.getLogger(OrderService.class);
 
     public OrderService(
             KafkaTemplate<String, OrderCreatedEvent> kafkaTemplate, RetrieveAccountService retrieveAccountService,
             ProductValidationService productValidationService,
 
-            OrderRepository orderRepository,
-            OrderItemRepository orderItemRepository) {
+            OrderRepository orderRepository, NotificationService notificationService) {
         this.kafkaTemplate = kafkaTemplate;
         this.retrieveAccountService = retrieveAccountService;
         this.productValidationService = productValidationService;
         this.orderRepository = orderRepository;
-        this.orderItemRepository = orderItemRepository;
+        this.notificationService = notificationService;
+
     }
 
 
@@ -61,7 +65,7 @@ public class OrderService {
 
         // Retrieve Account ID with Retrieve account microservice
         Account account = retrieveAccountService.execute(null);
-
+        currentUserId = account.getId();
         // CREATE AN INSTANCE FOR ORDER
         Order currentOrder = new Order(account);
         logger.info("Current Order before loop in CreateOrderService: {}", currentOrder);
@@ -74,10 +78,6 @@ public class OrderService {
         Map<String, Product> productMap = productValidationService.execute(orderCreationRequests);
 
 
-
-        // for sending admin notifications
-        // Add this outside the loop
-        Map<String, BigDecimal> purchasesMap = new HashMap<>();
 
         // LOOP THROUGH USER PAYLOAD
         for (OrderCreationRequest request : orderCreationRequests) {
@@ -92,7 +92,7 @@ public class OrderService {
 
             // ADD ON TABULATED COSTS
             tabulated = tabulated.add(batchCost);
-
+            orderItems.add(new OrderItem(product,request.getQuantity(),currentOrder));
             // Update total cost per admin (O(1) operation)
             // used for notifications
             purchasesMap.merge(adminId, batchCost, BigDecimal::add);
@@ -100,12 +100,20 @@ public class OrderService {
 
         // EXIT LOOP, SET TABULATED COSTS TO ORDER
         currentOrder.setTotalPrice(tabulated);
+
+        // save the order item tied to the order -> jpa relationship
         currentOrder.setOrderItems(orderItems);
+
+
+
+        // FOR DB, DO NOT USE ENUM
+        currentOrder.setOrderStatus("Processing");
 
         // SAVE THE FULL ORDER
         // get the random uuid generated from mysql
         Order savedOrder = orderRepository.save(currentOrder);
-        logger.info("Order saved: {}, in OrderProcessingService", savedOrder);
+
+
 
 
         // GENERATE THE EVENT
@@ -113,5 +121,37 @@ public class OrderService {
         OrderCreatedEvent event = new OrderCreatedEvent(savedOrder,orderCreationRequests,productMap);
         kafkaTemplate.send("order-commands",event);
     }
+
+
+    @KafkaListener(topics = "order-events",groupId = "saga-group")
+    public void orderCompletion(OrderCompletionEvent orderCompletionEvent) {
+        // continue order processing
+        logger.info("Received Order completion event at OrderService: {} ", orderCompletionEvent);
+        logger.info("Purchases map: {}", purchasesMap);
+
+        try {
+            Optional<Order> orderOptional = orderRepository.findById(orderCompletionEvent.getOrderId());
+
+            if (orderOptional.isPresent()) {
+                Order currentOrder = orderOptional.get();
+                if (orderCompletionEvent.getOrderStatus() == OrderStatus.SUCCESS) {
+                    notificationService.execute(purchasesMap, orderCompletionEvent.getOrderId(), currentUserId);
+                    currentOrder.setOrderStatus("Success");
+                } else {
+                    currentOrder.setOrderStatus("Failed");
+                }
+
+                Order savedOrder = orderRepository.save(currentOrder);
+                logger.info("Saved Order: {}", savedOrder);
+            }
+
+
+        } catch (Exception ex) {
+            logger.warn(ex.getMessage());
+        }
+
+
+    }
 }
+
 

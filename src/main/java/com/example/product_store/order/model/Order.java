@@ -1,6 +1,7 @@
 package com.example.product_store.order.model;
 
 import com.example.product_store.authentication.model.Account;
+import com.example.product_store.kafka.enums.OrderStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
@@ -32,6 +33,9 @@ public class Order {
 
   @Column(name = "created_at")
   private LocalDateTime createdAt;
+
+  @Column(name="status")
+  private String orderStatus;
 
   @OneToMany(mappedBy = "order",cascade = CascadeType.ALL,orphanRemoval = true)
   @ToString.Exclude

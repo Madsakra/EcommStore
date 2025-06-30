@@ -1,6 +1,7 @@
 package com.example.product_store.kafka;
 
 import com.example.product_store.kafka.enums.InventoryStatus;
+import com.example.product_store.kafka.enums.OrderStatus;
 import com.example.product_store.kafka.enums.PaymentStatus;
 import com.example.product_store.kafka.events.*;
 import com.example.product_store.kafka.service.InventoryRestockService;
@@ -79,6 +80,8 @@ public class SagaOrchestra {
     }
 
     private void checkSagaCompletion(SagaEvents events){
+        OrderStatus status;
+        String message = "";
         try {
             PaymentCompletedEvent paymentEvent = events.getPaymentCompletedEvent();
             InventoryCompletedEvent inventoryEvent = events.getInventoryCompletedEvent();
@@ -91,29 +94,40 @@ public class SagaOrchestra {
 
             if (events.isBothCompletedSuccessfully()) {
                 logger.info("Both events completed successfully, returning to OrderService");
-                // You might send an OrderCompletedEvent here
+                // Change status to success
+                status = OrderStatus.SUCCESS;
+                message = "Order completed processing";
             }
 
             else if (events.getPaymentStatus() == PaymentStatus.DENIED
                     && events.getInventoryStatus() == InventoryStatus.SUCCESS) {
                 logger.info("Stock deducted but payment failed, rolling back inventory");
                 inventoryRestockService.execute(inventoryEvent);
-
+                status = OrderStatus.FAILED;
+                message = "Order processing failed due to insufficient stock";
             }
 
             else if (events.getPaymentStatus() == PaymentStatus.SUCCESS &&
                     events.getInventoryStatus() == InventoryStatus.FAILED) {
                 logger.info("Payment completed but stock reservation failed, refunding customer");
                 rollBackPayment.execute(events.getPaymentCompletedEvent()); // This is likely throwing
+                status = OrderStatus.FAILED;
+                message = "Order processing failed due to insufficient balance in user account";
             }
 
             else {
                 logger.info("Both events failed, ending operation in Saga Orchestra");
+                status = OrderStatus.FAILED;
+                message = "Order processing failed due to insufficient stock and failed payment";
             }
+
+            kafkaTemplate.send("order-events",new OrderCompletionEvent(events.getOrderId(),status,message));
 
         } catch (Exception e) {
             logger.error("Saga orchestration error: {}", e.getMessage(), e);
             // Optionally send a failure event to dead-letter topic or audit log
+            message = "Order processing failed due to server error";
+            kafkaTemplate.send("order-events",new OrderCompletionEvent(events.getOrderId(),OrderStatus.FAILED,message));
         }
     }
 
