@@ -12,12 +12,12 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/user/orders")
-public class OrderDemoController {
+public class OrderController {
 
     private final CreateOrderService createOrderService;
     private final GetOrderService getOrderService;
 
-    public OrderDemoController(CreateOrderService createOrderService, GetOrderService getOrderService) {
+    public OrderController(CreateOrderService createOrderService, GetOrderService getOrderService) {
         this.createOrderService = createOrderService;
         this.getOrderService = getOrderService;
     }

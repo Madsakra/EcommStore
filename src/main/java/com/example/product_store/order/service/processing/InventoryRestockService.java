@@ -1,4 +1,4 @@
-package com.example.product_store.order.service;
+package com.example.product_store.order.service.processing;
 
 import com.example.product_store.order.events.InventoryCompletedEvent;
 import org.slf4j.Logger;

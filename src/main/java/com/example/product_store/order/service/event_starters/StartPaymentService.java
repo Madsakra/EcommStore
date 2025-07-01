@@ -1,4 +1,4 @@
-package com.example.product_store.order.service;
+package com.example.product_store.order.service.event_starters;
 
 import com.example.product_store.authentication.model.Account;
 import com.example.product_store.authentication.repositories.AccountRepository;
@@ -15,13 +15,13 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
-public class PaymentService {
+public class StartPaymentService {
 
   private final KafkaTemplate<String, Object> kafkaTemplate;
   private final AccountRepository accountRepository;
-  public static final Logger logger = LoggerFactory.getLogger(PaymentService.class);
+  public static final Logger logger = LoggerFactory.getLogger(StartPaymentService.class);
 
-  public PaymentService(
+  public StartPaymentService(
       KafkaTemplate<String, Object> kafkaTemplate, AccountRepository accountRepository) {
     this.kafkaTemplate = kafkaTemplate;
     this.accountRepository = accountRepository;
@@ -35,12 +35,14 @@ public class PaymentService {
         startPaymentEvent,
         LocalDateTime.now());
 
+    // retrieve the current user as an Account Object
     Optional<Account> accountOptional =
         accountRepository.findById(startPaymentEvent.getCustomerId());
 
-    PaymentStatus status = PaymentStatus.PROCESSING;
+    PaymentStatus status;
     String message;
 
+    // If account is not found
     if (accountOptional.isEmpty()) {
       status = PaymentStatus.DENIED;
       message = "Payment failed: customer not found.";
@@ -49,17 +51,21 @@ public class PaymentService {
       BigDecimal balance = account.getBalance();
       BigDecimal totalPrice = startPaymentEvent.getTotalPrice();
 
-      if (balance.compareTo(totalPrice) < 0) {
+      // If account is null or balance is <= 0
+      // set the status of the payment to denied
+      if (balance == null || balance.compareTo(totalPrice) <= 0) {
         status = PaymentStatus.DENIED;
         message = "Payment failed: insufficient balance.";
       } else {
         account.setBalance(balance.subtract(totalPrice));
         accountRepository.save(account);
-        message = "Payment success.";
+        // deduction successful
+        // set status to success
+        message = "Payment Success.";
         status = PaymentStatus.SUCCESS;
       }
     }
-
+    logger.info("Payment processing status: {}",status);
     PaymentCompletedEvent responseEvent =
         new PaymentCompletedEvent(startPaymentEvent, status, message);
     kafkaTemplate.send("payment-events", responseEvent);

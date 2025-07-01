@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -18,12 +19,15 @@ public class StartInventoryEvent {
     private Map<String, Product> productMap;
     private List<OrderCreationRequest> requests;
     private InventoryStatus status;
+    // for notification service later
+    private Map<String, BigDecimal> purchasesMap;
 
     public StartInventoryEvent(OrderCreatedEvent event){
         this.orderId = event.getOrderId();
         this.requests = event.getOrderCreationRequests();
         this.productMap = event.getProductMap();
         this.status = InventoryStatus.PROCESSING;
+        this.purchasesMap = event.getPurchasesMap();
     }
 
 }

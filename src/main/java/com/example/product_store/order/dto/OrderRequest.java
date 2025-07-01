@@ -13,5 +13,4 @@ public class OrderRequest {
     private double amount;
     private int quantity;
 
-    // Getters and Setters
 }

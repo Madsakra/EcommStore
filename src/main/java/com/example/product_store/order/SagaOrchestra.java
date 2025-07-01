@@ -4,8 +4,8 @@ import com.example.product_store.order.enums.InventoryStatus;
 import com.example.product_store.order.enums.OrderStatus;
 import com.example.product_store.order.enums.PaymentStatus;
 import com.example.product_store.order.events.*;
-import com.example.product_store.order.service.InventoryRestockService;
-import com.example.product_store.order.service.RollBackPayment;
+import com.example.product_store.order.service.processing.InventoryRestockService;
+import com.example.product_store.order.service.processing.RollBackPayment;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -42,7 +42,8 @@ public class SagaOrchestra {
     logger.info(
         "Received Order at Saga Orchestra. Time of receipt:{}", LocalDateTime.now());
 
-    // SENDS PAYMENT EVENT -> PAYMENT SERVICE
+    // START OF ORDER PROCESSING
+    // SENDS PAYMENT EVENT -> START PAYMENT SERVICE
     StartPaymentEvent startPaymentEvent = new StartPaymentEvent(event);
     kafkaTemplate.send("payment-commands", startPaymentEvent);
 
@@ -52,10 +53,16 @@ public class SagaOrchestra {
   }
 
   // CONSUME PAYMENT RESPONSE
+  // Store the payment event under SagaEvents Map
+  // Will be retrieved with order id as key
   @KafkaListener(topics = "payment-events", groupId = "saga-group")
   public void handlePaymentCompletion(PaymentCompletedEvent paymentCompletedEvent) {
     logger.info("Completed payment status: {} ", paymentCompletedEvent);
 
+    // RACE CONDITION: IF PAYMENT COMPLETES FIRST
+    // IF ORDER ID IS NOT PRESENT IN CONCURRENT HASHMAP
+    // CREATE A NEW SAGA EVENT
+    // SET THE orderId:{SagaEvents}, set paymentCompletedEvent
     SagaEvents events =
         sagaEvents.computeIfAbsent(
             paymentCompletedEvent.getOrderId(),
@@ -64,11 +71,18 @@ public class SagaOrchestra {
     checkSagaCompletion(events);
   }
 
+
   // CONSUME INVENTORY RESPONSE
+  // Store the payment event under SagaEvents Map
+  // Will be retrieved with order id as key
   @KafkaListener(topics = "inventory-events", groupId = "saga-group")
   public void handleInventoryCompletion(InventoryCompletedEvent inventoryCompletedEvent) {
     logger.info("Completed inventory status: {} ", inventoryCompletedEvent.getStatus());
 
+    // RACE CONDITION: IF INVENTORY EVENT COMPLETES FIRST
+    // IF ORDER ID IS NOT PRESENT IN CONCURRENT HASHMAP
+    // CREATE A NEW SAGA EVENT
+    // SET THE orderId:{SagaEvents}, set InventoryCompletedEvent
     SagaEvents events =
         sagaEvents.computeIfAbsent(
             inventoryCompletedEvent.getOrderId(),
@@ -77,6 +91,7 @@ public class SagaOrchestra {
     checkSagaCompletion(events);
   }
 
+  // CHECK SAGA COMPLETION
   private void checkSagaCompletion(SagaEvents events) {
     OrderStatus status;
     String message = "";
@@ -84,41 +99,56 @@ public class SagaOrchestra {
       PaymentCompletedEvent paymentEvent = events.getPaymentCompletedEvent();
       InventoryCompletedEvent inventoryEvent = events.getInventoryCompletedEvent();
 
+      // Will get triggered since 1 event might take slower to complete than the other
       if (paymentEvent == null || inventoryEvent == null) {
-        // One or both events not yet received, just wait
+        // One or both events not yet received, wait before processing below
         logger.info(
-            "Waiting for both payment and inventory events for order: {}",
-            events.getOrderId());
+            "Waiting for both payment and inventory events for order at {}",
+            LocalDateTime.now());
         return;
       }
 
+      // if both events completed successfully
       if (events.isBothCompletedSuccessfully()) {
         logger.info("Both events completed successfully, returning to OrderService");
         // Change status to success
         status = OrderStatus.SUCCESS;
         message = "Order completed processing successfully";
-      } else if (events.getPaymentStatus() == PaymentStatus.DENIED
+      }
+
+      // If payment status is denied and inventory status is success
+      // restock inventory
+      // user don't have to refund since nothing is deducted
+      else if (events.getPaymentStatus() == PaymentStatus.DENIED
           && events.getInventoryStatus() == InventoryStatus.SUCCESS) {
         logger.info("Stock deducted but payment failed, rolling back inventory");
         inventoryRestockService.execute(inventoryEvent);
         status = OrderStatus.FAILED;
         message = "Order processing failed due to insufficient balance in user account";
-
-      } else if (events.getPaymentStatus() == PaymentStatus.SUCCESS
+      }
+      // If payment is success and inventory status is denied, refund the user.
+      // don't have to restock since stock is not deducted
+      // if stock runs out during deduction operation, everything is rolled back with transactional
+      else if (events.getPaymentStatus() == PaymentStatus.SUCCESS
           && events.getInventoryStatus() == InventoryStatus.FAILED) {
         logger.info("Payment completed but stock reservation failed, refunding customer");
         rollBackPayment.execute(
             events.getPaymentCompletedEvent()); // This is likely throwing
         status = OrderStatus.FAILED;
         message = "Order processing failed due to insufficient stock";
-      } else {
+      }
+      // both events failed, do nothing since db is not affected
+      else {
         logger.info("Both events failed, ending operation in Saga Orchestra");
         status = OrderStatus.FAILED;
         message = "Order processing failed due to insufficient stock and failed payment";
       }
 
+      // send order completion event to order service again to complete order processing
       kafkaTemplate.send(
-          "order-events", new OrderCompletionEvent(events.getOrderId(), status, message));
+          "order-events", new OrderCompletionEvent(
+                  events.getOrderId(),
+                      paymentEvent.getCustomerId(),status, message, inventoryEvent.getPurchasesMap()));
 
     } catch (Exception e) {
       logger.error("Saga orchestration error: {}", e.getMessage(), e);
@@ -126,7 +156,9 @@ public class SagaOrchestra {
       message = "Order processing failed due to server error";
       kafkaTemplate.send(
           "order-events",
-          new OrderCompletionEvent(events.getOrderId(), OrderStatus.FAILED, message));
+          new OrderCompletionEvent(events.getOrderId(),
+                  events.getPaymentCompletedEvent().getCustomerId()
+                  ,OrderStatus.FAILED, message,events.getInventoryCompletedEvent().getPurchasesMap()));
     }
   }
 }

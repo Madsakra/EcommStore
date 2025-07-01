@@ -1,4 +1,4 @@
-package com.example.product_store.order.service;
+package com.example.product_store.order.service.processing;
 
 import com.example.product_store.authentication.model.Account;
 import com.example.product_store.authentication.repositories.AccountRepository;

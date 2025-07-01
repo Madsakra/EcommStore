@@ -1,4 +1,4 @@
-package com.example.product_store.order.service;
+package com.example.product_store.order.service.processing;
 
 import com.example.product_store.CacheConstants;
 import com.example.product_store.order.events.StartInventoryEvent;
@@ -39,13 +39,17 @@ public class InventoryReductionService {
       })
       public boolean execute(StartInventoryEvent startInventoryEvent) {
 
-        // will need to tap into db again to activate pessimistic lock
+      // Get the ids of all inventory items through the Kafka Event
         List<String> ids =
             startInventoryEvent.getRequests().stream()
                 .map(OrderCreationRequest::getId)
                 .toList();
+
+        // Get the latest update for products
+        // will trigger pessimistic lock
         List<Product> lockedProducts = productRepository.findAllById(ids);
-          // Map locked products by ID for fast lookup
+
+          // Map of locked products by ID for fast lookup
           Map<String, Product> lockedProductMap = lockedProducts.stream()
                   .collect(Collectors.toMap(Product::getId, Function.identity()));
 

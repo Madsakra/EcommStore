@@ -23,9 +23,16 @@ public class OrderCreatedEvent {
   private OrderStatus orderStatus;
   private List<OrderCreationRequest> orderCreationRequests;
   private Map<String, Product> productMap;
+  private Map<String, BigDecimal> purchasesMap;
+
 
   public OrderCreatedEvent(
-      Order order, List<OrderCreationRequest> requests, Map<String, Product> productMap) {
+      Order order,
+      List<OrderCreationRequest> requests,
+      Map<String, Product> productMap,
+      Map<String,BigDecimal> purchasesMap
+
+  ) {
     this.orderId = order.getId();
     this.customerId = order.getCustomerId();
     this.totalPrice = order.getTotalPrice();
@@ -33,5 +40,6 @@ public class OrderCreatedEvent {
     this.orderStatus = OrderStatus.PROCESSING;
     this.orderCreationRequests = requests;
     this.productMap = productMap;
+    this.purchasesMap = purchasesMap;
   }
 }

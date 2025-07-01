@@ -20,6 +20,7 @@ public class SagaEvents {
         this.orderId = orderId;
     }
 
+    // check if both events are completed successfully
     public boolean isBothCompletedSuccessfully(){
         return paymentCompletedEvent.getPaymentStatus() == PaymentStatus.SUCCESS &&
                 inventoryCompletedEvent.getStatus() == InventoryStatus.SUCCESS;
