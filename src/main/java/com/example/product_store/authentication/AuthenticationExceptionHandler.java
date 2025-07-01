@@ -2,6 +2,7 @@ package com.example.product_store.authentication;
 
 import com.example.product_store.ErrorResponseTemplate;
 import com.example.product_store.authentication.errors.*;
+import com.example.product_store.store.product.exceptions.UnauthorizedManagement;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -70,6 +71,14 @@ public class AuthenticationExceptionHandler {
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<Map<String,Object>> handleBadCredentialsException(BadCredentialsException ex){
         return ErrorResponseTemplate.buildResponseError("Failed to login due to wrong credentials",ex.getMessage(),HttpStatus.BAD_REQUEST);
+    }
+
+    // UNAUTHORIZED MANAGEMENT
+    // USED TO BLOCK OUT USERS TRYING TO ACCESS OTHER ENDPOINTS NOT BELONGING TO THEIR ROLE
+    @ExceptionHandler(UnauthorizedManagement.class)
+    public ResponseEntity<Map<String, Object>> handleUnauthorizedManagementException(
+            UnauthorizedManagement ex) {
+        return ErrorResponseTemplate.buildResponseError("Unauthorised Management", ex.getMessage(), HttpStatus.UNAUTHORIZED);
     }
 
 

@@ -1,7 +1,6 @@
 package com.example.product_store.order.model;
 
 import com.example.product_store.authentication.model.Account;
-import com.example.product_store.kafka.enums.OrderStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
@@ -31,11 +30,13 @@ public class Order {
   @Column(name = "total_price")
   private BigDecimal totalPrice;
 
-  @Column(name = "created_at")
-  private LocalDateTime createdAt;
+  @Column(name = "updated_at")
+  private LocalDateTime updatedAt;
 
   @Column(name="status")
   private String orderStatus;
+
+  private String message;
 
   @OneToMany(mappedBy = "order",cascade = CascadeType.ALL,orphanRemoval = true)
   @ToString.Exclude
@@ -46,7 +47,7 @@ public class Order {
   // STARTING AN ORDER REQUIRES CUSTOMER ID, CREATED AT, TOTAL PRICE
   public Order(Account account){
     this.customerId = account.getId();
-    this.createdAt = LocalDateTime.now();
+    this.updatedAt = LocalDateTime.now();
     this.totalPrice = BigDecimal.ZERO;
   }
 

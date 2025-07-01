@@ -1,8 +1,8 @@
 package com.example.product_store.order.service;
 
 import com.example.product_store.Command;
-import com.example.product_store.order.OrderCreationRequest;
-import com.example.product_store.order.util.Utilities;
+import com.example.product_store.order.dto.OrderCreationRequest;
+import com.example.product_store.order.Utilities;
 import com.example.product_store.store.product.ProductRepository;
 import com.example.product_store.store.product.model.Product;
 import org.springframework.stereotype.Service;

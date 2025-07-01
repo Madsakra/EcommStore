@@ -14,12 +14,16 @@ public class OrderDTO implements Serializable {
     private String id;
     private String customerId;
     private BigDecimal totalPrice;
-    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+    private String status;
+    private String message;
 
     public OrderDTO(Order order) {
         this.id = order.getId();
         this.customerId = order.getCustomerId();
         this.totalPrice = order.getTotalPrice();
-        this.createdAt = order.getCreatedAt();
+        this.updatedAt = order.getUpdatedAt();
+        this.status = order.getOrderStatus();
+        this.message = order.getMessage();
     }
 }
