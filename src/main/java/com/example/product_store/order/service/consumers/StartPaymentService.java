@@ -1,4 +1,4 @@
-package com.example.product_store.order.service.event_starters;
+package com.example.product_store.order.service.consumers;
 
 import com.example.product_store.authentication.model.Account;
 import com.example.product_store.authentication.repositories.AccountRepository;

@@ -1,11 +1,11 @@
-package com.example.product_store.order.service.event_starters;
+package com.example.product_store.order.service.consumers;
 
 import com.example.product_store.order.enums.InventoryStatus;
 import com.example.product_store.order.events.InventoryCompletedEvent;
 import com.example.product_store.order.events.StartInventoryEvent;
 import java.time.LocalDateTime;
 
-import com.example.product_store.order.service.processing.InventoryReductionService;
+import com.example.product_store.order.service.actions.InventoryReductionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.annotation.KafkaListener;

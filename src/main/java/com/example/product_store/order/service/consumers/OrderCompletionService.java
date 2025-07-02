@@ -1,4 +1,4 @@
-package com.example.product_store.order.service;
+package com.example.product_store.order.service.consumers;
 
 import com.example.product_store.notification.service.CreateNotificationService;
 import com.example.product_store.order.enums.OrderStatus;
@@ -60,7 +60,7 @@ public class OrderCompletionService {
         logger.info("Completed Order Information: {}", savedOrder);
 
       } catch (Exception ex) {
-        logger.warn(ex.getMessage());
+        logger.warn("Order failed to complete due to internal error: {}",ex.getMessage());
       }
     }
   }

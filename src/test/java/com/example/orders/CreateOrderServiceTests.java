@@ -31,7 +31,6 @@ public class CreateOrderServiceTests {
   @Mock private RetrieveAccountService retrieveAccountService;
   @Mock private OrdersValidationService ordersValidationService;
   @Mock private OrderRepository orderRepository;
-  @Mock private CreateNotificationService createNotificationService;
   @InjectMocks private CreateOrderService createOrderService;
 
   @Test

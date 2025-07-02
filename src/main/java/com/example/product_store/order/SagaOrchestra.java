@@ -4,8 +4,7 @@ import com.example.product_store.order.enums.InventoryStatus;
 import com.example.product_store.order.enums.OrderStatus;
 import com.example.product_store.order.enums.PaymentStatus;
 import com.example.product_store.order.events.*;
-import com.example.product_store.order.service.processing.InventoryRestockService;
-import com.example.product_store.order.service.processing.RollBackPayment;
+
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -23,17 +22,14 @@ public class SagaOrchestra {
   // type safe hashmap to enable concurrency
   private final Map<String, SagaEvents> sagaEvents = new ConcurrentHashMap<>();
 
-  private final RollBackPayment rollBackPayment;
+
   public static final Logger logger = LoggerFactory.getLogger(SagaOrchestra.class);
-  private final InventoryRestockService inventoryRestockService;
+
 
   public SagaOrchestra(
-      KafkaTemplate<String, Object> kafkaTemplate,
-      RollBackPayment rollBackPayment,
-      InventoryRestockService inventoryRestockService) {
+      KafkaTemplate<String, Object> kafkaTemplate) {
     this.kafkaTemplate = kafkaTemplate;
-    this.rollBackPayment = rollBackPayment;
-    this.inventoryRestockService = inventoryRestockService;
+
   }
 
   // CONSUME ORDER EVENT FIRST
@@ -122,20 +118,22 @@ public class SagaOrchestra {
       else if (events.getPaymentStatus() == PaymentStatus.DENIED
           && events.getInventoryStatus() == InventoryStatus.SUCCESS) {
         logger.info("Stock deducted but payment failed, rolling back inventory");
-        inventoryRestockService.execute(inventoryEvent);
         status = OrderStatus.FAILED;
         message = "Order processing failed due to insufficient balance in user account";
+        // Since payment event failed -> roll back inventory
+        kafkaTemplate.send("payment-failed",inventoryEvent);
       }
+
       // If payment is success and inventory status is denied, refund the user.
       // don't have to restock since stock is not deducted
       // if stock runs out during deduction operation, everything is rolled back with transactional
       else if (events.getPaymentStatus() == PaymentStatus.SUCCESS
           && events.getInventoryStatus() == InventoryStatus.FAILED) {
         logger.info("Payment completed but stock reservation failed, refunding customer");
-        rollBackPayment.execute(
-            events.getPaymentCompletedEvent()); // This is likely throwing
         status = OrderStatus.FAILED;
-        message = "Order processing failed due to insufficient stock";
+        message = "Order processing failed due to insufficient stock in the inventory";
+        // Since inventory event failed - > send payment event for refund
+        kafkaTemplate.send("inventory-failed",paymentEvent);
       }
       // both events failed, do nothing since db is not affected
       else {
@@ -144,7 +142,7 @@ public class SagaOrchestra {
         message = "Order processing failed due to insufficient stock and failed payment";
       }
 
-      // send order completion event to order service again to complete order processing
+      // update order processing status
       kafkaTemplate.send(
           "order-events", new OrderCompletionEvent(
                   events.getOrderId(),

@@ -26,23 +26,36 @@ public class KafkaConfig {
         return new NewTopic("inventory-commands",3,(short) 1);
     }
 
-    // ORDER PASS / FAIL
+    // ORDER COMPLETION
     @Bean
     public NewTopic orderTopic(){
         return new NewTopic("order-events",3,(short) 1);
     }
 
-    //  PAYMENT PASS / FAIL
+    //  PAYMENT COMPLETION
     @Bean
     public NewTopic paymentTopic(){
         return new NewTopic("payment-events",3,(short) 1);
     }
 
-    // INVENTORY PASS /FAIL
+    // INVENTORY COMPLETION
     @Bean
     public NewTopic inventoryTopic(){
         return new NewTopic("inventory-events",3,(short) 1);
     }
+
+    // Payment Failure to Process
+    @Bean
+    public NewTopic paymentFailedTopic(){
+        return new NewTopic("payment-failed",3,(short) 1);
+    }
+
+    // Inventory Failure to process
+    @Bean
+    public NewTopic inventoryFailedTopic(){
+        return new NewTopic("inventory-failed",3,(short) 1);
+    }
+
 
 
 }

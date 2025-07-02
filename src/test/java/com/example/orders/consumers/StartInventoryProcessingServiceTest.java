@@ -1,4 +1,4 @@
-package com.example.orders.event_starters;
+package com.example.orders.consumers;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -6,8 +6,8 @@ import static org.mockito.Mockito.*;
 import com.example.product_store.order.enums.InventoryStatus;
 import com.example.product_store.order.events.InventoryCompletedEvent;
 import com.example.product_store.order.events.StartInventoryEvent;
-import com.example.product_store.order.service.event_starters.StartInventoryProcessingService;
-import com.example.product_store.order.service.processing.InventoryReductionService;
+import com.example.product_store.order.service.consumers.StartInventoryProcessingService;
+import com.example.product_store.order.service.actions.InventoryReductionService;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;

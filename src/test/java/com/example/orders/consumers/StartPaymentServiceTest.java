@@ -1,4 +1,4 @@
-package com.example.orders.event_starters;
+package com.example.orders.consumers;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import com.example.product_store.authentication.model.Account;
@@ -6,7 +6,7 @@ import com.example.product_store.authentication.repositories.AccountRepository;
 import com.example.product_store.order.enums.PaymentStatus;
 import com.example.product_store.order.events.PaymentCompletedEvent;
 import com.example.product_store.order.events.StartPaymentEvent;
-import com.example.product_store.order.service.event_starters.StartPaymentService;
+import com.example.product_store.order.service.consumers.StartPaymentService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;

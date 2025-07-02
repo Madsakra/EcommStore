@@ -1,4 +1,4 @@
-package com.example.product_store.order.service.processing;
+package com.example.product_store.order.service.actions;
 
 import com.example.product_store.CacheConstants;
 import com.example.product_store.order.events.InventoryCompletedEvent;
@@ -17,13 +17,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class RollBackInventory {
+public class RollBackInventoryService {
   private final ProductRepository productRepository;
 
-  public RollBackInventory(ProductRepository productRepository) {
+  public RollBackInventoryService(ProductRepository productRepository) {
     this.productRepository = productRepository;
   }
 
+  // ACTION TO ROLL BACK INVENTORY
   @Transactional
   @Caching(
       evict = {
