@@ -1,5 +1,6 @@
 package com.example.product_store.store;
 
+import com.example.product_store.ErrorResponse;
 import com.example.product_store.ErrorResponseTemplate;
 import com.example.product_store.store.product.exceptions.InvalidPageRequestException;
 import com.example.product_store.store.product.exceptions.ProductNotFoundException;
@@ -16,20 +17,20 @@ public class ProductExceptionHandler {
 
     // FAILURE TO CREATE PRODUCT
     @ExceptionHandler
-    public ResponseEntity<Map<String,Object>> handleProductException(ProductNotValidException ex){
-        return ErrorResponseTemplate.buildResponseError("Failed to create product",ex.getMessage(), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<ErrorResponse> handleProductException(ProductNotValidException ex){
+        return ErrorResponseTemplate.buildResponseError("Failed to create / update product due to invalid payload",ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     // FAILURE TO FETCH PRODUCT
     @ExceptionHandler
-    public ResponseEntity<Map<String,Object>> handlePageException(InvalidPageRequestException ex){
-        return ErrorResponseTemplate.buildResponseError("Failed to fetch products", ex.getMessage(), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<ErrorResponse> handlePageException(InvalidPageRequestException ex){
+        return ErrorResponseTemplate.buildResponseError("Fail to fetch non-existent products", ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     // PRODUCT NOT FOUND
     @ExceptionHandler
-    public ResponseEntity<Map<String,Object>> handleProductNotFoundException(ProductNotFoundException ex){
-        return ErrorResponseTemplate.buildResponseError("Product not found",ex.getMessage(),HttpStatus.NOT_FOUND);
+    public ResponseEntity<ErrorResponse> handleProductNotFoundException(ProductNotFoundException ex){
+        return ErrorResponseTemplate.buildResponseError("Unable to find product with the product id",ex.getMessage(),HttpStatus.NOT_FOUND);
     }
 
 }

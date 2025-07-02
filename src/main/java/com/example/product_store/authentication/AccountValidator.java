@@ -1,5 +1,6 @@
 package com.example.product_store.authentication;
 
+import com.example.product_store.authentication.dto.AccountRequestDTO;
 import com.example.product_store.authentication.errors.AccountNotValidException;
 import com.example.product_store.authentication.errors.InvalidRoleIdException;
 import com.example.product_store.authentication.errors.RoleMismatchException;
@@ -23,7 +24,7 @@ public class AccountValidator {
   }
 
   // USED ONLY WHEN CREATING ACCOUNT
-  public void execute(Account account, Logger logger) {
+  public void execute(AccountRequestDTO account, Logger logger) {
 
     // CHECK WHETHER ACCOUNT HAS ANY ROLES
     if (account.getRoles().isEmpty()) {
@@ -39,7 +40,7 @@ public class AccountValidator {
     }
 
     // NO USERNAME
-    if (StringUtils.isEmpty(account.getUserName())) {
+    if (StringUtils.isEmpty(account.getUsername())) {
       logger.warn("Username is not in client payload, throwing AccountNotValidException");
       throw new AccountNotValidException("Account does not have username");
     }
@@ -67,30 +68,12 @@ public class AccountValidator {
     }
 
     // CHECK USERNAME
-    if (!account.getUserName().matches("^[a-zA-Z0-9_]{3,20}$")) {
+    if (!account.getUsername().matches("^[a-zA-Z0-9_]{3,20}$")) {
       logger.warn("Username too short, throwing AccountNotValidException");
       throw new AccountNotValidException("Username must be alphanumeric and 3–20 characters long");
     }
 
-    // CHECK FOR ROLES
-    Set<Role> inputRoles = account.getRoles();
-    for (Role role : inputRoles) {
-      logger.info("Validating role: ID={}, Name={}", role.getRoleId(), role.getRoleName());
 
-      Role dbRole = roleRepository.findById(role.getRoleId())
-              .orElseThrow(() -> {
-                logger.warn("Role ID not found: {}", role.getRoleId());
-                return new InvalidRoleIdException("Invalid role ID: " + role.getRoleId());
-              });
-
-      if (!dbRole.getRoleName().equals(role.getRoleName())) {
-        logger.warn("Role name mismatch. Input: '{}', Expected: '{}' for ID: {}",
-                role.getRoleName(), dbRole.getRoleName(), role.getRoleId());
-        throw new RoleMismatchException("Role name mismatch for ID: " + role.getRoleId());
-      }
-
-      logger.info("Role validated successfully: {}", dbRole);
-    }
 
     logger.info("Account payload fully validated");
 

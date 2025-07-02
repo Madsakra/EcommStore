@@ -1,5 +1,6 @@
 package com.example.product_store.store.product;
 
+import com.example.product_store.store.product.dto.ProductRequestDTO;
 import com.example.product_store.store.product.model.Product;
 import lombok.Getter;
 
@@ -7,10 +8,10 @@ import lombok.Getter;
 public class UpdateProductCommand {
 
   private String id;
-  private Product product;
+  private ProductRequestDTO requestDTO;
 
-  public UpdateProductCommand(String id, Product product) {
-    this.product = product;
+  public UpdateProductCommand(String id, ProductRequestDTO requestDTO) {
+    this.requestDTO = requestDTO;
     this.id = id;
   }
 }

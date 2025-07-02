@@ -6,6 +6,7 @@ import com.example.product_store.store.product.ProductRepository;
 import com.example.product_store.store.product.ProductValidator;
 import com.example.product_store.store.product.UpdateProductCommand;
 import com.example.product_store.store.product.dto.ProductDTO;
+import com.example.product_store.store.product.dto.ProductRequestDTO;
 import com.example.product_store.store.product.exceptions.ProductNotFoundException;
 import com.example.product_store.store.product.exceptions.UnauthorizedManagement;
 import com.example.product_store.store.product.model.Product;
@@ -49,16 +50,18 @@ public class UpdateProductService implements Command<UpdateProductCommand, Produ
       String jti =
           (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-      Product product = command.getProduct();
+      ProductRequestDTO requestDTO = command.getRequestDTO();
 
       // 3. if product does not belong to user, throw error
       if (!dbProduct.getCreatedBy().matches(jti)) {
         throw new UnauthorizedManagement("This product does not belongs to you!");
       }
 
+      requestDTO.setCreatedBy(jti);
+      productValidator.execute(requestDTO, true);
+
+      Product product = new Product(requestDTO);
       product.setId(command.getId());
-      product.setCreatedBy(jti);
-      productValidator.execute(product, true);
       productRepository.save(product);
       return new ProductDTO(product);
     }

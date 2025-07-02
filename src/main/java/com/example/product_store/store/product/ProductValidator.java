@@ -1,7 +1,9 @@
 package com.example.product_store.store.product;
 
 import com.example.product_store.store.category.CategoryRepository;
+import com.example.product_store.store.category.dto.CategoryDTO;
 import com.example.product_store.store.category.model.Category;
+import com.example.product_store.store.product.dto.ProductRequestDTO;
 import com.example.product_store.store.product.exceptions.ProductNotFoundException;
 import com.example.product_store.store.product.exceptions.ProductNotValidException;
 import com.example.product_store.store.product.model.Product;
@@ -21,7 +23,7 @@ public class ProductValidator {
       this.categoryRepository = categoryRepository;
   }
 
-  public void execute(Product product, boolean isUpdate) {
+  public void execute(ProductRequestDTO product, boolean isUpdate) {
 
     if (product.getTitle() == null ||product.getTitle().isBlank()) {
       throw new ProductNotValidException("Product Title should not be empty or null!");
@@ -45,7 +47,7 @@ public class ProductValidator {
 
 
     // CHECK CATEGORY ALSO
-    for (Category cat: product.getCategories()){
+    for (CategoryDTO cat: product.getCategories()){
         if (!categoryRepository.existsById(cat.getId()))
         {
           throw new ProductNotValidException("Failed to create product due to invalid category");
