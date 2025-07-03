@@ -6,6 +6,7 @@ import static org.mockito.Mockito.*;
 import com.example.product_store.store.product.ProductRepository;
 import com.example.product_store.store.product.ProductValidator;
 import com.example.product_store.store.product.dto.ProductDTO;
+import com.example.product_store.store.product.dto.ProductRequestDTO;
 import com.example.product_store.store.product.model.Product;
 import com.example.product_store.store.product.service.CreateProductService;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,7 +43,9 @@ public class CreateProductTests {
 
     // GIVEN
     String expectedJti = "user-123";
-    Product inputProduct = new Product();
+    ProductRequestDTO inputProduct = new ProductRequestDTO();
+    inputProduct.setCreatedBy(expectedJti);
+    Product mockedProduct = new Product(inputProduct);
 
     Product savedProduct = new Product();
     savedProduct.setId("214214");
@@ -57,7 +60,7 @@ public class CreateProductTests {
 
     // do nothing for validator, assume it will pass
     doNothing().when(productValidator).execute(inputProduct, false);
-    when(productRepository.save(inputProduct)).thenReturn(savedProduct);
+    when(productRepository.save(any(Product.class))).thenReturn(savedProduct);
 
     // Act
     ProductDTO result = createProductService.execute(inputProduct);
@@ -68,14 +71,14 @@ public class CreateProductTests {
     assertEquals(savedProduct.getCreatedBy(), result.getCreatedBy());
 
     verify(productValidator).execute(inputProduct, false);
-    verify(productRepository).save(inputProduct);
+    verify(productRepository).save(mockedProduct);
   }
 
   @Test
   void testCreateProduct_whenSecurityContextIsNull_ShouldThrowNullPointerException() {
     // GIVEN
     SecurityContextHolder.clearContext();
-    Product inputProduct = new Product();
+    ProductRequestDTO inputProduct = new ProductRequestDTO();
 
     // ERROR WILL BE THROW BEFORE VALIDATOR COMES IN
     // ACT & ASSERT
@@ -90,7 +93,7 @@ public class CreateProductTests {
   void testCreateProduct_WhenAuthenticationIsNull_ShouldThrowNullPointerException() {
     // GIVEN
     SecurityContextHolder.setContext(securityContext);
-    Product inputProduct = new Product();
+    ProductRequestDTO inputProduct = new ProductRequestDTO();
 
     // WHEN
     when(securityContext.getAuthentication()).thenReturn(null);
@@ -108,7 +111,7 @@ public class CreateProductTests {
   void testCreateProduct_WhenPrincipalIsNull_ShouldThrowNullPointerException() {
     // GIVEN
     SecurityContextHolder.setContext(securityContext);
-    Product inputProduct = new Product();
+    ProductRequestDTO inputProduct = new ProductRequestDTO();
 
     // WHEN
     when(securityContext.getAuthentication()).thenReturn(authentication);

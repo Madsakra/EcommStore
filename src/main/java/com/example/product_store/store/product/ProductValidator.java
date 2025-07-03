@@ -2,12 +2,9 @@ package com.example.product_store.store.product;
 
 import com.example.product_store.store.category.CategoryRepository;
 import com.example.product_store.store.category.dto.CategoryDTO;
-import com.example.product_store.store.category.model.Category;
 import com.example.product_store.store.product.dto.ProductRequestDTO;
-import com.example.product_store.store.product.exceptions.ProductNotFoundException;
 import com.example.product_store.store.product.exceptions.ProductNotValidException;
-import com.example.product_store.store.product.model.Product;
-import io.micrometer.common.util.StringUtils;
+
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;

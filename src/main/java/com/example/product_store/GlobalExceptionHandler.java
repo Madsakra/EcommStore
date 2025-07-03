@@ -1,10 +1,9 @@
 package com.example.product_store;
 
-import com.example.product_store.order.exceptions.InsufficientBalanceException;
-import com.example.product_store.order.exceptions.ProductStockException;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.example.product_store.error_response.ErrorResponse;
+import com.example.product_store.error_response.ErrorResponseTemplate;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -17,15 +16,21 @@ public class GlobalExceptionHandler {
 
   // WHEN TYPE MISMATCH
   @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-  public ResponseEntity<String> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
-    return ResponseEntity.badRequest().body("Invalid type for parameter: " + ex.getName());
+  public ResponseEntity<ErrorResponse> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
+    return ErrorResponseTemplate.buildResponseError("Invalid Type for parameter", ex.getMessage(),HttpStatus.CONFLICT);
+
   }
 
   // WHEN JSON MALFORM
   @ExceptionHandler(HttpMessageNotReadableException.class)
-  public ResponseEntity<String> handleJsonParseError(HttpMessageNotReadableException ex) {
-    return ResponseEntity.badRequest().body("Malformed JSON request: " + ex.getMessage());
+  public ResponseEntity<ErrorResponse> handleJsonParseError(HttpMessageNotReadableException ex) {
+    return ErrorResponseTemplate.buildResponseError("Malformed JSON request", ex.getMessage(),HttpStatus.BAD_REQUEST);
   }
 
+  // DATA INTEGRITY ERROR
+  @ExceptionHandler(DataIntegrityViolationException.class)
+  public ResponseEntity<ErrorResponse> handleDataIntegrityViolation(DataIntegrityViolationException ex){
+    return ErrorResponseTemplate.buildResponseError("Data Integrity violation error", ex.getMessage(),HttpStatus.CONFLICT);
+  }
 
 }

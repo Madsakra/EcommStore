@@ -1,4 +1,4 @@
-package com.example.product_store.authentication;
+package com.example.product_store.authentication.controller;
 
 import com.example.product_store.authentication.dto.*;
 import com.example.product_store.authentication.service.CreateAccountService;
@@ -10,10 +10,16 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.util.List;
+
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Tag(
+ name="Authentication Management",
+        description = "APIs for managing authentication and security"
+)
 @RestController
 @RequestMapping("/auth")
 public class AuthController {

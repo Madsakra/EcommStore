@@ -1,5 +1,6 @@
 package com.example.product_store.store.category.model;
 
+import com.example.product_store.store.category.dto.CategoryRequestDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,4 +20,8 @@ public class Category {
 
   @Column(name = "category_name")
   private String categoryName;
+
+  public Category(CategoryRequestDTO requestDTO){
+    this.categoryName = requestDTO.getName();
+  }
 }

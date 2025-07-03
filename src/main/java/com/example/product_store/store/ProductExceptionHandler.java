@@ -1,7 +1,7 @@
 package com.example.product_store.store;
 
-import com.example.product_store.ErrorResponse;
-import com.example.product_store.ErrorResponseTemplate;
+import com.example.product_store.error_response.ErrorResponse;
+import com.example.product_store.error_response.ErrorResponseTemplate;
 import com.example.product_store.store.product.exceptions.InvalidPageRequestException;
 import com.example.product_store.store.product.exceptions.ProductNotFoundException;
 import com.example.product_store.store.product.exceptions.ProductNotValidException;
@@ -9,8 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import java.util.Map;
 
 @RestControllerAdvice
 public class ProductExceptionHandler {
@@ -24,7 +22,7 @@ public class ProductExceptionHandler {
     // FAILURE TO FETCH PRODUCT
     @ExceptionHandler
     public ResponseEntity<ErrorResponse> handlePageException(InvalidPageRequestException ex){
-        return ErrorResponseTemplate.buildResponseError("Fail to fetch non-existent products", ex.getMessage(), HttpStatus.BAD_REQUEST);
+        return ErrorResponseTemplate.buildResponseError("Invalid page request exception", ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     // PRODUCT NOT FOUND

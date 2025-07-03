@@ -65,7 +65,7 @@ public class StartPaymentService {
         status = PaymentStatus.SUCCESS;
       }
     }
-    logger.info("Payment processing status: {}",status);
+    logger.info("Payment processing status: {}", status);
     PaymentCompletedEvent responseEvent =
         new PaymentCompletedEvent(startPaymentEvent, status, message);
     kafkaTemplate.send("payment-events", responseEvent);

@@ -43,6 +43,10 @@ public class SagaOrchestra {
     StartPaymentEvent startPaymentEvent = new StartPaymentEvent(event);
     kafkaTemplate.send("payment-commands", startPaymentEvent);
 
+    // OUTBOX MESSSAGE PATTERN
+    // IDEMPOTENCY -> REMOVE SAGA CONSISTENCY
+    // PRIMARY KEY IN PAYMENT TABLE
+    // BLOOM FILTER
     // AT THE SAME TIME -> START INVENTORY SERVICE
     StartInventoryEvent startInventoryEvent = new StartInventoryEvent(event);
     kafkaTemplate.send("inventory-commands", startInventoryEvent);

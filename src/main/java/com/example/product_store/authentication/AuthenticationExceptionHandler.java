@@ -1,7 +1,7 @@
 package com.example.product_store.authentication;
 
-import com.example.product_store.ErrorResponse;
-import com.example.product_store.ErrorResponseTemplate;
+import com.example.product_store.error_response.ErrorResponse;
+import com.example.product_store.error_response.ErrorResponseTemplate;
 import com.example.product_store.authentication.errors.*;
 import com.example.product_store.store.product.exceptions.UnauthorizedManagement;
 import org.springframework.http.HttpStatus;

@@ -103,6 +103,9 @@ public class CreateOrderService {
     // get the random uuid generated from mysql
     Order savedOrder = orderRepository.save(currentOrder);
 
+
+    // POSSIIBLITY TO CRASH
+
     // GENERATE THE EVENT
     // WILL BE CAUGHT BY SAGA ORCHESTRA THROUGH KAFKA LISTENER
     OrderCreatedEvent event =

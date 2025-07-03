@@ -41,6 +41,9 @@ public class SecurityConfiguration {
         .authorizeHttpRequests(
             authorize -> {
               authorize.requestMatchers("/auth/**").permitAll();
+              authorize
+                  .requestMatchers("/superAdmin/**")
+                  .hasAuthority("ROLE_SUPER_ADMIN");
               authorize.requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN");
               authorize.requestMatchers("/user/**").hasAuthority("ROLE_USER");
               authorize

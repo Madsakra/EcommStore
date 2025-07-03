@@ -1,10 +1,12 @@
 package com.example.store;
 
+import com.example.product_store.store.category.dto.CategoryDTO;
 import com.example.product_store.store.category.model.Category;
 import com.example.product_store.store.product.ProductRepository;
 import com.example.product_store.store.product.ProductValidator;
 import com.example.product_store.store.product.UpdateProductCommand;
 import com.example.product_store.store.product.dto.ProductDTO;
+import com.example.product_store.store.product.dto.ProductRequestDTO;
 import com.example.product_store.store.product.exceptions.ProductNotFoundException;
 import com.example.product_store.store.product.exceptions.UnauthorizedManagement;
 import com.example.product_store.store.product.model.Product;
@@ -64,11 +66,11 @@ public class UpdateProductTests {
         existingProduct.setCreatedBy(expectedJti);
 
         // USER PAYLOAD
-        Product updatedProduct = new Product();
+        ProductRequestDTO updatedProduct = new ProductRequestDTO();
         updatedProduct.setTitle("Updated Title");
         updatedProduct.setStock(50);
         updatedProduct.setPrice(BigDecimal.valueOf(500));
-        updatedProduct.setCategories(List.of(new Category())); // dummy list
+        updatedProduct.setCategories(List.of(new CategoryDTO())); // dummy list
 
         UpdateProductCommand command = new UpdateProductCommand(productId,updatedProduct);
 
@@ -77,7 +79,7 @@ public class UpdateProductTests {
         when(productRepository.findById(productId)).thenReturn(Optional.of(existingProduct));
 
         // Validator does nothing (no exception = valid)
-        doNothing().when(productValidator).execute(any(Product.class), eq(true));
+        doNothing().when(productValidator).execute(any(ProductRequestDTO.class), eq(true));
 
         when(productRepository.save(any(Product.class))).thenAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
         // Act
@@ -94,11 +96,11 @@ public class UpdateProductTests {
         String productId = "qwerty123";
 
         // MOCKED USER PAYLOAD
-        Product updatedProduct = new Product();
+        ProductRequestDTO updatedProduct = new ProductRequestDTO();
         updatedProduct.setTitle("Updated Title");
         updatedProduct.setStock(50);
         updatedProduct.setPrice(BigDecimal.valueOf(500));
-        updatedProduct.setCategories(List.of(new Category())); // dummy list
+        updatedProduct.setCategories(List.of(new CategoryDTO())); // dummy list
 
         UpdateProductCommand command = new UpdateProductCommand(productId,updatedProduct);
         // ❗ Mock the repository to simulate "product not found"
@@ -126,11 +128,11 @@ public class UpdateProductTests {
         existingProduct.setCreatedBy("differentUser");
 
         // Setup the update command (user payload)
-        Product updatedProduct = new Product();
+        ProductRequestDTO updatedProduct = new ProductRequestDTO();
         updatedProduct.setTitle("Updated Title");
         updatedProduct.setStock(50);
         updatedProduct.setPrice(BigDecimal.valueOf(500));
-        updatedProduct.setCategories(List.of(new Category())); // dummy
+        updatedProduct.setCategories(List.of(new CategoryDTO())); // dummy
         UpdateProductCommand command = new UpdateProductCommand(productId, updatedProduct);
 
         // WHEN

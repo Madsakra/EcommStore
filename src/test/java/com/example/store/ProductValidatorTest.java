@@ -4,9 +4,11 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import com.example.product_store.store.category.CategoryRepository;
+import com.example.product_store.store.category.dto.CategoryDTO;
 import com.example.product_store.store.category.model.Category;
 import com.example.product_store.store.product.ProductRepository;
 import com.example.product_store.store.product.ProductValidator;
+import com.example.product_store.store.product.dto.ProductRequestDTO;
 import com.example.product_store.store.product.exceptions.ProductNotValidException;
 import com.example.product_store.store.product.model.Product;
 import java.math.BigDecimal;
@@ -31,7 +33,7 @@ public class ProductValidatorTest {
 
   @Test
   void testProductValidator_whenTitleIsNull_ShouldThrowProductNotValidException() {
-    Product product = new Product();
+    ProductRequestDTO product = new ProductRequestDTO();
     product.setTitle(null); // Explicit null
     ProductNotValidException ex =
         assertThrows(
@@ -41,7 +43,7 @@ public class ProductValidatorTest {
 
   @Test
   void testProductValidator_whenTitleIsEmpty_ShouldThrowProductNotValidException() {
-    Product product = new Product();
+    ProductRequestDTO product = new ProductRequestDTO();
     product.setTitle(""); // empty string
     ProductNotValidException ex =
         assertThrows(
@@ -51,7 +53,7 @@ public class ProductValidatorTest {
 
   @Test
   void testProductValidator_whenStockIsNull_ShouldThrowProductNotValidException() {
-    Product product = new Product();
+    ProductRequestDTO product = new ProductRequestDTO();
     product.setTitle("product1");
     product.setStock(null); // Null quantity
     ProductNotValidException ex =
@@ -62,7 +64,7 @@ public class ProductValidatorTest {
 
   @Test
   void testProductValidator_whenStockIsNegative_ShouldThrowProductNotValidException() {
-    Product product = new Product();
+    ProductRequestDTO product = new ProductRequestDTO();
     product.setTitle("product1");
     product.setStock(-12); // Null quantity
     ProductNotValidException ex =
@@ -73,7 +75,7 @@ public class ProductValidatorTest {
 
   @Test
   void testProductValidator_whenPriceIsNull_ShouldThrowProductNotValidException() {
-    Product product = new Product();
+    ProductRequestDTO product = new ProductRequestDTO();
     product.setTitle("product1");
     product.setStock(100);
     product.setPrice(null);
@@ -86,7 +88,7 @@ public class ProductValidatorTest {
 
   @Test
   void testProductValidator_whenPriceIsZero_ShouldThrowProductNotValidException() {
-    Product product = new Product();
+    ProductRequestDTO product = new ProductRequestDTO();
     product.setTitle("product1");
     product.setStock(100);
     product.setPrice(BigDecimal.valueOf(0));
@@ -99,7 +101,7 @@ public class ProductValidatorTest {
 
   @Test
   void testProductValidator_whenPriceIsNegative_ShouldThrowProductNotValidException() {
-    Product product = new Product();
+    ProductRequestDTO product = new ProductRequestDTO();
     product.setTitle("product1");
     product.setStock(100);
     product.setPrice(BigDecimal.valueOf(-100));
@@ -113,7 +115,7 @@ public class ProductValidatorTest {
   @Test
   void testProductValidator_duplicateProduct_ShouldThrowProductNotValidException() {
     // GIVEN
-    Product testProduct1 = new Product();
+    ProductRequestDTO testProduct1 = new ProductRequestDTO();
     testProduct1.setTitle("testProduct1");
     testProduct1.setStock(100);
     testProduct1.setPrice(BigDecimal.valueOf(1000));
@@ -134,7 +136,7 @@ public class ProductValidatorTest {
   @Test
   void testProductValidator_EmptyCategory_ShouldThrowProductNotValidException() {
     // GIVEN
-    Product testProduct1 = new Product();
+    ProductRequestDTO testProduct1 = new ProductRequestDTO();
     testProduct1.setTitle("testProduct1");
     testProduct1.setStock(100);
     testProduct1.setPrice(BigDecimal.valueOf(1000));
@@ -150,10 +152,10 @@ public class ProductValidatorTest {
   @Test
   void testProductValidator_InvalidCategoryId_ShouldThrowProductNotValidException() {
     // GIVEN
-    Category invalidCategory = new Category();
+    CategoryDTO invalidCategory = new CategoryDTO();
     invalidCategory.setId("invalidID"); // this ID will be treated as non-existent
 
-    Product testProduct1 = new Product();
+    ProductRequestDTO testProduct1 = new ProductRequestDTO();
     testProduct1.setTitle("testProduct1");
     testProduct1.setStock(100);
     testProduct1.setPrice(BigDecimal.valueOf(1000));

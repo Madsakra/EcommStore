@@ -1,7 +1,7 @@
 package com.example.product_store.order;
 
-import com.example.product_store.ErrorResponse;
-import com.example.product_store.ErrorResponseTemplate;
+import com.example.product_store.error_response.ErrorResponse;
+import com.example.product_store.error_response.ErrorResponseTemplate;
 import com.example.product_store.order.exceptions.InsufficientBalanceException;
 import com.example.product_store.order.exceptions.ProductStockException;
 import org.springframework.http.HttpStatus;
@@ -9,10 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.Map;
-
 @RestControllerAdvice
 public class OrderExceptionHandler {
+
 
     // WHEN INSUFFICIENT STOCK
     // HANDLE ERROR AND DISPLAY RESPONSE ENTITY TO USER
