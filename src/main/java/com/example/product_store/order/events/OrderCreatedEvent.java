@@ -23,16 +23,12 @@ public class OrderCreatedEvent {
   private LocalDateTime createdAt;
   private OrderStatus orderStatus;
   private List<OrderCreationRequest> orderCreationRequests;
-  private Map<String, Product> productMap;
-  private Map<String, BigDecimal> purchasesMap;
+
 
 
   public OrderCreatedEvent(
       Order order,
-      List<OrderCreationRequest> requests,
-      Map<String, Product> productMap,
-      Map<String,BigDecimal> purchasesMap
-
+      List<OrderCreationRequest> requests
   ) {
     this.orderId = order.getId();
     this.customerId = order.getCustomerId();
@@ -40,7 +36,5 @@ public class OrderCreatedEvent {
     this.createdAt = order.getUpdatedAt();
     this.orderStatus = OrderStatus.PROCESSING;
     this.orderCreationRequests = requests;
-    this.productMap = productMap;
-    this.purchasesMap = purchasesMap;
   }
 }

@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(
@@ -163,8 +164,12 @@ public class ProductController {
   @PostMapping("/admin/products")
   public ResponseEntity<ProductDTO> createProduct(
       @RequestBody ProductRequestDTO requestDTO) {
-    logger.info("RequestDTO are :{}", requestDTO);
-    ProductDTO productDTO = createProductService.execute(requestDTO);
+
+    // get hold of the current user UUID THROUGH THE JWT, via context provider
+    String jti = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+    logger.info("RequestDTO from account:{} are :{}", jti ,requestDTO);
+    ProductDTO productDTO = createProductService.execute(jti,requestDTO);
     return ResponseEntity.status(HttpStatus.CREATED).body(productDTO);
   }
 
@@ -193,8 +198,10 @@ public class ProductController {
   @PutMapping("/admin/products/{id}")
   public ResponseEntity<ProductDTO> updateProductDTO(
       @PathVariable("id") String id, @RequestBody ProductRequestDTO requestDTO) {
+    // get hold of the current user UUID THROUGH THE JWT, via context provider
+    String jti = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     ProductDTO productDTO =
-        updateProductService.execute(new UpdateProductCommand(id, requestDTO));
+        updateProductService.execute(jti,new UpdateProductCommand(id, requestDTO));
     return ResponseEntity.status(HttpStatus.OK).body(productDTO);
   }
 
@@ -234,7 +241,9 @@ public class ProductController {
       })
   @DeleteMapping("/admin/products/{id}")
   public ResponseEntity<Void> deleteProduct(@PathVariable("id") String id) {
-    deleteProductService.execute(id);
+    // get hold of the current user UUID THROUGH THE JWT, via context provider
+    String jti = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    deleteProductService.execute(jti,id);
     return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
   }
 }

@@ -11,7 +11,6 @@
             <column name="username" type="VARCHAR(100)"/>
             <column name="email" type="VARCHAR(100)"/>
             <column name="password_hash" type="VARCHAR(255)"/>
-            <column name="balance" type="DECIMAL(10, 2)"/>
         </createTable>
     </changeSet>
     <changeSet author="axmen (generated)" id="1750060828006-2">
@@ -32,7 +31,25 @@
             <column name="category_name" type="VARCHAR(100)"/>
         </createTable>
     </changeSet>
-
+    <changeSet author="axmen (generated)" id="1750060828006-4">
+        <createTable tableName="outbox_event">
+            <column name="id" type="VARCHAR(36)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="aggregate_type" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="aggregate_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="type" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="payload" type="JSON">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
     <changeSet author="axmen (generated)" id="1750060828006-5">
         <createTable tableName="orders">
             <column name="order_id" type="CHAR(36)">
@@ -98,10 +115,18 @@
             </column>
         </createTable>
     </changeSet>
-
-
-
     <changeSet author="axmen (generated)" id="1750060828006-11">
+        <createTable tableName="wallet">
+            <column name="id" type="CHAR(36)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="client_id" type="VARCHAR(100)"/>
+            <column name="balance" type="DECIMAL(10, 2)"/>
+        </createTable>
+    </changeSet>
+
+
+    <changeSet author="axmen (generated)" id="1750060828006-12">
         <createIndex associatedWith="" indexName="fk_ar_role" tableName="account_roles">
             <column name="role_id"/>
         </createIndex>
@@ -187,4 +212,5 @@
                                  deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
                                  referencedColumnNames="id" referencedTableName="account" validate="true"/>
     </changeSet>
+
 </databaseChangeLog>

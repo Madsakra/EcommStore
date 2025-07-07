@@ -88,7 +88,6 @@ public class AuthController {
   @PostMapping("/createAccount")
   public ResponseEntity<AccountDTO> createNewUser(
       @RequestBody AccountRequestDTO request) {
-    System.out.println(request);
     AccountDTO response = createNewAccountService.execute(request);
     return ResponseEntity.status(HttpStatus.CREATED).body(response);
   }

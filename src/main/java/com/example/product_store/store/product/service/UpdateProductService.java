@@ -1,7 +1,6 @@
 package com.example.product_store.store.product.service;
 
 import com.example.product_store.CacheConstants;
-import com.example.product_store.Command;
 import com.example.product_store.store.product.ProductRepository;
 import com.example.product_store.store.product.ProductValidator;
 import com.example.product_store.store.product.UpdateProductCommand;
@@ -14,11 +13,10 @@ import java.util.Optional;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Caching;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UpdateProductService implements Command<UpdateProductCommand, ProductDTO> {
+public class UpdateProductService {
 
   private final ProductRepository productRepository;
   private final ProductValidator productValidator;
@@ -29,7 +27,6 @@ public class UpdateProductService implements Command<UpdateProductCommand, Produ
     this.productValidator = productValidator;
   }
 
-  @Override
   @Caching(
       evict = {
         @CacheEvict(cacheNames = CacheConstants.GET_ALL_PRODUCTS, allEntries = true)
@@ -37,30 +34,24 @@ public class UpdateProductService implements Command<UpdateProductCommand, Produ
       put = {
         @CachePut(cacheNames = CacheConstants.GET_ALL_PRODUCTS, key = "'allProducts'")
       })
-  public ProductDTO execute(UpdateProductCommand command) {
+  public ProductDTO execute(String jti, UpdateProductCommand command) {
 
     // 1. Find the item in db first
     Optional<Product> productOptional = productRepository.findById(command.getId());
     if (productOptional.isPresent()) {
 
       Product dbProduct = productOptional.get(); // This is the actual DB object
-
-      // 2. Check if the product belongs to the user
-      // get hold of the current user UUID THROUGH THE JWT, via context provider
-      String jti =
-          (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-      ProductRequestDTO requestDTO = command.getRequestDTO();
-
-      // 3. if product does not belong to user, throw error
+      // 2. if product does not belong to admin, throw error
       if (!dbProduct.getCreatedBy().matches(jti)) {
         throw new UnauthorizedManagement("This product does not belongs to you!");
       }
 
+      ProductRequestDTO requestDTO = command.getRequestDTO();
       requestDTO.setCreatedBy(jti);
       productValidator.execute(requestDTO, true);
-
       Product product = new Product(requestDTO);
+      // 1. when creating product, id is null
+      // 2. set the id of the product in db to new product
       product.setId(command.getId());
       productRepository.save(product);
       return new ProductDTO(product);

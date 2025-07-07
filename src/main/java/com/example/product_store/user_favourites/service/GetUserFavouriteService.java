@@ -13,7 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class GetUserFavouriteService implements QueryBinder<Void, UserFavouriteDTO> {
+public class GetUserFavouriteService implements QueryBinder<String, UserFavouriteDTO> {
 
   private final AccountRepository accountRepository;
   private static final Logger logger = LoggerFactory.getLogger(GetUserFavouriteService.class);
@@ -24,19 +24,12 @@ public class GetUserFavouriteService implements QueryBinder<Void, UserFavouriteD
 
   @Override
   @Cacheable(cacheNames = "getUserFavorites", key = "'userFavorites'")
-  public UserFavouriteDTO execute(Void input) {
-
-    // 1. use the jwt to parse the current user id
-    String jti = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
+  public UserFavouriteDTO execute(String jti) {
     logger.info("User ID {} found in GetUserFavouriteService", jti);
-
-    // 2. Use the current user id to fetch his account
+    // Use the current user id to fetch his account
     Account account =
         accountRepository.findById(jti).orElseThrow(() -> new AccountNotFoundException("Account not found based on current user ID"));
-
     logger.info("Account {} retrieved for in GetUserFavouriteService", jti);
-
     return new UserFavouriteDTO(account);
   }
 }

@@ -11,6 +11,8 @@ import com.example.product_store.store.product.exceptions.ProductNotFoundExcepti
 import com.example.product_store.store.product.model.Product;
 import com.example.product_store.user_favourites.dto.UserFavouriteDTO;
 import com.example.product_store.user_favourites.service.AddUserFavouriteService;
+
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -19,9 +21,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 @ExtendWith(MockitoExtension.class)
 public class AddUserFavouriteTest {
@@ -39,10 +38,6 @@ public class AddUserFavouriteTest {
 
     // GIVEN
     String mockedUserId = "user-123";
-    Authentication auth = mock(Authentication.class);
-    SecurityContext securityContext = mock(SecurityContext.class);
-    SecurityContextHolder.setContext(securityContext);
-
     // MOCK PRODUCT
     Product mockProduct = new Product();
     mockProduct.setId(productId);
@@ -55,15 +50,11 @@ public class AddUserFavouriteTest {
     Account mockAccount = new Account();
     mockAccount.setId(mockedUserId);
     mockAccount.setFavouriteProducts(mockProductSet);
-
-    // WHEN
-    when(productRepository.findById(productId)).thenReturn(Optional.of(mockProduct));
-    when(auth.getPrincipal()).thenReturn(mockedUserId);
-    when(securityContext.getAuthentication()).thenReturn(auth);
     when(accountRepository.findById(mockedUserId)).thenReturn(Optional.of(mockAccount));
 
+    when(productRepository.findById(productId)).thenReturn(Optional.of(mockProduct));
     // ACT
-    UserFavouriteDTO result = addUserFavouriteService.execute(productId);
+    UserFavouriteDTO result = addUserFavouriteService.execute(mockedUserId, productId);
 
     // ASSERT
 
@@ -80,40 +71,43 @@ public class AddUserFavouriteTest {
   @Test
   void testExecute_ProductNotFound_shouldThrowProductNotFoundException() {
     // GIVEN
+    String expectedJti = "hash-1234";
     // PRODUCT ID INSERTED BY USER
     String productId = "targetProduct";
     // WHEN
+    // Mock account
+    Account mockAccount = new Account();
+    mockAccount.setId(expectedJti);
+
+    mockAccount.setFavouriteProducts(Collections.emptySet());
+
+    // WHEN
+    when(accountRepository.findById(expectedJti)).thenReturn(Optional.of(mockAccount));
     when(productRepository.findById(productId)).thenReturn(Optional.empty());
     // ASSERT THROWS
-    ProductNotFoundException ex = assertThrows(ProductNotFoundException.class, ()-> addUserFavouriteService.execute(productId));
+    ProductNotFoundException ex =
+        assertThrows(
+            ProductNotFoundException.class,
+            () -> addUserFavouriteService.execute(expectedJti, productId));
     assertEquals("Product not found with the given id", ex.getMessage());
   }
 
   @Test
-  void testExecute_AccountNotFound_shouldThrowAccountNotFoundException(){
+  void testExecute_AccountNotFound_shouldThrowAccountNotFoundException() {
     // PRODUCT ID INSERTED BY USER
     String productId = "targetProduct";
 
     // GIVEN
-    String mockedUserId = "user-123";
-    Authentication auth = mock(Authentication.class);
-    SecurityContext securityContext = mock(SecurityContext.class);
-    SecurityContextHolder.setContext(securityContext);
-
+    String expectedJti = "hash-1234";
     Product mockProduct = new Product();
     mockProduct.setId(productId);
     mockProduct.setTitle("addedProduct");
 
-    // WHEN
-    when(productRepository.findById(productId)).thenReturn(Optional.of(mockProduct));
-    when(auth.getPrincipal()).thenReturn(mockedUserId);
-    when(securityContext.getAuthentication()).thenReturn(auth);
-    when(accountRepository.findById(mockedUserId)).thenReturn(Optional.empty());
-
     // ASSERT THROWS
-    AccountNotFoundException ex = assertThrows(AccountNotFoundException.class, ()-> addUserFavouriteService.execute(productId));
+    AccountNotFoundException ex =
+        assertThrows(
+            AccountNotFoundException.class,
+            () -> addUserFavouriteService.execute(expectedJti, productId));
     assertEquals("Account not found with current JWT", ex.getMessage());
-
   }
-
 }

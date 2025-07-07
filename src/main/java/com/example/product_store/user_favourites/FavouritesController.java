@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(
@@ -60,7 +61,9 @@ public class FavouritesController {
       })
   @GetMapping("/favorites")
   public ResponseEntity<UserFavouriteDTO> getUserFavorites() {
-    UserFavouriteDTO userFavourites = getUserFavouriteService.execute(null);
+    // use the jwt to parse the current user id
+    String jti = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    UserFavouriteDTO userFavourites = getUserFavouriteService.execute(jti);
     return ResponseEntity.status(HttpStatus.OK).body(userFavourites);
   }
 
@@ -88,7 +91,9 @@ public class FavouritesController {
   @PostMapping("/favorites/{id}")
   public ResponseEntity<UserFavouriteDTO> addUserFavorites(
       @PathVariable("id") String id) {
-    UserFavouriteDTO updatedUserFavourites = addUserFavouriteService.execute(id);
+    // use the jwt to parse the current user id
+    String jti = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    UserFavouriteDTO updatedUserFavourites = addUserFavouriteService.execute(jti,id);
     return ResponseEntity.status(HttpStatus.OK).body(updatedUserFavourites);
   }
 
@@ -116,7 +121,9 @@ public class FavouritesController {
   @DeleteMapping("/favorites/{id}")
   public ResponseEntity<UserFavouriteDTO> deleteUserFavorites(
       @PathVariable("id") String id) {
-    deleteUserFavouriteService.execute(id);
+    // use the jwt to parse the current user id
+    String jti = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    deleteUserFavouriteService.execute(jti,id);
     return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
   }
 }

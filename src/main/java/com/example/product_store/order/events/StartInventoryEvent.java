@@ -19,15 +19,13 @@ public class StartInventoryEvent {
     private Map<String, Product> productMap;
     private List<OrderCreationRequest> requests;
     private InventoryStatus status;
-    // for notification service later
-    private Map<String, BigDecimal> purchasesMap;
+
 
     public StartInventoryEvent(OrderCreatedEvent event){
         this.orderId = event.getOrderId();
         this.requests = event.getOrderCreationRequests();
-        this.productMap = event.getProductMap();
         this.status = InventoryStatus.PROCESSING;
-        this.purchasesMap = event.getPurchasesMap();
+
     }
 
 }

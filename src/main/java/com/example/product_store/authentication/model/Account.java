@@ -25,7 +25,6 @@ public class Account {
     this.password = password;
     this.roles = roles;
     this.favouriteProducts = new HashSet<>();
-    this.balance = BigDecimal.valueOf(0);
   }
 
   @Id
@@ -55,5 +54,5 @@ public class Account {
           inverseJoinColumns = @JoinColumn(name = "product_id")
   )
   private Set<Product> favouriteProducts = new HashSet<>();
-  private BigDecimal balance;
+
 }

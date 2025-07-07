@@ -13,7 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class CreateProductService implements Command<ProductRequestDTO, ProductDTO> {
+public class CreateProductService{
 
   private final ProductRepository productRepository;
   private final ProductValidator productValidator;
@@ -24,12 +24,12 @@ public class CreateProductService implements Command<ProductRequestDTO, ProductD
     this.productValidator = productValidator;
   }
 
-  @Override
-  @CacheEvict(cacheNames = "getAllProducts", allEntries = true)
-  public ProductDTO execute(ProductRequestDTO requestDTO) {
 
-    // get hold of the current user UUID THROUGH THE JWT, via context provider
-    String jti = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+  @CacheEvict(cacheNames = "getAllProducts", allEntries = true)
+  public ProductDTO execute(String jti,ProductRequestDTO requestDTO) {
+
+
+
     // set createdBy to current User
     requestDTO.setCreatedBy(jti);
 

@@ -1,0 +1,14 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
+
+    <changeSet id="02=8" author="Colin">
+        <insert tableName="wallet">
+            <column name="id" value="9b2d0486-ac27-4625-94a5-8e69f5285748"/>
+            <column name="client_id" value="1a014560-4e27-442a-9312-efa1928362e4"/>
+            <column name="balance" value="30000.00"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>

@@ -2,7 +2,6 @@ package com.example.store;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.example.product_store.store.product.ProductRepository;
@@ -16,30 +15,17 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
+
 
 @ExtendWith(MockitoExtension.class)
 public class DeleteProductTests {
   @Mock private ProductRepository productRepository;
-
-  @Mock private Authentication authentication;
-
-  @Mock private SecurityContext securityContext;
-
   @InjectMocks private DeleteProductService deleteProductService;
 
   @Test
   void testDeleteProduct_withValidProductId_shouldReturnNull() {
     // GIVEN
     String mockedUserId = "user-123";
-    Authentication auth = mock(Authentication.class);
-    when(auth.getPrincipal()).thenReturn(mockedUserId);
-    SecurityContext securityContext = mock(SecurityContext.class);
-    when(securityContext.getAuthentication()).thenReturn(auth);
-    SecurityContextHolder.setContext(securityContext);
-
     String productId = "qwerty123";
 
     Product existingProduct = new Product();
@@ -49,33 +35,26 @@ public class DeleteProductTests {
     when(productRepository.findById(productId)).thenReturn(Optional.of(existingProduct));
 
     // ACT
-    assertDoesNotThrow(() -> deleteProductService.execute(productId));
+    assertDoesNotThrow(() -> deleteProductService.execute(mockedUserId,productId));
     verify(productRepository).deleteById(productId);
   }
 
   @Test
   void testDeleteProduct_productNotFound_shouldThrowProductNotFoundException() {
     String productId = "notFound";
-
+      String expectedJti = "hash-1234";
     when(productRepository.findById(productId)).thenReturn(Optional.empty());
     ProductNotFoundException ex =
         assertThrows(
             ProductNotFoundException.class,
-            () -> deleteProductService.execute(productId));
+            () -> deleteProductService.execute(expectedJti,productId));
     assertEquals("Product does not exist based on id!", ex.getMessage());
   }
 
     @Test
     void testDeleteProduct_unauthorizedManagement_shouldThrowUnauthorizedException(){
-        String mockedUserId = "user-123";
-        Authentication auth = mock(Authentication.class);
-        when(auth.getPrincipal()).thenReturn(mockedUserId);
-        SecurityContext securityContext = mock(SecurityContext.class);
-        when(securityContext.getAuthentication()).thenReturn(auth);
-        SecurityContextHolder.setContext(securityContext);
-
+        String expectedJti = "hash-1234";
         String productId = "qwerty123";
-
         // Setup existing product
         Product existingProduct = new Product();
         existingProduct.setId(productId);
@@ -90,7 +69,7 @@ public class DeleteProductTests {
         // WHEN
         UnauthorizedManagement ex = assertThrows(
                 UnauthorizedManagement.class,
-                ()->deleteProductService.execute(productId)
+                ()->deleteProductService.execute(expectedJti,productId)
         );
         assertEquals("This product does not belongs to you!", ex.getMessage());
     }
