@@ -29,7 +29,9 @@ public class GetProductSpecificationService
     // WILL JUST THROW ERROR FROM HERE AND REFUSE TO CONTINUE
     if (productFilter.getMinPrice() != null) {
       if (productFilter.getMinPrice().compareTo(BigDecimal.ZERO) < 0) {
-        logger.warn("GetProductSpecificationService: Payload given by client consists of negative minimum price for product.");
+        logger.warn(
+            "GetProductSpecificationService: Payload given by client consists of negative"
+                + " minimum price for product.");
         throw new InvalidPageRequestException(
             "Minimum price of product cannot be negative.");
       }
@@ -39,7 +41,9 @@ public class GetProductSpecificationService
 
     if (productFilter.getMaxPrice() != null) {
       if (productFilter.getMaxPrice().compareTo(BigDecimal.ZERO) < 0) {
-        logger.warn("GetProductSpecificationService: Payload given by client consists of negative maximum price for product.");
+        logger.warn(
+            "GetProductSpecificationService: Payload given by client consists of negative"
+                + " maximum price for product.");
         throw new InvalidPageRequestException(
             "Maximum price of product cannot be negative.");
       }
@@ -49,7 +53,9 @@ public class GetProductSpecificationService
     if (productFilter.getMinPrice() != null
         && productFilter.getMaxPrice() != null
         && productFilter.getMinPrice().compareTo(productFilter.getMaxPrice()) > 0) {
-      logger.warn("GetProductSpecificationService: Payload given by client has min price > max price of product.");
+      logger.warn(
+          "GetProductSpecificationService: Payload given by client has min price > max"
+              + " price of product.");
       throw new InvalidPageRequestException(
           "Minimum price cannot be greater than maximum price of product.");
     }

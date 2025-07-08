@@ -3,10 +3,10 @@ package com.example.product_store.order.service;
 import com.example.product_store.authentication.errors.AccountNotFoundException;
 import com.example.product_store.authentication.model.Account;
 import com.example.product_store.authentication.repositories.AccountRepository;
-import com.example.product_store.authentication.service.RetrieveAccountService;
 import com.example.product_store.order.dto.OrderCreationRequest;
 import com.example.product_store.order.dto.OrderDTO;
-import com.example.product_store.order.events.OrderCreatedEvent;
+import com.example.product_store.order.dto.outbox_event.OrderCreatedPayload;
+
 import com.example.product_store.order.exceptions.OrderCreationException;
 import com.example.product_store.order.model.Order;
 import com.example.product_store.order.model.OrderItem;
@@ -17,13 +17,9 @@ import com.example.product_store.store.product.model.Product;
 import java.math.BigDecimal;
 import java.util.*;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.json.Json;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,9 +36,9 @@ public class CreateOrderService {
 
 
   public CreateOrderService(
-          KafkaTemplate<String, OrderCreatedEvent> kafkaTemplate,
           OrdersValidationService ordersValidationService,
-          OrderRepository orderRepository, AccountRepository accountRepository, ObjectMapper objectMapper, OutboxRepository outboxRepository) {
+          OrderRepository orderRepository, AccountRepository accountRepository,
+          ObjectMapper objectMapper, OutboxRepository outboxRepository) {
     this.ordersValidationService = ordersValidationService;
     this.orderRepository = orderRepository;
     this.accountRepository = accountRepository;
@@ -84,7 +80,7 @@ public class CreateOrderService {
       Order savedOrder = orderRepository.save(currentOrder);
 
       // Create event
-      OrderCreatedEvent event = new OrderCreatedEvent(savedOrder, orderCreationRequests);
+      OrderCreatedPayload event = new OrderCreatedPayload(savedOrder, orderCreationRequests);
 
       // Insert into outbox
       OutboxEvent outboxEvent = new OutboxEvent(

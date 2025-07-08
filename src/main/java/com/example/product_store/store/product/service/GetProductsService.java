@@ -30,7 +30,6 @@ public class GetProductsService {
     this.getProductSpecificationService = getProductSpecificationService;
   }
 
-  @Cacheable(cacheNames = "getAllProducts", keyGenerator = "productFilterKeyGenerator")
   public List<ProductDTO> execute(ProductFilter productFilter, Pageable pageable) {
 
     // CONVERT THE PRODUCT FILTER (PAYLOAD FROM CLIENT) TO PRODUCT SPECIFICATION FOR JPA TO FILTER

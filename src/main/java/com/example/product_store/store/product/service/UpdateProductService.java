@@ -27,13 +27,6 @@ public class UpdateProductService {
     this.productValidator = productValidator;
   }
 
-  @Caching(
-      evict = {
-        @CacheEvict(cacheNames = CacheConstants.GET_ALL_PRODUCTS, allEntries = true)
-      },
-      put = {
-        @CachePut(cacheNames = CacheConstants.GET_ALL_PRODUCTS, key = "'allProducts'")
-      })
   public ProductDTO execute(String jti, UpdateProductCommand command) {
 
     // 1. Find the item in db first
