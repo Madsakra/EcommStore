@@ -1,6 +1,5 @@
 package com.example.product_store.order.model;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,8 +13,8 @@ import org.hibernate.type.SqlTypes;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "outbox_event")
-public class OutboxEvent {
+@Table(name = "outbox")
+public class Outbox {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

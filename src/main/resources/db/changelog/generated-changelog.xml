@@ -32,7 +32,7 @@
         </createTable>
     </changeSet>
     <changeSet author="axmen (generated)" id="1750060828006-4">
-        <createTable tableName="outbox_event">
+        <createTable tableName="outbox">
             <column name="id" type="VARCHAR(36)">
                 <constraints nullable="false" primaryKey="true"/>
             </column>

@@ -10,5 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class OutboxEventWrapper {
-    private OutboxEventPayload payload;
+    private OutboxEventReceipt payload;
+    private String eventType;
 }

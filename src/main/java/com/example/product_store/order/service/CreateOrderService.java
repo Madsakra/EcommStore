@@ -5,12 +5,12 @@ import com.example.product_store.authentication.model.Account;
 import com.example.product_store.authentication.repositories.AccountRepository;
 import com.example.product_store.order.dto.OrderCreationRequest;
 import com.example.product_store.order.dto.OrderDTO;
-import com.example.product_store.order.dto.outbox_event.OrderCreatedPayload;
+import com.example.product_store.order.dto.outbox_event.EventPayload;
 
 import com.example.product_store.order.exceptions.OrderCreationException;
 import com.example.product_store.order.model.Order;
 import com.example.product_store.order.model.OrderItem;
-import com.example.product_store.order.model.OutboxEvent;
+import com.example.product_store.order.model.Outbox;
 import com.example.product_store.order.repository.OrderRepository;
 import com.example.product_store.order.repository.OutboxRepository;
 import com.example.product_store.store.product.model.Product;
@@ -79,19 +79,25 @@ public class CreateOrderService {
       // SAVE ORDER INTO DB -> GET ORDER ID
       Order savedOrder = orderRepository.save(currentOrder);
 
-      // Create event
-      OrderCreatedPayload event = new OrderCreatedPayload(savedOrder, orderCreationRequests);
+      // Create event payload -> store it on the outbox table
+      // pass it to the other services for processing
+      EventPayload payload = new EventPayload(savedOrder, orderCreationRequests);
 
       // Insert into outbox
-      OutboxEvent outboxEvent = new OutboxEvent(
+      // debezium will watch this table and transfer event through kafka listener
+      Outbox outbox = new Outbox(
               null,
-              "Order",
+              "order",
               savedOrder.getId(),
               "OrderCreated",
-              objectMapper.writeValueAsString(event)
+              objectMapper.writeValueAsString(payload)
       );
-      outboxRepository.save(outboxEvent);
+      Outbox savedOutbox = outboxRepository.save(outbox);
+      logger.info("Saved outbox event: {}",savedOutbox);
 
+
+
+      // RETURN TO CLIENT SIDE FOR DISPLAY
       return new OrderDTO(savedOrder);
 
     } catch (AccountNotFoundException e) {

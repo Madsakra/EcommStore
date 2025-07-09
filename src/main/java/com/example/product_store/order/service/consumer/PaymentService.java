@@ -1,17 +1,15 @@
 package com.example.product_store.order.service.consumer;
 
-import com.example.product_store.order.dto.outbox_event.OrderCreatedPayload;
-import com.example.product_store.order.dto.outbox_event.OutboxEventDTO;
-import com.example.product_store.order.dto.outbox_event.PaymentCompletedPayload;
+import com.example.product_store.order.dto.outbox_event.EventPayload;
+import com.example.product_store.order.dto.outbox_event.OutboxEventReceipt;
 import com.example.product_store.order.exceptions.InsufficientBalanceException;
 import com.example.product_store.order.exceptions.WalletNotFoundException;
-import com.example.product_store.order.model.OutboxEvent;
+import com.example.product_store.order.model.Outbox;
 import com.example.product_store.order.model.Wallet;
 import com.example.product_store.order.repository.OutboxRepository;
 import com.example.product_store.order.repository.WalletRepository;
 import com.example.product_store.order.util.OutboxEventUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.Objects;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,76 +32,78 @@ public class PaymentService {
   }
 
   @Transactional
-  @KafkaListener(
-      topics = "store.product_store.outbox_event",
-      groupId = "payment-service-consumer")
+  @KafkaListener(topics = "order.events", groupId = "payment-service-consumer")
   public void execute(String message) {
+    logger.info("Received message from kafka :{}", message);
     if (message == null || message.isBlank()) {
       logger.warn("Received null or empty Kafka message, skipping.");
       return;
     }
+
     try {
-      // Extract "after" field (actual outbox row)
-      OutboxEventDTO eventDTO = OutboxEventUtil.extractOutboxEvent(message);
+      // parse the debezium kafka message
+      OutboxEventReceipt receipt = OutboxEventUtil.extractOutboxEvent(message);
       String messageType = "OrderCreated";
 
-      if (Objects.equals(eventDTO.getType(), messageType)) {
-        // Parse order payload
-        OrderCreatedPayload orderCreated =
-            objectMapper.readValue(eventDTO.getPayload(), OrderCreatedPayload.class);
-        logger.info(
-            "Order id is :{}, belongs to client:{}. Total price of order is :{}",
-            orderCreated.getOrderId(),
-            orderCreated.getCustomerId(),
-            orderCreated.getTotalPrice());
+      // PASS THE PAYLOAD TO COMPLETION / FAILURE
+      EventPayload payload = new EventPayload(receipt);
 
-        // Validate
-        OutboxEventUtil.orderCreatedPayloadValidator(orderCreated);
-
+      if (messageType.equals(receipt.getEventType())) {
+        // Validate the parsed message
+        OutboxEventUtil.orderCreatedPayloadValidator(receipt);
         // fetch the wallet from db
         Optional<Wallet> walletOptional =
-            walletRepository.findByClientId(orderCreated.getCustomerId());
-
+            walletRepository.findByClientId(receipt.getCustomerId());
         if (walletOptional.isEmpty()) {
           logger.warn(
-              "This user :{} does not have a wallet in the db",
-              orderCreated.getCustomerId());
+              "This user :{} does not have a wallet in the db", receipt.getCustomerId());
+
+          Outbox outbox =
+              new Outbox(
+                  null,
+                  "order-completed",
+                  receipt.getOrderId(),
+                  "PaymentDenied",
+                  objectMapper.writeValueAsString(payload));
+          outboxRepository.save(outbox);
+
           throw new WalletNotFoundException(
               "This user"
-                  + orderCreated.getCustomerId()
+                  + receipt.getCustomerId()
                   + "does not have a wallet in the store");
         }
 
         Wallet wallet = walletOptional.get();
-        if (wallet.getBalance().compareTo(orderCreated.getTotalPrice()) < 0) {
+        if (wallet.getBalance().compareTo(receipt.getTotalPrice()) < 0) {
           logger.warn(
               "Wallet balance is insufficient, current amount is :{}",
               wallet.getBalance());
+          Outbox outbox =
+              new Outbox(
+                  null,
+                  "order-completed",
+                  receipt.getOrderId(),
+                  "PaymentDenied",
+                  objectMapper.writeValueAsString(payload));
+          outboxRepository.save(outbox);
           throw new InsufficientBalanceException("Wallet has insufficient funds");
         }
 
         // IF CHECK ABOVE PASSES, SUBTRACT FROM WALLET
-        wallet.setBalance(wallet.getBalance().subtract(orderCreated.getTotalPrice()));
+        wallet.setBalance(wallet.getBalance().subtract(receipt.getTotalPrice()));
         // SAVE THE WALLET IN DB
         Wallet savedWallet = walletRepository.save(wallet);
         logger.info("Saved wallet balance :{}", savedWallet.getBalance());
 
-        // Create event
-        PaymentCompletedPayload payload =
-            new PaymentCompletedPayload(
-                orderCreated.getOrderId(),
-                "PaymentAccepted",
-                orderCreated.getTotalPrice());
-
-        // Insert into outbox
-        OutboxEvent outboxEvent =
-            new OutboxEvent(
+        // SAVE ORDER COMPLETION
+        Outbox outbox =
+            new Outbox(
                 null,
-                "Payment",
-                orderCreated.getOrderId(),
+                "order-completed",
+                receipt.getOrderId(),
                 "PaymentAccepted",
                 objectMapper.writeValueAsString(payload));
-        outboxRepository.save(outboxEvent);
+        outboxRepository.save(outbox);
       }
 
     } catch (Exception e) {

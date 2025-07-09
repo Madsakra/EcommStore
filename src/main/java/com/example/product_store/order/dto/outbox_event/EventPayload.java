@@ -12,22 +12,35 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrderCreatedPayload {
+public class EventPayload {
     private String orderId;
-    private String createdAt;
     private String customerId;
     private BigDecimal totalPrice;
-    private String orderStatus;
     private List<OrderCreationRequest> orderCreationRequests;
 
-    public OrderCreatedPayload(
+
+    // WHEN ORDERS ARE FRESHLY CREATED
+    public EventPayload(
             Order order,
             List<OrderCreationRequest> requests
     ) {
         this.orderId = order.getId();
         this.customerId = order.getCustomerId();
         this.totalPrice = order.getTotalPrice();
-        this.orderStatus = "Processing";
         this.orderCreationRequests = requests;
     }
+
+
+    public EventPayload(OutboxEventReceipt outboxEventReceipt)
+    {
+        this.orderId = outboxEventReceipt.getOrderId();
+        this.customerId = outboxEventReceipt.getCustomerId();
+        this.totalPrice = outboxEventReceipt.getTotalPrice();
+        this.orderCreationRequests = outboxEventReceipt.getOrderCreationRequests();
+    }
+
+
+
+
+
 }

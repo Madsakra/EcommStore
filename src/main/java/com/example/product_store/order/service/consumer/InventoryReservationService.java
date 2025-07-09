@@ -1,12 +1,10 @@
 package com.example.product_store.order.service.consumer;
 
-
 import com.example.product_store.order.dto.OrderCreationRequest;
-import com.example.product_store.order.dto.outbox_event.InventoryCompletedPayload;
-import com.example.product_store.order.dto.outbox_event.OrderCreatedPayload;
-import com.example.product_store.order.dto.outbox_event.OutboxEventDTO;
+import com.example.product_store.order.dto.outbox_event.EventPayload;
+import com.example.product_store.order.dto.outbox_event.OutboxEventReceipt;
 import com.example.product_store.order.exceptions.ProductStockException;
-import com.example.product_store.order.model.OutboxEvent;
+import com.example.product_store.order.model.Outbox;
 import com.example.product_store.order.repository.OutboxRepository;
 import com.example.product_store.order.util.OutboxEventUtil;
 import com.example.product_store.store.product.ProductRepository;
@@ -14,7 +12,6 @@ import com.example.product_store.store.product.model.Product;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
@@ -32,44 +29,39 @@ public class InventoryReservationService {
   private final ObjectMapper objectMapper = new ObjectMapper();
   private final OutboxRepository outboxRepository;
 
-    public InventoryReservationService(ProductRepository productRepository, OutboxRepository outboxRepository) {
+  public InventoryReservationService(
+      ProductRepository productRepository, OutboxRepository outboxRepository) {
     this.productRepository = productRepository;
-        this.outboxRepository = outboxRepository;
-    }
+    this.outboxRepository = outboxRepository;
+  }
 
   @Transactional
-  @KafkaListener(
-      topics = "store.product_store.outbox_event",
-      groupId = "order-service-consumer")
+  @KafkaListener(topics = "order.events", groupId = "order-service-consumer")
   public void execute(String message) {
-
+    logger.info(message);
     if (message == null || message.isBlank()) {
       logger.warn("Received null or empty Kafka message, skipping.");
       return;
     }
     try {
       // Extract "after" field (actual outbox row)
-      OutboxEventDTO eventDTO = OutboxEventUtil.extractOutboxEvent(message);
+      OutboxEventReceipt eventDTO = OutboxEventUtil.extractOutboxEvent(message);
+      logger.info("Event dto is :{}", eventDTO);
       // ONLY CONTINUE PARSING IF THE MESSAGE TYPE IS CORRECT
-        String messageType = "OrderCreated";
-        if (Objects.equals(eventDTO.getType(), messageType))
-      {
-        // Parse order payload
-        OrderCreatedPayload orderCreated =
-                objectMapper.readValue(eventDTO.getPayload(), OrderCreatedPayload.class);
-        logger.info(
-                "Order id is :{}, belongs to client:{}. Products ordered :{}",
-                orderCreated.getOrderId(),
-                orderCreated.getCustomerId(),
-                orderCreated.getOrderCreationRequests());
+      String messageType = "OrderCreated";
 
+      // SEND THE PAYLOAD LATER TO COMPLETION / FAILURE EVENT
+      EventPayload payload = new EventPayload(eventDTO);
+
+      // ONLY PICK UP ORDER CREATED EVENTS
+      if (messageType.equals(eventDTO.getEventType())) {
         // CHECK THE PAYLOAD FOR ANY ERRORS
-        OutboxEventUtil.orderCreatedPayloadValidator(orderCreated);
+        OutboxEventUtil.orderCreatedPayloadValidator(eventDTO);
 
         List<String> productIds =
-                orderCreated.getOrderCreationRequests().stream()
-                        .map(OrderCreationRequest::getId)
-                        .toList();
+            eventDTO.getOrderCreationRequests().stream()
+                .map(OrderCreationRequest::getId)
+                .toList();
 
         // GET LATEST UPDATED PRODUCTS
         // TRIGGER PESSIMISTIC LOCK
@@ -77,17 +69,34 @@ public class InventoryReservationService {
 
         // Map of locked products by ID for fast lookup
         Map<String, Product> lockedProductMap =
-                lockedProducts.stream()
-                        .collect(Collectors.toMap(Product::getId, Function.identity()));
+            lockedProducts.stream()
+                .collect(Collectors.toMap(Product::getId, Function.identity()));
 
-        for (OrderCreationRequest request : orderCreated.getOrderCreationRequests()) {
+        for (OrderCreationRequest request : eventDTO.getOrderCreationRequests()) {
           Product product = lockedProductMap.get(request.getId());
           if (product == null) {
             logger.warn("Product Not found for :{}", request.getId());
+            // Insert into outbox
+            Outbox outbox =
+                    new Outbox(
+                            null,
+                            "order-completed",
+                            eventDTO.getOrderId(),
+                            "InventoryFailed",
+                            objectMapper.writeValueAsString(payload));
+            outboxRepository.save(outbox);
             throw new ProductStockException("Product not found: " + request.getId());
           }
           if (product.getStock() < request.getQuantity()) {
             logger.warn("Insufficient stock for : {}", product.getId());
+            Outbox outbox =
+                    new Outbox(
+                            null,
+                            "order-completed",
+                            eventDTO.getOrderId(),
+                            "InventoryFailed",
+                            objectMapper.writeValueAsString(payload));
+            outboxRepository.save(outbox);
             throw new ProductStockException("Insufficient stock for: " + product.getId());
           }
           product.setStock(product.getStock() - request.getQuantity());
@@ -96,24 +105,15 @@ public class InventoryReservationService {
         List<Product> savedProducts = productRepository.saveAll(lockedProducts);
         logger.info("Successfully saved products. After changes: {}", savedProducts);
 
-
-        // Create event
-        InventoryCompletedPayload payload =
-                new InventoryCompletedPayload(
-                        orderCreated.getOrderId(),
-                        "InventoryReserved",
-                        orderCreated.getOrderCreationRequests());
-
         // Insert into outbox
-        OutboxEvent outboxEvent =
-                new OutboxEvent(
-                        null,
-                        "Inventory",
-                        orderCreated.getOrderId(),
-                        "InventoryReserved",
-                        objectMapper.writeValueAsString(payload));
-        outboxRepository.save(outboxEvent);
-
+        Outbox outbox =
+            new Outbox(
+                null,
+                "order-completed",
+                eventDTO.getOrderId(),
+                "InventoryReserved",
+                objectMapper.writeValueAsString(payload));
+        outboxRepository.save(outbox);
       }
 
     } catch (Exception e) {
