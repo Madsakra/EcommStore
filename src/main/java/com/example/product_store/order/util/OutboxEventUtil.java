@@ -1,7 +1,9 @@
 package com.example.product_store.order.util;
+import com.example.product_store.order.dto.outbox_event.EventPayload;
 import com.example.product_store.order.dto.outbox_event.OutboxEventReceipt;
 import com.example.product_store.order.dto.outbox_event.OutboxEventWrapper;
 import com.example.product_store.order.exceptions.OrderPayloadMalformedException;
+import com.example.product_store.order.model.Outbox;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;

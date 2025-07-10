@@ -4,7 +4,7 @@ import com.example.product_store.order.dto.OrderDTO;
 import com.example.product_store.order.service.GetOrderService;
 import com.example.product_store.order.service.CreateOrderService;
 import com.example.product_store.order.dto.OrderCreationRequest;
-import com.example.product_store.user_favourites.dto.UserFavouriteDTO;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -48,7 +48,7 @@ public class OrderController {
                             content = @Content(schema = @Schema(implementation = OrderDTO.class)))
             })
     @PostMapping
-    public ResponseEntity<OrderDTO> createOrder(@RequestBody List<OrderCreationRequest> request) {
+    public ResponseEntity<OrderDTO> createOrder(@RequestBody List<OrderCreationRequest> request) throws JsonProcessingException {
         String jti = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         OrderDTO orderDTO =  createOrderService.execute(jti,request);
         return ResponseEntity.status(HttpStatus.CREATED).body(orderDTO);
@@ -69,7 +69,8 @@ public class OrderController {
             })
     @GetMapping("/{id}")
     public ResponseEntity<OrderDTO> getOrder(@PathVariable(name = "id") String id){
-        OrderDTO orderDTO = getOrderService.execute(id);
+        String jti = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        OrderDTO orderDTO = getOrderService.execute(jti,id);
         return ResponseEntity.status(HttpStatus.CREATED).body(orderDTO);
     }
 }

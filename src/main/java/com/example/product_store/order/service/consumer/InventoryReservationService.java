@@ -3,6 +3,7 @@ package com.example.product_store.order.service.consumer;
 import com.example.product_store.order.dto.OrderCreationRequest;
 import com.example.product_store.order.dto.outbox_event.EventPayload;
 import com.example.product_store.order.dto.outbox_event.OutboxEventReceipt;
+import com.example.product_store.order.exceptions.EmptyKafkaMessageException;
 import com.example.product_store.order.exceptions.ProductStockException;
 import com.example.product_store.order.model.Outbox;
 import com.example.product_store.order.repository.OutboxRepository;
@@ -23,14 +24,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class InventoryReservationService {
 
-  public static final Logger logger =
-      LoggerFactory.getLogger(InventoryReservationService.class);
+  public static final Logger logger = LoggerFactory.getLogger(InventoryReservationService.class);
   private final ProductRepository productRepository;
   private final ObjectMapper objectMapper = new ObjectMapper();
   private final OutboxRepository outboxRepository;
 
-  public InventoryReservationService(
-      ProductRepository productRepository, OutboxRepository outboxRepository) {
+  public InventoryReservationService(ProductRepository productRepository, OutboxRepository outboxRepository) {
     this.productRepository = productRepository;
     this.outboxRepository = outboxRepository;
   }
@@ -40,28 +39,30 @@ public class InventoryReservationService {
   public void execute(String message) {
     logger.info(message);
     if (message == null || message.isBlank()) {
-      logger.warn("Received null or empty Kafka message, skipping.");
-      return;
+      logger.warn("Received null or empty Kafka message, throwing empty kafka message exception.");
+      throw new EmptyKafkaMessageException("The current kafka message is empty");
     }
     try {
-      // Extract "after" field (actual outbox row)
-      OutboxEventReceipt eventDTO = OutboxEventUtil.extractOutboxEvent(message);
-      logger.info("Event dto is :{}", eventDTO);
-      // ONLY CONTINUE PARSING IF THE MESSAGE TYPE IS CORRECT
-      String messageType = "OrderCreated";
+      // EXTRACT THE OUTBOX EVENT
+      OutboxEventReceipt receipt = OutboxEventUtil.extractOutboxEvent(message);
 
-      // SEND THE PAYLOAD LATER TO COMPLETION / FAILURE EVENT
-      EventPayload payload = new EventPayload(eventDTO);
+      // SHORT CIRCUIT EARLY IF EVENT TYPE IS NOT RIGHT
+      if (!"OrderCreated".equals(receipt.getEventType())) {
+        return;
+      }
 
-      // ONLY PICK UP ORDER CREATED EVENTS
-      if (messageType.equals(eventDTO.getEventType())) {
+
+      // EVENT PAYLOAD THAT IS USED FOR TRANSFER TO OUTBOX TABLE
+      // IN EVENT OF FAILURE / SUCCESS
+      EventPayload payload = new EventPayload(receipt);
+
         // CHECK THE PAYLOAD FOR ANY ERRORS
-        OutboxEventUtil.orderCreatedPayloadValidator(eventDTO);
+        OutboxEventUtil.orderCreatedPayloadValidator(receipt);
 
-        List<String> productIds =
-            eventDTO.getOrderCreationRequests().stream()
-                .map(OrderCreationRequest::getId)
-                .toList();
+        logger.info("Verified Outbox Event Payload :{}", receipt);
+
+        // GET ALL THE PRODUCT id's in a map (used for findAll in repository)
+        List<String> productIds = receipt.getOrderCreationRequests().stream().map(OrderCreationRequest::getId).toList();
 
         // GET LATEST UPDATED PRODUCTS
         // TRIGGER PESSIMISTIC LOCK
@@ -69,55 +70,58 @@ public class InventoryReservationService {
 
         // Map of locked products by ID for fast lookup
         Map<String, Product> lockedProductMap =
-            lockedProducts.stream()
-                .collect(Collectors.toMap(Product::getId, Function.identity()));
+            lockedProducts.stream().collect(Collectors.toMap(Product::getId, Function.identity()));
 
-        for (OrderCreationRequest request : eventDTO.getOrderCreationRequests()) {
+        // PHASE 1: VALIDATION
+        for (OrderCreationRequest request : receipt.getOrderCreationRequests()) {
           Product product = lockedProductMap.get(request.getId());
+
+          // WHEN: UNABLE TO FIND PRODUCT
           if (product == null) {
             logger.warn("Product Not found for :{}", request.getId());
-            // Insert into outbox
-            Outbox outbox =
-                    new Outbox(
-                            null,
-                            "order-completed",
-                            eventDTO.getOrderId(),
-                            "InventoryFailed",
-                            objectMapper.writeValueAsString(payload));
-            outboxRepository.save(outbox);
+            // Insert into outbox event to signal failure
+            sendOutboxEvent("InventoryFailed", receipt.getOrderId(), payload);
             throw new ProductStockException("Product not found: " + request.getId());
           }
+
+          // WHEN: STOCK < DESIRED QUANTITY
           if (product.getStock() < request.getQuantity()) {
             logger.warn("Insufficient stock for : {}", product.getId());
-            Outbox outbox =
-                    new Outbox(
-                            null,
-                            "order-completed",
-                            eventDTO.getOrderId(),
-                            "InventoryFailed",
-                            objectMapper.writeValueAsString(payload));
-            outboxRepository.save(outbox);
+            // Insert into outbox event to signal failure
+            sendOutboxEvent("InventoryFailed", receipt.getOrderId(), payload);
             throw new ProductStockException("Insufficient stock for: " + product.getId());
           }
+        }
+
+        // Phase 2: All validations passed, now deduct stock
+        for (OrderCreationRequest request : receipt.getOrderCreationRequests()) {
+          Product product = lockedProductMap.get(request.getId());
           product.setStock(product.getStock() - request.getQuantity());
         }
 
+        // TAKES THE WHOLE LIST OF LOCKED PRODUCTS (EDITED ONES)
+        // SAVE THEM IN REPO
         List<Product> savedProducts = productRepository.saveAll(lockedProducts);
         logger.info("Successfully saved products. After changes: {}", savedProducts);
 
         // Insert into outbox
-        Outbox outbox =
-            new Outbox(
-                null,
-                "order-completed",
-                eventDTO.getOrderId(),
-                "InventoryReserved",
-                objectMapper.writeValueAsString(payload));
-        outboxRepository.save(outbox);
-      }
+        // SIGNAL SUCCESS
+        sendOutboxEvent("InventoryReserved", receipt.getOrderId(), payload);
 
     } catch (Exception e) {
+      // USED TO CATCH JSON PARSING ERROR
       logger.warn("Encountered exception, throwing it: {}", e.getMessage());
+    }
+  }
+
+  // Continue letting kafka send events
+  private void sendOutboxEvent(String eventType, String orderId, EventPayload payload) {
+    try {
+      Outbox outbox = new Outbox(null, "order-completed", orderId, eventType, objectMapper.writeValueAsString(payload));
+      Outbox savedOutbox = outboxRepository.save(outbox);
+      logger.info("Successfully saved outbox event :{}", savedOutbox);
+    } catch (Exception ex) {
+      logger.error("Failed to write outbox event for {}-{}: {}", "order-completed", eventType, ex.getMessage(), ex);
     }
   }
 }

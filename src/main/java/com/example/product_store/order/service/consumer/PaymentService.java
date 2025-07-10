@@ -2,6 +2,7 @@ package com.example.product_store.order.service.consumer;
 
 import com.example.product_store.order.dto.outbox_event.EventPayload;
 import com.example.product_store.order.dto.outbox_event.OutboxEventReceipt;
+import com.example.product_store.order.exceptions.EmptyKafkaMessageException;
 import com.example.product_store.order.exceptions.InsufficientBalanceException;
 import com.example.product_store.order.exceptions.WalletNotFoundException;
 import com.example.product_store.order.model.Outbox;
@@ -34,39 +35,35 @@ public class PaymentService {
   @Transactional
   @KafkaListener(topics = "order.events", groupId = "payment-service-consumer")
   public void execute(String message) {
-    logger.info("Received message from kafka :{}", message);
+    // CHECK IF MESSAGE IS BLANK OR NULL
     if (message == null || message.isBlank()) {
-      logger.warn("Received null or empty Kafka message, skipping.");
-      return;
+      logger.warn("Received null or empty Kafka message, throwing empty kafka message exception.");
+      throw new EmptyKafkaMessageException("The current kafka message is empty");
     }
 
     try {
       // parse the debezium kafka message
       OutboxEventReceipt receipt = OutboxEventUtil.extractOutboxEvent(message);
-      String messageType = "OrderCreated";
 
-      // PASS THE PAYLOAD TO COMPLETION / FAILURE
+      // PAYLOAD FOR COMPLETION / FAILURE EVENT
       EventPayload payload = new EventPayload(receipt);
 
+      String messageType = "OrderCreated";
+      // ENSURE THE EVENT TYPE IS THE SAME AS REQUIRED EVENT TYPE
       if (messageType.equals(receipt.getEventType())) {
+
         // Validate the parsed message
         OutboxEventUtil.orderCreatedPayloadValidator(receipt);
+
         // fetch the wallet from db
         Optional<Wallet> walletOptional =
             walletRepository.findByClientId(receipt.getCustomerId());
+
+        // IF THE USER DOESN'T HAVE A WALLET IN DB
         if (walletOptional.isEmpty()) {
           logger.warn(
               "This user :{} does not have a wallet in the db", receipt.getCustomerId());
-
-          Outbox outbox =
-              new Outbox(
-                  null,
-                  "order-completed",
-                  receipt.getOrderId(),
-                  "PaymentDenied",
-                  objectMapper.writeValueAsString(payload));
-          outboxRepository.save(outbox);
-
+          sendOutboxEvent("PaymentDenied",receipt.getOrderId(),payload);
           throw new WalletNotFoundException(
               "This user"
                   + receipt.getCustomerId()
@@ -74,40 +71,48 @@ public class PaymentService {
         }
 
         Wallet wallet = walletOptional.get();
+
+        // IF THE USER'S WALLET HAS INSUFFICIENT FUNDS
         if (wallet.getBalance().compareTo(receipt.getTotalPrice()) < 0) {
           logger.warn(
               "Wallet balance is insufficient, current amount is :{}",
               wallet.getBalance());
-          Outbox outbox =
-              new Outbox(
-                  null,
-                  "order-completed",
-                  receipt.getOrderId(),
-                  "PaymentDenied",
-                  objectMapper.writeValueAsString(payload));
-          outboxRepository.save(outbox);
+          sendOutboxEvent("PaymentDenied",receipt.getOrderId(),payload);
           throw new InsufficientBalanceException("Wallet has insufficient funds");
         }
 
         // IF CHECK ABOVE PASSES, SUBTRACT FROM WALLET
         wallet.setBalance(wallet.getBalance().subtract(receipt.getTotalPrice()));
+
         // SAVE THE WALLET IN DB
         Wallet savedWallet = walletRepository.save(wallet);
         logger.info("Saved wallet balance :{}", savedWallet.getBalance());
 
         // SAVE ORDER COMPLETION
-        Outbox outbox =
-            new Outbox(
-                null,
-                "order-completed",
-                receipt.getOrderId(),
-                "PaymentAccepted",
-                objectMapper.writeValueAsString(payload));
-        outboxRepository.save(outbox);
+        sendOutboxEvent("PaymentAccepted",receipt.getOrderId(),payload);
       }
 
     } catch (Exception e) {
       logger.warn("Encountered exception, throwing it: {}", e.getMessage());
     }
   }
+
+  // send outbox events through this method
+  private void sendOutboxEvent(String eventType, String orderId, EventPayload payload) {
+    try {
+      Outbox outbox = new Outbox(
+              null,
+              "order-completed",
+              orderId,
+              eventType,
+              objectMapper.writeValueAsString(payload)
+      );
+      Outbox savedOutbox =  outboxRepository.save(outbox);
+      logger.info("Successfully saved outbox event :{}",savedOutbox);
+    } catch (Exception ex) {
+      logger.error("Failed to write outbox event for {}-{}: {}", "order-completed", eventType, ex.getMessage(), ex);
+    }
+  }
+
+
 }

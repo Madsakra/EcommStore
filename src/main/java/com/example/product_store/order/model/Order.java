@@ -45,8 +45,8 @@ public class Order {
 
   // for creating orders
   // STARTING AN ORDER REQUIRES CUSTOMER ID, CREATED AT, TOTAL PRICE
-  public Order(Account account){
-    this.customerId = account.getId();
+  public Order(String jti){
+    this.customerId = jti;
     this.updatedAt = LocalDateTime.now();
     this.totalPrice = BigDecimal.ZERO;
   }
