@@ -3,7 +3,6 @@ package com.example.product_store.order.service;
 import com.example.product_store.order.dto.OrderCreationRequest;
 import com.example.product_store.order.dto.OrderDTO;
 import com.example.product_store.order.dto.outbox_event.EventPayload;
-import com.example.product_store.order.exceptions.EmptyKafkaMessageException;
 import com.example.product_store.order.model.Order;
 import com.example.product_store.order.model.OrderItem;
 import com.example.product_store.order.model.Outbox;

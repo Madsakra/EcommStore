@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -36,7 +38,7 @@ public class NotificationService {
 
   @Transactional
   @KafkaListener(topics = "notify-admin.events", groupId = "notify-admin-consumer")
-  public void execute(String message) {
+  public void execute(String message) throws JsonProcessingException {
 
     // if message is empty
     if (message == null || message.isBlank()) {
@@ -44,7 +46,7 @@ public class NotificationService {
       throw new EmptyKafkaMessageException("The current kafka message is empty");
     }
 
-    try {
+
       // Parse the message from debezium
       OutboxEventReceipt receipt = OutboxEventUtil.extractOutboxEvent(message);
       String batchOrderId = receipt.getOrderId();
@@ -101,8 +103,6 @@ public class NotificationService {
 
       notificationRepository.saveAll(notifications);
 
-    } catch (Exception e) {
-      logger.warn("Unable to send notification due to the following exception: {}", e.getMessage());
-    }
+
   }
 }

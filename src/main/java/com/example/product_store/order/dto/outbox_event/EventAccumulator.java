@@ -1,4 +1,4 @@
-package com.example.product_store.order.service.consumer;
+package com.example.product_store.order.dto.outbox_event;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

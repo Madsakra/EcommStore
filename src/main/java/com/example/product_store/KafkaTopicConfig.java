@@ -30,4 +30,5 @@ public class KafkaTopicConfig {
     public NewTopic notifyAdminTopic(){
         return TopicBuilder.name("notify-admin.events").partitions(3).replicas(1).build();
     }
+
 }

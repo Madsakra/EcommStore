@@ -29,7 +29,7 @@ public class ProductRetrievalService implements Command<List<OrderCreationReques
     List<String> productIDs = requests.stream().map(OrderCreationRequest::getId).toList();
 
     // FIND ALL PRODUCTS IN REPOSITORY
-    List<Product> products = productRepository.findAllByIdForUpdate(productIDs);
+    List<Product> products = productRepository.findAllById(productIDs);
     // CREATE A MAP {ID: PRODUCT OBJECT}
     // don't have to find in repo later, reduces n(N) query in DB to n(1)
     Map<String, Product> productMap = products.stream().collect(Collectors.toMap(Product::getId, p -> p));
