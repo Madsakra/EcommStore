@@ -33,7 +33,6 @@ public class LoginService implements Command<LoginRequestDTO,String> {
 
         // this will fail if credentials is invalid
         Authentication authentication = manager.authenticate(token);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwtToken = JwtUtil.generateToken((MyUserDetails) authentication.getPrincipal());
         logger.info("LoginService: JWT successfully generated");
 

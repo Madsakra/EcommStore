@@ -1,5 +1,6 @@
 package com.example.product_store;
 
+import com.example.product_store.order.exceptions.WalletNotFoundException;
 import org.apache.kafka.common.TopicPartition;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,6 +29,8 @@ public class KafkaConsumerConfig {
         );
 
         DefaultErrorHandler errorHandler = new DefaultErrorHandler(recoverer, new FixedBackOff(0L, 0));
+        // Won't retry for wallet not found exception
+        errorHandler.addNotRetryableExceptions(WalletNotFoundException.class);
 
         factory.setCommonErrorHandler(errorHandler);  // ✅ correct method for Spring Kafka 3.x+
 

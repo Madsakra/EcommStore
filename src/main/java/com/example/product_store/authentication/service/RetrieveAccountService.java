@@ -14,7 +14,7 @@ import java.util.Optional;
 @Service
 public class RetrieveAccountService implements Command<Void, Account> {
 
-    // Microservice to help fetch account information (UUID specifically) based on jwt
+    // help fetch account information (UUID specifically) based on jwt
     // returns entire account
     private final AccountRepository accountRepository;
     private static final Logger logger = LoggerFactory.getLogger(RetrieveAccountService.class);

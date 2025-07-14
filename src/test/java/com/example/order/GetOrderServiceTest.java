@@ -49,7 +49,7 @@ public class GetOrderServiceTest {
     }
 
     @Test
-    void testGetOrderServjce_orderNotFound_shouldThrowOrderNotFoundException(){
+    void testGetOrderService_orderNotFound_shouldThrowOrderNotFoundException(){
         String expectedOrderId = "order123";
         String jti = "user123";
 
