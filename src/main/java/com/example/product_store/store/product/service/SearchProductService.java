@@ -1,6 +1,6 @@
 package com.example.product_store.store.product.service;
 
-import com.example.product_store.store.product.ProductRepository;
+import com.example.product_store.store.product.repositories.ProductRepository;
 import com.example.product_store.store.product.dto.ProductDTO;
 import com.example.product_store.store.product.exceptions.InvalidPageRequestException;
 import com.example.product_store.store.product.model.Product;
@@ -30,13 +30,7 @@ public class SearchProductService {
   // DEFAULT SEARCH BY TITLE
   // NOT CACHING BECAUSE OF FILTER
   // TITLE SEARCHES CAN ALSO BE DYNAMIC
-  public List<ProductDTO> execute(ProductFilter productFilter, Pageable pageable) {
-
-    // THROW ERROR IF TITLE IS EMPTY OR NULL IN PAYLOAD FROM CLIENT
-    if (productFilter.getTitle() == null || productFilter.getTitle().isBlank()) {
-      logger.warn("Title is empty / null in client's payload");
-      throw new InvalidPageRequestException("Please check your headers: Title is null / empty");
-    }
+  public Page<ProductDTO> execute(ProductFilter productFilter, Pageable pageable) {
 
     Specification<Product> spec = getProductSpecificationService.execute(productFilter);
     spec = spec.and(ProductSpecification.titleContains(productFilter.getTitle()));
@@ -47,7 +41,7 @@ public class SearchProductService {
 
     // use repository to find all products with the filter
     Page<Product> products = productRepository.findAll(spec, pageable);
-    List<ProductDTO> productDTOS = products.stream().map(ProductDTO::new).toList();
+    Page<ProductDTO> productDTOS = products.map(ProductDTO::new);
     logger.info("Returned ProductDTOS in SearchProductService: {}", productDTOS);
     return productDTOS;
   }

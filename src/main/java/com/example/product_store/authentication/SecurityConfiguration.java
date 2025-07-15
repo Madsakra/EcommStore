@@ -3,6 +3,7 @@ package com.example.product_store.authentication;
 import com.example.product_store.authentication.jwt.JwtAuthenticationFilter;
 import com.example.product_store.authentication.securityHandler.CustomAccessDeniedHandler;
 import com.example.product_store.authentication.securityHandler.CustomAuthenticationEntryPoint;
+import com.example.product_store.authentication.service.LoginUserDetailsService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,15 +23,20 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableMethodSecurity
 public class SecurityConfiguration {
 
-  @Bean
-  public AuthenticationManager authenticationManager(HttpSecurity httpSecurity)
-      throws Exception {
-    return httpSecurity.getSharedObject(AuthenticationManagerBuilder.class).build();
-  }
+    @Bean
+    public AuthenticationManager authenticationManager(HttpSecurity httpSecurity,
+                                                       LoginUserDetailsService userDetailsService,
+                                                       PasswordEncoder passwordEncoder) throws Exception {
+        AuthenticationManagerBuilder authBuilder = httpSecurity.getSharedObject(AuthenticationManagerBuilder.class);
+        authBuilder
+                .userDetailsService(userDetailsService)
+                .passwordEncoder(passwordEncoder);
+        return authBuilder.build();
+    }
 
   @Bean
   public PasswordEncoder passwordEncoder() {
-    return new BCryptPasswordEncoder();
+    return new BCryptPasswordEncoder(8);
   }
 
   @Bean

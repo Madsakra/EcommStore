@@ -1,6 +1,6 @@
 package com.example.product_store.store.product.service;
 
-import com.example.product_store.store.product.ProductRepository;
+import com.example.product_store.store.product.repositories.ProductRepository;
 import com.example.product_store.store.product.exceptions.ProductNotFoundException;
 import com.example.product_store.store.product.exceptions.UnauthorizedManagement;
 import com.example.product_store.store.product.model.Product;

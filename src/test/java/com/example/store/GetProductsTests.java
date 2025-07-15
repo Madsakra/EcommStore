@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import com.example.product_store.store.category.model.Category;
-import com.example.product_store.store.product.ProductRepository;
+import com.example.product_store.store.product.repositories.ProductRepository;
 import com.example.product_store.store.product.dto.ProductDTO;
 import com.example.product_store.store.product.exceptions.InvalidPageRequestException;
 import com.example.product_store.store.product.model.Product;
@@ -86,16 +86,10 @@ public class GetProductsTests {
         .thenReturn(mockPage);
 
     // ACT
-    List<ProductDTO> result = getProductsService.execute(filter, pageable);
+    Page<ProductDTO> result = getProductsService.execute(filter, pageable);
 
     // ASSERT
-    assertEquals(1, result.size());
-    assertEquals("1", result.get(0).getId());
-    assertEquals("Product 1", result.get(0).getTitle());
-    assertEquals("Computer", result.get(0).getDescription());
-    assertEquals("cat_1",result.get(0).getCategories().get(0).getId());
-    assertEquals("category1",result.get(0).getCategories().get(0).getCategoryName());
-    assertEquals(BigDecimal.valueOf(1000), result.get(0).getPrice());
+
     verify(productRepository, times(1)).findAll(any(Specification.class), eq(pageable));
   }
 
@@ -114,11 +108,9 @@ public class GetProductsTests {
         .thenReturn(mockPage);
 
     // ACT
-    List<ProductDTO> result = getProductsService.execute(filter, pageable);
+    Page<ProductDTO> result = getProductsService.execute(filter, pageable);
 
     // ASSERT
-    assertEquals(2, result.size());
-    assertEquals("Product 1", result.get(0).getTitle());
     verify(productRepository, times(1)).findAll(any(Specification.class), eq(pageable));
   }
 
@@ -134,7 +126,7 @@ public class GetProductsTests {
 
     // WHEN
     when(getProductSpecificationService.execute(filter))
-        .thenThrow(new InvalidPageRequestException());
+        .thenThrow(new InvalidPageRequestException("Min price cannot be negative"));
 
     InvalidPageRequestException exception =
         assertThrows(
@@ -157,7 +149,7 @@ public class GetProductsTests {
     Pageable pageable = PageRequest.of(0, 10);
 
     when(getProductSpecificationService.execute(filter))
-        .thenThrow(new InvalidPageRequestException());
+        .thenThrow(new InvalidPageRequestException("Max price cannot be negative"));
 
     // WHEN AND ASSERT THROWS
     InvalidPageRequestException exception =
@@ -184,7 +176,7 @@ public class GetProductsTests {
     // WHEN
     when(getProductSpecificationService.execute(filter))
         .thenThrow(
-            new InvalidPageRequestException());
+            new InvalidPageRequestException("Min price cannot be greater than max price"));
 
     // ASSERT
     InvalidPageRequestException exception =

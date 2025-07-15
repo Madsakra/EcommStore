@@ -5,7 +5,7 @@ import com.example.product_store.order.dto.outbox_event.OutboxEventReceipt;
 import com.example.product_store.order.exceptions.EmptyKafkaMessageException;
 import com.example.product_store.order.exceptions.ProductStockException;
 import com.example.product_store.order.util.OutboxEventUtil;
-import com.example.product_store.store.product.ProductRepository;
+import com.example.product_store.store.product.repositories.ProductRepository;
 import com.example.product_store.store.product.model.Product;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.util.List;

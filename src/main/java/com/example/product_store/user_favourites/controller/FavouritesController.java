@@ -1,4 +1,4 @@
-package com.example.product_store.user_favourites;
+package com.example.product_store.user_favourites.controller;
 
 import com.example.product_store.user_favourites.dto.UserFavouriteDTO;
 import com.example.product_store.user_favourites.service.AddUserFavouriteService;

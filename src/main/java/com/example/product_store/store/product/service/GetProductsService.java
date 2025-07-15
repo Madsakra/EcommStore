@@ -1,6 +1,6 @@
 package com.example.product_store.store.product.service;
 
-import com.example.product_store.store.product.ProductRepository;
+import com.example.product_store.store.product.repositories.ProductRepository;
 import com.example.product_store.store.product.dto.ProductDTO;
 import com.example.product_store.store.product.model.Product;
 import com.example.product_store.store.product.dto.ProductFilter;
@@ -29,13 +29,13 @@ public class GetProductsService {
     this.getProductSpecificationService = getProductSpecificationService;
   }
 
-  public List<ProductDTO> execute(ProductFilter productFilter, Pageable pageable) {
+  public Page<ProductDTO> execute(ProductFilter productFilter, Pageable pageable) {
 
     // CONVERT THE PRODUCT FILTER (PAYLOAD FROM CLIENT) TO PRODUCT SPECIFICATION FOR JPA TO FILTER
     Specification<Product> spec = getProductSpecificationService.execute(productFilter);
 
     Page<Product> products = productRepository.findAll(spec, pageable);
-    List<ProductDTO> productDTOS = products.stream().map(ProductDTO::new).toList();
+    Page<ProductDTO> productDTOS = products.map(ProductDTO::new);
     logger.info("Returning ProductsDTO at GetProductsService: {}", LocalDateTime.now());
 
     return productDTOS;

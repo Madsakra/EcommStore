@@ -1,9 +1,11 @@
-package com.example.product_store.store.product;
+package com.example.product_store.store.product.repositories;
 
 import com.example.product_store.store.product.model.Product;
 import jakarta.persistence.LockModeType;
 import java.math.BigDecimal;
 import java.util.List;
+
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Lock;
@@ -18,4 +20,7 @@ public interface ProductRepository extends JpaRepository<Product, String>, JpaSp
   // prevent overselling
   @Lock(LockModeType.PESSIMISTIC_WRITE)
   List<Product> findAllById(Iterable<String> ids);
+
+  // FIND ALL PRODUCTS THAT ARE CREATED BY THE CURRENT ADMIN
+  List<Product> findAllByCreatedBy(String createdBy, Pageable pageable);
 }

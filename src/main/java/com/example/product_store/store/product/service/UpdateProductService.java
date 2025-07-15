@@ -1,7 +1,6 @@
 package com.example.product_store.store.product.service;
 
-import com.example.product_store.CacheConstants;
-import com.example.product_store.store.product.ProductRepository;
+import com.example.product_store.store.product.repositories.ProductRepository;
 import com.example.product_store.store.product.ProductValidator;
 import com.example.product_store.store.product.UpdateProductCommand;
 import com.example.product_store.store.product.dto.ProductDTO;
@@ -10,9 +9,7 @@ import com.example.product_store.store.product.exceptions.ProductNotFoundExcepti
 import com.example.product_store.store.product.exceptions.UnauthorizedManagement;
 import com.example.product_store.store.product.model.Product;
 import java.util.Optional;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Caching;
+
 import org.springframework.stereotype.Service;
 
 @Service

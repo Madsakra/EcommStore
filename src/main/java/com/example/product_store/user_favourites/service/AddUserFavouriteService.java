@@ -3,7 +3,7 @@ package com.example.product_store.user_favourites.service;
 import com.example.product_store.authentication.errors.AccountNotFoundException;
 import com.example.product_store.authentication.model.Account;
 import com.example.product_store.authentication.repositories.AccountRepository;
-import com.example.product_store.store.product.ProductRepository;
+import com.example.product_store.store.product.repositories.ProductRepository;
 import com.example.product_store.store.product.exceptions.ProductNotFoundException;
 import com.example.product_store.store.product.model.Product;
 import com.example.product_store.user_favourites.dto.UserFavouriteDTO;

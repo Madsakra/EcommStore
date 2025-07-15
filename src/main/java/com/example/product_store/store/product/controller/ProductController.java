@@ -19,6 +19,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,6 +36,7 @@ public class ProductController {
   private final DeleteProductService deleteProductService;
   private final SearchProductService searchProductService;
   private final UpdateProductService updateProductService;
+  private final GetAdminProductsService getAdminProductsService;
   public final Logger logger = LoggerFactory.getLogger(ProductController.class);
 
   public ProductController(
@@ -42,12 +44,14 @@ public class ProductController {
       CreateProductService createProductService,
       DeleteProductService deleteProductService,
       SearchProductService searchProductService,
-      UpdateProductService updateProductService) {
+      UpdateProductService updateProductService,
+      GetAdminProductsService getAdminProductsService) {
     this.getProductsService = getProductsService;
     this.createProductService = createProductService;
     this.deleteProductService = deleteProductService;
     this.searchProductService = searchProductService;
     this.updateProductService = updateProductService;
+    this.getAdminProductsService = getAdminProductsService;
   }
 
   // GENERAL ENDPOINT
@@ -68,7 +72,7 @@ public class ProductController {
             content = @Content(schema = @Schema())),
       })
   @GetMapping("/products")
-  public ResponseEntity<List<ProductDTO>> getProducts(
+  public ResponseEntity<Page<ProductDTO>> getProducts(
       @RequestParam(name = "minPrice", required = false) BigDecimal minPrice,
       @RequestParam(name = "maxPrice", required = false) BigDecimal maxPrice,
       @RequestParam(name = "categoryIds", required = false) List<String> categoryIds,
@@ -89,7 +93,7 @@ public class ProductController {
     productFilter.setMaxPrice(maxPrice);
     productFilter.setCategoryIds(categoryIds);
 
-    List<ProductDTO> products = getProductsService.execute(productFilter, PageRequest.of(page, size));
+    Page<ProductDTO> products = getProductsService.execute(productFilter, PageRequest.of(page, size));
     return ResponseEntity.status(HttpStatus.OK).body(products);
   }
 
@@ -111,21 +115,37 @@ public class ProductController {
             content = @Content(schema = @Schema())),
       })
   @GetMapping("/products/search")
-  public ResponseEntity<List<ProductDTO>> searchProduct(
-      @RequestParam(name = "title") String title,
+  public ResponseEntity<Page<ProductDTO>> searchProduct(
+      @RequestParam(name = "title",required = false) String title,
       @RequestParam(name = "description", required = false) String description,
       @RequestParam(name = "minPrice", required = false) BigDecimal minPrice,
       @RequestParam(name = "maxPrice", required = false) BigDecimal maxPrice,
       @RequestParam(name = "categoryIds", required = false) List<String> categoryIds,
       @RequestParam(name = "page", defaultValue = "0") int page,
       @RequestParam(name = "size", defaultValue = "10") int size) {
+
+    // CHECK IF PAGE NUMBER IS NULL OR NEGATIVE
+    if (page < 0) {
+      throw new InvalidPageRequestException("Please check your headers: Page is negative or zero");
+    }
+
+    // CHECK IF PAGE SIZE IS NEGATIVE
+    if (size <= 0) {
+      throw new InvalidPageRequestException("Please check your headers: Size of page is negative");
+    }
+
+    if (title==null || title.isEmpty())
+    {
+      throw new InvalidPageRequestException("Please check your headers: Title is empty!");
+    }
+
     ProductFilter productFilter = new ProductFilter();
     productFilter.setMinPrice(minPrice);
     productFilter.setMaxPrice(maxPrice);
     productFilter.setCategoryIds(categoryIds);
     productFilter.setTitle(title);
     productFilter.setDescription(description);
-    List<ProductDTO> products = searchProductService.execute(productFilter, PageRequest.of(page, size));
+    Page<ProductDTO> products = searchProductService.execute(productFilter, PageRequest.of(page, size));
     return ResponseEntity.status(HttpStatus.OK).body(products);
   }
 
@@ -154,6 +174,41 @@ public class ProductController {
     logger.info("RequestDTO from account:{} are :{}", jti, requestDTO);
     ProductDTO productDTO = createProductService.execute(jti, requestDTO);
     return ResponseEntity.status(HttpStatus.CREATED).body(productDTO);
+  }
+
+  // USABLE BY ADMINS TO CHECK THE PRODUCTS THEY CREATE
+  @Operation(
+      summary = "Get All Products (For individual admin.)",
+      description = "Get all the products for the current logged in admin",
+      security = @SecurityRequirement(name = "bearerAuth"))
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Products Found",
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = ProductDTO.class)))),
+        @ApiResponse(
+            responseCode = "400",
+            description = "Invalid page request exception.",
+            content = @Content(schema = @Schema())),
+      })
+  @GetMapping("/admin/products")
+  public ResponseEntity<List<ProductDTO>> getProducts(
+      @RequestParam(name = "page", defaultValue = "0") int page,
+      @RequestParam(name = "size", defaultValue = "10") int size) {
+    // CHECK IF PAGE NUMBER IS NULL OR NEGATIVE
+    if (page < 0) {
+      throw new InvalidPageRequestException("Please check your headers: Page is negative or zero");
+    }
+
+    // CHECK IF PAGE SIZE IS NEGATIVE
+    if (size <= 0) {
+      throw new InvalidPageRequestException("Please check your headers: Size of page is negative");
+    }
+    // GET HOLD OF THE CURRENT user UUID through JWT, via context provider
+    String jti = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    List<ProductDTO> productDTOS = getAdminProductsService.execute(jti, PageRequest.of(page, size));
+    return ResponseEntity.status(HttpStatus.OK).body(productDTOS);
   }
 
   // UPDATE PRODUCT

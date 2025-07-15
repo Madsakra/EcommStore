@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import com.example.product_store.store.category.dto.CategoryDTO;
-import com.example.product_store.store.product.ProductRepository;
+import com.example.product_store.store.product.repositories.ProductRepository;
 import com.example.product_store.store.product.ProductValidator;
 import com.example.product_store.store.product.UpdateProductCommand;
 import com.example.product_store.store.product.dto.ProductDTO;

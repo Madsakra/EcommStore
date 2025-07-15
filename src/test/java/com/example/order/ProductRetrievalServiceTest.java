@@ -2,7 +2,7 @@ package com.example.order;
 
 import com.example.product_store.order.dto.OrderCreationRequest;
 import com.example.product_store.order.service.ProductRetrievalService;
-import com.example.product_store.store.product.ProductRepository;
+import com.example.product_store.store.product.repositories.ProductRepository;
 import com.example.product_store.store.product.exceptions.ProductNotFoundException;
 import com.example.product_store.store.product.model.Product;
 import org.junit.jupiter.api.Test;

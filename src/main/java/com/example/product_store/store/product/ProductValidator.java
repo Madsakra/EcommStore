@@ -5,6 +5,7 @@ import com.example.product_store.store.category.dto.CategoryDTO;
 import com.example.product_store.store.product.dto.ProductRequestDTO;
 import com.example.product_store.store.product.exceptions.ProductNotValidException;
 
+import com.example.product_store.store.product.repositories.ProductRepository;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;

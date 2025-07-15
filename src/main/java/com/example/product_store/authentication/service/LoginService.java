@@ -26,17 +26,31 @@ public class LoginService implements Command<LoginRequestDTO,String> {
 
     @Override
     public String execute(LoginRequestDTO loginRequestDTO){
-        checkRequestDTO(loginRequestDTO);
-        UsernamePasswordAuthenticationToken token =
-                new UsernamePasswordAuthenticationToken(
-                        loginRequestDTO.getIdentifier(), loginRequestDTO.getPassword());
 
-        // this will fail if credentials is invalid
-        Authentication authentication = manager.authenticate(token);
-        String jwtToken = JwtUtil.generateToken((MyUserDetails) authentication.getPrincipal());
-        logger.info("LoginService: JWT successfully generated");
+            long start = System.currentTimeMillis();
 
-        return jwtToken;
+            checkRequestDTO(loginRequestDTO);
+
+            long afterCheck = System.currentTimeMillis();
+
+            UsernamePasswordAuthenticationToken token =
+                    new UsernamePasswordAuthenticationToken(
+                            loginRequestDTO.getIdentifier(), loginRequestDTO.getPassword());
+
+            Authentication authentication = manager.authenticate(token);
+
+            long afterAuth = System.currentTimeMillis();
+
+
+            String jwtToken = JwtUtil.generateToken((MyUserDetails) authentication.getPrincipal());
+
+            long afterToken = System.currentTimeMillis();
+
+            logger.info("Timing: checkRequestDTO={}ms, authenticate={}ms, generateToken={}ms",
+                    (afterCheck - start), (afterAuth - afterCheck), (afterToken - afterAuth));
+
+            return jwtToken;
+
     }
 
     // CHECK IF PAYLOAD CONSISTS OF NULL / EMPTY

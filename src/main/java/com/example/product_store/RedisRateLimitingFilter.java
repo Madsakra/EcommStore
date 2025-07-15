@@ -1,4 +1,5 @@
 package com.example.product_store;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 import jakarta.servlet.Filter;
@@ -10,7 +11,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.time.Duration;
 
-@Component
+//@Profile("!test")
+//@Component
 public class RedisRateLimitingFilter implements Filter{
     private final StringRedisTemplate redisTemplate;
     private static final int LIMIT = 40;

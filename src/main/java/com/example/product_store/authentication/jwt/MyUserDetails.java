@@ -1,49 +1,24 @@
 package com.example.product_store.authentication.jwt;
 
-import java.util.ArrayList;
+
 import java.util.Collection;
-import java.util.List;
-import java.util.Set;
 
-import com.example.product_store.authentication.model.Account;
-import com.example.product_store.authentication.model.Role;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
+import org.springframework.security.core.userdetails.UserDetails;
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class MyUserDetails implements UserDetails {
 
-  private final Account account;
+  private String id;
+  private String username;
+  private String password;
+  private Collection<? extends GrantedAuthority> authorities;
 
-  public MyUserDetails(Account account) {
-    this.account = account;
-  }
-
-  @Override
-  public Collection<? extends GrantedAuthority> getAuthorities() {
-    Set<Role> roles = account.getRoles();
-    List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-
-    for (Role role : roles) {
-      String authority = "ROLE_" + role.getRoleName();
-      authorities.add(new SimpleGrantedAuthority(authority));
-    }
-
-    return authorities;
-  }
-
-  @Override
-  public String getPassword() {
-    return account.getPassword();
-  }
-
-
-  public String getId(){return account.getId();}
-
-  @Override
-  public String getUsername() {
-    return account.getUserName();
-  }
 
   @Override
   public boolean isAccountNonExpired() {

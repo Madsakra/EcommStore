@@ -5,12 +5,11 @@ import static org.mockito.Mockito.*;
 
 import com.example.product_store.store.category.CategoryRepository;
 import com.example.product_store.store.category.dto.CategoryDTO;
-import com.example.product_store.store.category.model.Category;
-import com.example.product_store.store.product.ProductRepository;
+import com.example.product_store.store.product.repositories.ProductRepository;
 import com.example.product_store.store.product.ProductValidator;
 import com.example.product_store.store.product.dto.ProductRequestDTO;
 import com.example.product_store.store.product.exceptions.ProductNotValidException;
-import com.example.product_store.store.product.model.Product;
+
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;

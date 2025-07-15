@@ -7,7 +7,7 @@ import com.example.product_store.order.exceptions.EmptyKafkaMessageException;
 import com.example.product_store.order.model.Outbox;
 import com.example.product_store.order.repository.OutboxRepository;
 import com.example.product_store.order.service.consumer.InventoryReservationService;
-import com.example.product_store.store.product.ProductRepository;
+import com.example.product_store.store.product.repositories.ProductRepository;
 import com.example.product_store.store.product.model.Product;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
