@@ -3,6 +3,7 @@ package com.example.product_store.store.category.service;
 import com.example.product_store.CacheConstants;
 import com.example.product_store.Command;
 import com.example.product_store.store.category.CategoryRepository;
+import com.example.product_store.store.category.exceptions.CategoryNotFoundException;
 import com.example.product_store.store.category.model.Category;
 import com.example.product_store.store.product.exceptions.ProductNotFoundException;
 import java.util.Optional;
@@ -32,6 +33,6 @@ public class DeleteCategoryService implements Command<String, Void> {
       return null;
     }
 
-    throw new ProductNotFoundException("Product does not exist based on id!");
+    throw new CategoryNotFoundException();
   }
 }

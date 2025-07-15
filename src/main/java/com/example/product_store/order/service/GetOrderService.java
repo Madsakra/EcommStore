@@ -32,7 +32,7 @@ public class GetOrderService {
            if (!customerId.equals(jti))
            {
                logger.warn("Unauthorized attempt to access other user's orders blocked out.");
-               throw new UnauthorizedManagement("Unauthorised Management of order.");
+               throw new UnauthorizedManagement();
            }
 
            Order order = orderOptional.get();

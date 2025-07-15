@@ -29,27 +29,32 @@ public class UpdateProductService {
 
   public ProductDTO execute(String jti, UpdateProductCommand command) {
 
-    // 1. Find the item in db first
+    // Find the item in db first
     Optional<Product> productOptional = productRepository.findById(command.getId());
     if (productOptional.isPresent()) {
 
-      Product dbProduct = productOptional.get(); // This is the actual DB object
+      // 1. This is the actual DB object
+      Product dbProduct = productOptional.get();
       // 2. if product does not belong to admin, throw error
       if (!dbProduct.getCreatedBy().matches(jti)) {
-        throw new UnauthorizedManagement("This product does not belongs to you!");
+        throw new UnauthorizedManagement();
       }
 
       ProductRequestDTO requestDTO = command.getRequestDTO();
       requestDTO.setCreatedBy(jti);
+
+      // 3. VALIDATE THE PRODUCT, ANY ERRORS WILL RESULT IN NULL
       productValidator.execute(requestDTO, true);
+
+      // 4. CREATE A NEW PRODUCT INSTANCE (WITHOUT THE ID)
       Product product = new Product(requestDTO);
-      // 1. when creating product, id is null
-      // 2. set the id of the product in db to new product
+
+      // 5. SET THE ID (DB OBJECT) TO THE ABOVE INSTANCE
       product.setId(command.getId());
       productRepository.save(product);
       return new ProductDTO(product);
     }
 
-    throw new ProductNotFoundException("Product does not exist based on id!");
+    throw new ProductNotFoundException();
   }
 }

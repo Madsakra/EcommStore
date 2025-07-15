@@ -37,7 +37,7 @@ public class AddUserFavouriteService {
     // 3. Check the product repository if the product exist
     logger.info("Account {} exist and ready to add favourites in AddUserFavouriteService", jti);
     Product product =
-        productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException("Product not found with the given id"));
+        productRepository.findById(id).orElseThrow(ProductNotFoundException::new);
     logger.info("Product {} exist and ready to be added to favourites in AddUserFavouriteService", id);
     // 4. Save the product to the account repository
     account.getFavouriteProducts().add(product);

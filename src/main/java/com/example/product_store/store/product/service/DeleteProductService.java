@@ -1,6 +1,5 @@
 package com.example.product_store.store.product.service;
 
-
 import com.example.product_store.store.product.ProductRepository;
 import com.example.product_store.store.product.exceptions.ProductNotFoundException;
 import com.example.product_store.store.product.exceptions.UnauthorizedManagement;
@@ -18,16 +17,19 @@ public class DeleteProductService {
   }
 
   public Void execute(String jti, String id) {
+
+
     Optional<Product> productOptional = productRepository.findById(id);
     if (productOptional.isPresent()) {
-      Product dbProduct = productOptional.get(); // This is the actual DB object
-      // 3. if product does not belong to user, throw error
+      // This is the actual DB object
+      Product dbProduct = productOptional.get();
+      // if product does not belong to user, throw error
       if (!dbProduct.getCreatedBy().matches(jti)) {
-        throw new UnauthorizedManagement("This product does not belongs to you!");
+        throw new UnauthorizedManagement();
       }
       productRepository.deleteById(id);
       return null;
     }
-    throw new ProductNotFoundException("Product does not exist based on id!");
+    throw new ProductNotFoundException();
   }
 }

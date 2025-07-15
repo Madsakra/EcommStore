@@ -25,6 +25,7 @@ public class CreateProductService {
   public ProductDTO execute(String jti, ProductRequestDTO requestDTO) {
 
     // set createdBy to current User
+    // no need for any checks since it is already done by spring security
     requestDTO.setCreatedBy(jti);
 
     logger.info(
@@ -32,9 +33,10 @@ public class CreateProductService {
         requestDTO);
 
     // VALIDATE THE PRODUCT
+    // ANY ERRORS IN PRODUCT VALIDATOR WILL THROW AND STOP THE OPERATION
     productValidator.execute(requestDTO, false);
-    // IF NO ERRORS, SAVE
 
+    // SAVE THE PRODUCT
     Product product = new Product(requestDTO);
     Product savedProduct = productRepository.save(product);
     logger.info(

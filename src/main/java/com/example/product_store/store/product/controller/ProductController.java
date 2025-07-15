@@ -2,9 +2,9 @@ package com.example.product_store.store.product.controller;
 
 import com.example.product_store.store.product.UpdateProductCommand;
 import com.example.product_store.store.product.dto.ProductDTO;
+import com.example.product_store.store.product.dto.ProductFilter;
 import com.example.product_store.store.product.dto.ProductRequestDTO;
 import com.example.product_store.store.product.exceptions.InvalidPageRequestException;
-import com.example.product_store.store.product.model.ProductFilter;
 import com.example.product_store.store.product.service.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -25,9 +25,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(
-    name = "Product Management",
-    description = "APIs for managing products in the store.")
+@Tag(name = "Product Management", description = "APIs for managing products in the store.")
 @SecurityRequirement(name = "bearerAuth")
 @RestController
 public class ProductController {
@@ -56,20 +54,14 @@ public class ProductController {
   // GET ALL PRODUCTS
   @Operation(
       summary = "Get All Products",
-      description =
-          "Get all the products from the store. The default limit of items per page is"
-              + " 10",
+      description = "Get all the products from the store. The default limit of items per page is" + " 10",
       security = @SecurityRequirement(name = "bearerAuth"))
   @ApiResponses(
       value = {
         @ApiResponse(
             responseCode = "200",
             description = "Products Found",
-            content =
-                @Content(
-                    array =
-                        @ArraySchema(
-                            schema = @Schema(implementation = ProductDTO.class)))),
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = ProductDTO.class)))),
         @ApiResponse(
             responseCode = "400",
             description = "Invalid page request exception.",
@@ -84,12 +76,12 @@ public class ProductController {
       @RequestParam(name = "size", defaultValue = "10") int size) {
     // CHECK IF PAGE NUMBER IS NULL OR NEGATIVE
     if (page < 0) {
-      throw new InvalidPageRequestException("Page number cannot be negative.");
+      throw new InvalidPageRequestException("Please check your headers: Page is negative or zero");
     }
 
     // CHECK IF PAGE SIZE IS NEGATIVE
-    if (size < 0) {
-      throw new InvalidPageRequestException("Page size cannot be negative.");
+    if (size <= 0) {
+      throw new InvalidPageRequestException("Please check your headers: Size of page is negative");
     }
 
     ProductFilter productFilter = new ProductFilter();
@@ -97,8 +89,7 @@ public class ProductController {
     productFilter.setMaxPrice(maxPrice);
     productFilter.setCategoryIds(categoryIds);
 
-    List<ProductDTO> products =
-        getProductsService.execute(productFilter, PageRequest.of(page, size));
+    List<ProductDTO> products = getProductsService.execute(productFilter, PageRequest.of(page, size));
     return ResponseEntity.status(HttpStatus.OK).body(products);
   }
 
@@ -106,20 +97,14 @@ public class ProductController {
   // USABLE BY ALL ACCOUNTS
   @Operation(
       summary = "Search for products",
-      description =
-          "Search for products in the store. A title is required in the request"
-              + " parameter.",
+      description = "Search for products in the store. A title is required in the request" + " parameter.",
       security = @SecurityRequirement(name = "bearerAuth"))
   @ApiResponses(
       value = {
         @ApiResponse(
             responseCode = "200",
             description = "Products Found",
-            content =
-                @Content(
-                    array =
-                        @ArraySchema(
-                            schema = @Schema(implementation = ProductDTO.class)))),
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = ProductDTO.class)))),
         @ApiResponse(
             responseCode = "400",
             description = "Invalid page request exception.",
@@ -140,8 +125,7 @@ public class ProductController {
     productFilter.setCategoryIds(categoryIds);
     productFilter.setTitle(title);
     productFilter.setDescription(description);
-    List<ProductDTO> products =
-        searchProductService.execute(productFilter, PageRequest.of(page, size));
+    List<ProductDTO> products = searchProductService.execute(productFilter, PageRequest.of(page, size));
     return ResponseEntity.status(HttpStatus.OK).body(products);
   }
 
@@ -162,14 +146,13 @@ public class ProductController {
             content = @Content(schema = @Schema())),
       })
   @PostMapping("/admin/products")
-  public ResponseEntity<ProductDTO> createProduct(
-      @RequestBody ProductRequestDTO requestDTO) {
+  public ResponseEntity<ProductDTO> createProduct(@RequestBody ProductRequestDTO requestDTO) {
 
     // get hold of the current user UUID THROUGH THE JWT, via context provider
     String jti = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-    logger.info("RequestDTO from account:{} are :{}", jti ,requestDTO);
-    ProductDTO productDTO = createProductService.execute(jti,requestDTO);
+    logger.info("RequestDTO from account:{} are :{}", jti, requestDTO);
+    ProductDTO productDTO = createProductService.execute(jti, requestDTO);
     return ResponseEntity.status(HttpStatus.CREATED).body(productDTO);
   }
 
@@ -177,9 +160,7 @@ public class ProductController {
   // USABLE BY ADMIN ACCOUNTS ONLY
   @Operation(
       summary = "Update a product",
-      description =
-          "Update a product for users to reflect the latest changes. Only usable by"
-              + " admins")
+      description = "Update a product for users to reflect the latest changes. Only usable by" + " admins")
   @ApiResponses(
       value = {
         @ApiResponse(
@@ -200,8 +181,7 @@ public class ProductController {
       @PathVariable("id") String id, @RequestBody ProductRequestDTO requestDTO) {
     // get hold of the current user UUID THROUGH THE JWT, via context provider
     String jti = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    ProductDTO productDTO =
-        updateProductService.execute(jti,new UpdateProductCommand(id, requestDTO));
+    ProductDTO productDTO = updateProductService.execute(jti, new UpdateProductCommand(id, requestDTO));
     return ResponseEntity.status(HttpStatus.OK).body(productDTO);
   }
 
@@ -243,7 +223,7 @@ public class ProductController {
   public ResponseEntity<Void> deleteProduct(@PathVariable("id") String id) {
     // get hold of the current user UUID THROUGH THE JWT, via context provider
     String jti = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    deleteProductService.execute(jti,id);
+    deleteProductService.execute(jti, id);
     return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
   }
 }

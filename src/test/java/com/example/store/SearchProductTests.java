@@ -11,7 +11,7 @@ import com.example.product_store.store.product.ProductRepository;
 import com.example.product_store.store.product.dto.ProductDTO;
 import com.example.product_store.store.product.exceptions.InvalidPageRequestException;
 import com.example.product_store.store.product.model.Product;
-import com.example.product_store.store.product.model.ProductFilter;
+import com.example.product_store.store.product.dto.ProductFilter;
 import com.example.product_store.store.product.service.GetProductSpecificationService;
 import com.example.product_store.store.product.service.SearchProductService;
 import java.math.BigDecimal;
@@ -205,7 +205,7 @@ public class SearchProductTests {
 
         // WHEN
         when(getProductSpecificationService.execute(filter))
-                .thenThrow(new InvalidPageRequestException("Min price cannot be negative."));
+                .thenThrow(new InvalidPageRequestException("Please check your headers: Minimum price is negative"));
 
         InvalidPageRequestException exception =
                 assertThrows(
@@ -229,7 +229,7 @@ public class SearchProductTests {
         Pageable pageable = PageRequest.of(0, 10);
 
         when(getProductSpecificationService.execute(filter))
-                .thenThrow(new InvalidPageRequestException("Max price cannot be negative."));
+                .thenThrow(new InvalidPageRequestException("Please check your headers: Maximum price is negative"));
 
         // WHEN AND ASSERT THROWS
         InvalidPageRequestException exception =
@@ -257,8 +257,7 @@ public class SearchProductTests {
         // WHEN
         when(getProductSpecificationService.execute(filter))
                 .thenThrow(
-                        new InvalidPageRequestException(
-                                "Min price cannot be greater than max price."));
+                        new InvalidPageRequestException("Please check your headers: Minimum price > Maximum price"));
 
         // ASSERT
         InvalidPageRequestException exception =

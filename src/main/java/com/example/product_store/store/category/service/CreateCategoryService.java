@@ -23,7 +23,7 @@ public class CreateCategoryService implements Command<Category, CategoryDTO> {
   @Override
   @CacheEvict(cacheNames = CacheConstants.GET_ALL_CATEGORIES, key = CacheConstants.ALL_CATEGORIES_KEY)
   public CategoryDTO execute(Category category) {
-
+    // CREATE CATEGORY BASED ON INPUT
     categoryValidator.execute(category, false);
     Category savedCategory = categoryRepository.save(category);
     return new CategoryDTO(savedCategory);

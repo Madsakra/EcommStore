@@ -12,6 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 public class ProductRequestDTO {
 
+    // TO BE SENT BY FRONTEND (CLIENT SIDE)
     private String title;
     private String description;
     private Integer stock;

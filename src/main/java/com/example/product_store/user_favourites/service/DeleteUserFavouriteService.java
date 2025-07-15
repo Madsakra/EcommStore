@@ -45,8 +45,7 @@ public class DeleteUserFavouriteService {
         productRepository
             .findById(id)
             .orElseThrow(
-                () ->
-                    new ProductNotFoundException("Product not found with the given id"));
+                    ProductNotFoundException::new);
 
     logger.info(
         "Product {} exist and ready to be added to favourites in"

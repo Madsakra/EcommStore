@@ -7,6 +7,7 @@ import lombok.Getter;
 @Getter
 public class UpdateProductCommand {
 
+  // USED FOR UPDATING PRODUCTS
   private String id;
   private ProductRequestDTO requestDTO;
 

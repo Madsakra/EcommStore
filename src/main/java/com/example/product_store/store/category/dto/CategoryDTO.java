@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CategoryDTO implements Serializable {
-
+  // DTO RETURNED BY DATABASE
   private String id;
   private String categoryName;
 

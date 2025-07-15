@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CategoryRequestDTO {
-    // FOR DOCUMENTATION PURPOSES
-    // CAN BE USED TO INCLUDE MORE PARAMS IN FUTURE
+    // PAYLOAD BY USER
+    // CAN INCLUDE MORE IN FUTURE
     private String name;
 }

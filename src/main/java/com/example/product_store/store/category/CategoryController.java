@@ -121,6 +121,8 @@ public class CategoryController {
       @RequestBody CategoryRequestDTO categoryRequestDTO) {
     // convert from request to Category Entity
     Category category = new Category(categoryRequestDTO);
+
+    // CALL ON SERVICE METHOD TO CREATE
     CategoryDTO categoryDTO = createCategoryService.execute(category);
     return ResponseEntity.status(HttpStatus.CREATED).body(categoryDTO);
   }

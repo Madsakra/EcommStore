@@ -6,14 +6,15 @@ import jakarta.persistence.criteria.Join;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.math.BigDecimal;
+import java.util.List;
+
 // CLASS THAT BUILDS FILTER FOR JPA TO PROCESS
 public class ProductSpecification {
 
-    // CATEGORIES
-    public static Specification<Product> hasCategoryId(String categoryId){
+    public static Specification<Product> hasCategoryIds(List<String> categoryIds) {
         return (root, query, criteriaBuilder) -> {
-            Join<Product, Category> products = root.join("categories");
-            return criteriaBuilder.equal(products.get("id"), categoryId);
+            Join<Product, Category> join = root.join("categories");
+            return join.get("id").in(categoryIds);
         };
     }
 

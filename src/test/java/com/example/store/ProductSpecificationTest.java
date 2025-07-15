@@ -2,7 +2,7 @@ package com.example.store;
 
 import com.example.product_store.store.product.exceptions.InvalidPageRequestException;
 import com.example.product_store.store.product.model.Product;
-import com.example.product_store.store.product.model.ProductFilter;
+import com.example.product_store.store.product.dto.ProductFilter;
 import com.example.product_store.store.product.service.GetProductSpecificationService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,7 +14,6 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class ProductSpecificationTest {

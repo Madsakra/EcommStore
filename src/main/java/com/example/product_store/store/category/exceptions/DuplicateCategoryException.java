@@ -4,9 +4,9 @@ import com.example.product_store.store.category.CategoryErrorMessages;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-@ResponseStatus(HttpStatus.BAD_REQUEST)
-public class CategoryNotValidException extends RuntimeException {
-  public CategoryNotValidException() {
-    super(CategoryErrorMessages.CATEGORY_NOT_VALID.getMessage());
+@ResponseStatus(HttpStatus.CONFLICT)
+public class DuplicateCategoryException extends RuntimeException {
+  public DuplicateCategoryException() {
+    super(CategoryErrorMessages.DUPLICATE_CATEGORY_EXCEPTION.getMessage());
   }
 }
