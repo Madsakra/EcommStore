@@ -1,43 +1,16 @@
 services:
-  zookeeper:
-    image: quay.io/debezium/zookeeper:2.0
+  server:
+    build:
+      context: .
     ports:
-      - 2181:2181
-      - 2888:2888
-      - 3888:3888
-  kafka:
-    image: quay.io/debezium/kafka:2.0
-    ports:
-      - 9092:9092
-      - 29092:29092
-    links:
-      - zookeeper
-    environment:
-      - ZOOKEEPER_CONNECT=zookeeper:2181
-      - KAFKA_BROKER_ID=1
-      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      - KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9092,PLAINTEXT_HOST://0.0.0.0:29092
-      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
-      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
-  mysql:
-    image: quay.io/debezium/example-mysql:2.0
-    ports:
-      - 3307:3306
-    environment:
-      - MYSQL_ROOT_PASSWORD=debezium
-      - MYSQL_USER=mysqluser
-      - MYSQL_PASSWORD=mysqluser
-  connect:
-    image: quay.io/debezium/connect:2.0
-    ports:
-      - 8083:8083
-    links:
-      - kafka
-      - mysql
-    environment:
-      # Debezium image needs the topics below (and more for advanced settings)
-      - BOOTSTRAP_SERVERS=kafka:9092
-      - GROUP_ID=1 # group id of kafka connect cluster
-      - CONFIG_STORAGE_TOPIC=my_connect_configs # store connector configurations.
-      - OFFSET_STORAGE_TOPIC=my_connect_offsets # store connector offsets.
-      - STATUS_STORAGE_TOPIC=my_connect_statuses # store connector status.
+      - 8080:8080
+    networks:
+      - shared-net
+    volumes:
+      - ./.env:/.env  # map local .env into /app/.env inside container
+
+networks:
+  shared-net:
+    external: true
+  isolated_app_network:
+    driver: bridge
