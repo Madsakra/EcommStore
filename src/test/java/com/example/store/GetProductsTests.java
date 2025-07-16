@@ -134,7 +134,7 @@ public class GetProductsTests {
             () -> getProductsService.execute(filter, pageable));
 
     // ASSERT EQUALS
-    assertEquals("Min price cannot be negative.", exception.getMessage());
+    assertEquals("Min price cannot be negative", exception.getMessage());
     verify(productRepository, never())
         .findAll((Specification<Product>) any(), (Pageable) any());
   }
@@ -158,7 +158,7 @@ public class GetProductsTests {
             () -> getProductsService.execute(filter, pageable));
 
     // ASSERT EQUALS
-    assertEquals("Max price cannot be negative.", exception.getMessage());
+    assertEquals("Max price cannot be negative", exception.getMessage());
     verify(productRepository, never())
         .findAll((Specification<Product>) any(), (Pageable) any());
   }
@@ -184,7 +184,7 @@ public class GetProductsTests {
             InvalidPageRequestException.class,
             () -> getProductsService.execute(filter, pageable));
 
-    assertEquals("Min price cannot be greater than max price.", exception.getMessage());
+    assertEquals("Min price cannot be greater than max price", exception.getMessage());
     verify(productRepository, never())
         .findAll((Specification<Product>) any(), (Pageable) any());
   }

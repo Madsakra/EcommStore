@@ -5,6 +5,7 @@ import jakarta.persistence.LockModeType;
 import java.math.BigDecimal;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -22,5 +23,5 @@ public interface ProductRepository extends JpaRepository<Product, String>, JpaSp
   List<Product> findAllById(Iterable<String> ids);
 
   // FIND ALL PRODUCTS THAT ARE CREATED BY THE CURRENT ADMIN
-  List<Product> findAllByCreatedBy(String createdBy, Pageable pageable);
+  Page<Product> findAllByCreatedBy(String createdBy, Pageable pageable);
 }

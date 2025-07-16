@@ -31,7 +31,7 @@ public class ProductSpecificationTest {
                 ()->getProductSpecificationService.execute(productFilter)
         );
 
-        assertEquals("Minimum price of product cannot be negative.",ex.getMessage());
+        assertEquals("Please check your headers: Minimum price is negative",ex.getMessage());
     }
 
     @Test
@@ -45,7 +45,7 @@ public class ProductSpecificationTest {
                 ()->getProductSpecificationService.execute(productFilter)
         );
 
-        assertEquals("Maximum price of product cannot be negative.",ex.getMessage());
+        assertEquals("Please check your headers: Maximum price is negative",ex.getMessage());
     }
 
     @Test
@@ -59,7 +59,7 @@ public class ProductSpecificationTest {
                 ()->getProductSpecificationService.execute(productFilter)
         );
 
-        assertEquals("Minimum price cannot be greater than maximum price of product.",ex.getMessage());
+        assertEquals("Please check your headers: min price > max price of product",ex.getMessage());
     }
 
     @Test

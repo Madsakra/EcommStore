@@ -17,11 +17,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(
-    name = "Category Management",
-    description = "APIs for managing category of products. Usable by super admins only")
+@Tag(name = "Category Management", description = "APIs for managing category of products. Usable by super admins only")
 @RestController
-@RequestMapping("/superAdmin")
 public class CategoryController {
 
   private final GetCategoriesService getCategoriesService;
@@ -53,16 +50,13 @@ public class CategoryController {
         @ApiResponse(
             responseCode = "200",
             description = "Categories Found",
-            content =
-                @Content(
-                    array =
-                        @ArraySchema(
-                            schema = @Schema(implementation = CategoryDTO.class)))),
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = CategoryDTO.class)))),
         @ApiResponse(
             responseCode = "401",
             description = "Unauthorized Management.",
             content = @Content(schema = @Schema())),
       })
+  // ENDPOINT OPENED TO ALL
   @GetMapping("/categories")
   public ResponseEntity<List<CategoryDTO>> getCategories() {
     List<CategoryDTO> categoryDTOS = getCategoriesService.execute(null);
@@ -78,20 +72,16 @@ public class CategoryController {
         @ApiResponse(
             responseCode = "200",
             description = "Categories Found",
-            content =
-                @Content(
-                    array =
-                        @ArraySchema(
-                            schema = @Schema(implementation = CategoryDTO.class)))),
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = CategoryDTO.class)))),
         @ApiResponse(
             responseCode = "401",
             description = "Unauthorized Management.",
             content = @Content(schema = @Schema())),
       })
+  // ENDPOINT OPENED TO ALL
   // SEARCH BY CATEGORY NAME
   @GetMapping("/categories/{categoryName}")
-  public ResponseEntity<List<CategoryDTO>> searchCategory(
-      @PathVariable("categoryName") String categoryName) {
+  public ResponseEntity<List<CategoryDTO>> searchCategory(@PathVariable("categoryName") String categoryName) {
     List<CategoryDTO> categoryDTOS = searchCategoryByName.execute(categoryName);
     return ResponseEntity.status(HttpStatus.OK).body(categoryDTOS);
   }
@@ -116,9 +106,8 @@ public class CategoryController {
             description = "Category already exist.",
             content = @Content(schema = @Schema())),
       })
-  @PostMapping("/categories")
-  public ResponseEntity<CategoryDTO> createCategory(
-      @RequestBody CategoryRequestDTO categoryRequestDTO) {
+  @PostMapping("/superAdmin/categories")
+  public ResponseEntity<CategoryDTO> createCategory(@RequestBody CategoryRequestDTO categoryRequestDTO) {
     // convert from request to Category Entity
     Category category = new Category(categoryRequestDTO);
 
@@ -134,10 +123,7 @@ public class CategoryController {
       security = @SecurityRequirement(name = "bearerAuth"))
   @ApiResponses(
       value = {
-        @ApiResponse(
-            responseCode = "200",
-            description = "Categories Deleted",
-            content = @Content(schema = @Schema())),
+        @ApiResponse(responseCode = "200", description = "Categories Deleted", content = @Content(schema = @Schema())),
         @ApiResponse(
             responseCode = "401",
             description = "Unauthorized Management.",
@@ -147,7 +133,7 @@ public class CategoryController {
             description = "Category don't exist.",
             content = @Content(schema = @Schema())),
       })
-  @DeleteMapping("/categories/{id}")
+  @DeleteMapping("/superAdmin/categories/{id}")
   public ResponseEntity<Void> deleteCategory(@PathVariable("id") String id) {
     deleteCategoryService.execute(id);
     return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
@@ -173,12 +159,11 @@ public class CategoryController {
             description = "Category don't exist.",
             content = @Content(schema = @Schema())),
       })
-  @PutMapping("/categories/{id}")
+  @PutMapping("/superAdmin/categories/{id}")
   public ResponseEntity<CategoryDTO> updateCategoryDTO(
       @PathVariable("id") String id, @RequestBody CategoryRequestDTO categoryRequestDTO) {
     Category category = new Category(categoryRequestDTO);
-    CategoryDTO categoryDTO =
-        updateCategoryService.execute(new UpdateCategoryCommand(id, category));
+    CategoryDTO categoryDTO = updateCategoryService.execute(new UpdateCategoryCommand(id, category));
     return ResponseEntity.status(HttpStatus.OK).body(categoryDTO);
   }
 }

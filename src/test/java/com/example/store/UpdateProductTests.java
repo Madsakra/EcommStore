@@ -84,7 +84,7 @@ public class UpdateProductTests {
         assertThrows(
             ProductNotFoundException.class,
             () -> updateProductService.execute(expectedJti, command));
-    assertEquals("Product does not exist based on id!", ex.getMessage());
+    assertEquals("Product not found based on given id.", ex.getMessage());
   }
 
   @Test
@@ -116,6 +116,6 @@ public class UpdateProductTests {
             UnauthorizedManagement.class,
             () -> updateProductService.execute(expectedJti, command));
 
-    assertEquals("This product does not belongs to you!", ex.getMessage());
+    assertEquals("Not authorized to access the following endpoint resources.", ex.getMessage());
   }
 }

@@ -1,11 +1,11 @@
 package com.example.product_store.store.product.service;
 
-import com.example.product_store.QueryBinder;
+
 import com.example.product_store.store.product.dto.ProductDTO;
 import com.example.product_store.store.product.repositories.ProductRepository;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import java.util.List;
 
 @Service
 public class GetAdminProductsService {
@@ -16,8 +16,8 @@ public class GetAdminProductsService {
     }
 
     // ALLOW THE ADMIN TO VIEW OWN PRODUCTS
-    public List<ProductDTO> execute(String jti, Pageable pageable){
-        List<ProductDTO> productDTOS = productRepository.findAllByCreatedBy(jti,pageable).stream().map(ProductDTO::new).toList();
+    public Page<ProductDTO> execute(String jti, Pageable pageable){
+        Page<ProductDTO> productDTOS = productRepository.findAllByCreatedBy(jti,pageable).map(ProductDTO::new);
         return productDTOS;
     }
 

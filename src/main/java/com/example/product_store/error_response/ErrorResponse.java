@@ -13,11 +13,11 @@ import lombok.NoArgsConstructor;
 @Schema(description = "Error response format")
 public class ErrorResponse {
 
-    private String error;
+  private String error;
 
-    private String message;
+  private String message;
 
-    private int status;
+  private int status;
 
-    private String timestamp;
+  private String timestamp;
 }

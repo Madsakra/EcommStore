@@ -12,7 +12,7 @@ import java.util.Set;
 public class CachedUserDetailsDTO implements Serializable {
     private String id;
     private String username;
-    private String password;
+    private String hashedPassword;
     private Set<String> roles;
 
 }

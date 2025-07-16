@@ -48,7 +48,7 @@ public class DeleteProductTests {
         assertThrows(
             ProductNotFoundException.class,
             () -> deleteProductService.execute(expectedJti,productId));
-    assertEquals("Product does not exist based on id!", ex.getMessage());
+    assertEquals("Product not found based on given id.", ex.getMessage());
   }
 
     @Test
@@ -71,7 +71,7 @@ public class DeleteProductTests {
                 UnauthorizedManagement.class,
                 ()->deleteProductService.execute(expectedJti,productId)
         );
-        assertEquals("This product does not belongs to you!", ex.getMessage());
+        assertEquals("Not authorized to access the following endpoint resources.", ex.getMessage());
     }
 
 

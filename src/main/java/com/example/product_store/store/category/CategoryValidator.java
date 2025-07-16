@@ -21,7 +21,7 @@ public class CategoryValidator {
       throw new CategoryNotValidException();
     }
 
-    if (!isUpdate && categoryRepository.existsByCategoryName(category.getCategoryName())) {
+    if (categoryRepository.existsByCategoryName(category.getCategoryName())) {
       throw new DuplicateCategoryException();
     }
   }

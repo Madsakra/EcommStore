@@ -3,11 +3,11 @@ package com.example.store;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import com.example.product_store.store.product.repositories.ProductRepository;
 import com.example.product_store.store.product.ProductValidator;
 import com.example.product_store.store.product.dto.ProductDTO;
 import com.example.product_store.store.product.dto.ProductRequestDTO;
 import com.example.product_store.store.product.model.Product;
+import com.example.product_store.store.product.repositories.ProductRepository;
 import com.example.product_store.store.product.service.CreateProductService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

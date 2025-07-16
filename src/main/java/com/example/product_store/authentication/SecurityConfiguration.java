@@ -36,7 +36,7 @@ public class SecurityConfiguration {
 
   @Bean
   public PasswordEncoder passwordEncoder() {
-    return new BCryptPasswordEncoder(8);
+    return new BCryptPasswordEncoder();
   }
 
   @Bean
@@ -49,9 +49,9 @@ public class SecurityConfiguration {
               authorize.requestMatchers("/auth/**").permitAll();
               authorize
                   .requestMatchers("/superAdmin/**")
-                  .hasAuthority("ROLE_SUPER_ADMIN");
-              authorize.requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN");
-              authorize.requestMatchers("/user/**").hasAuthority("ROLE_USER");
+                  .hasAuthority("SUPER_ADMIN");
+              authorize.requestMatchers("/admin/**").hasAuthority("ADMIN");
+              authorize.requestMatchers("/user/**").hasAuthority("USER");
               authorize
                   .requestMatchers(
                       "/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**")

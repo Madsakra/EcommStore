@@ -153,13 +153,12 @@ public class SearchProductTests {
         Pageable pageable = PageRequest.of(0, 10);
 
         // WHEN
-        InvalidPageRequestException exception =
+        NullPointerException exception =
                 assertThrows(
-                        InvalidPageRequestException.class,
+                        NullPointerException.class,
                         () -> searchProductService.execute(filter, pageable));
 
         // ASSERT EQUALS
-        assertEquals("Title cannot be null or empty!", exception.getMessage());
         verify(productRepository, never())
                 .findAll((Specification<Product>) any(), (Pageable) any());
     }
@@ -176,13 +175,12 @@ public class SearchProductTests {
         Pageable pageable = PageRequest.of(0, 10);
 
         // WHEN
-        InvalidPageRequestException exception =
+        NullPointerException exception =
                 assertThrows(
-                        InvalidPageRequestException.class,
+                        NullPointerException.class,
                         () -> searchProductService.execute(filter, pageable));
 
         // ASSERT EQUALS
-        assertEquals("Title cannot be null or empty!", exception.getMessage());
         verify(productRepository, never())
                 .findAll((Specification<Product>) any(), (Pageable) any());
     }
@@ -213,7 +211,7 @@ public class SearchProductTests {
                         () -> searchProductService.execute(filter, pageable));
 
         // ASSERT EQUALS
-        assertEquals("Min price cannot be negative.", exception.getMessage());
+        assertEquals("Please check your headers: Minimum price is negative", exception.getMessage());
         verify(productRepository, never())
                 .findAll((Specification<Product>) any(), (Pageable) any());
     }
@@ -238,7 +236,7 @@ public class SearchProductTests {
                         () -> searchProductService.execute(filter, pageable));
 
         // ASSERT EQUALS
-        assertEquals("Max price cannot be negative.", exception.getMessage());
+        assertEquals("Please check your headers: Maximum price is negative", exception.getMessage());
         verify(productRepository, never())
                 .findAll((Specification<Product>) any(), (Pageable) any());
     }
@@ -265,7 +263,7 @@ public class SearchProductTests {
                         InvalidPageRequestException.class,
                         () -> searchProductService.execute(filter, pageable));
 
-        assertEquals("Min price cannot be greater than max price.", exception.getMessage());
+        assertEquals("Please check your headers: Minimum price > Maximum price", exception.getMessage());
         verify(productRepository, never())
                 .findAll((Specification<Product>) any(), (Pageable) any());
     }

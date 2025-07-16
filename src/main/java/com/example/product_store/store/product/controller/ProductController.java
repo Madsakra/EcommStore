@@ -193,7 +193,7 @@ public class ProductController {
             content = @Content(schema = @Schema())),
       })
   @GetMapping("/admin/products")
-  public ResponseEntity<List<ProductDTO>> getProducts(
+  public ResponseEntity<Page<ProductDTO>> getProducts(
       @RequestParam(name = "page", defaultValue = "0") int page,
       @RequestParam(name = "size", defaultValue = "10") int size) {
     // CHECK IF PAGE NUMBER IS NULL OR NEGATIVE
@@ -207,7 +207,7 @@ public class ProductController {
     }
     // GET HOLD OF THE CURRENT user UUID through JWT, via context provider
     String jti = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    List<ProductDTO> productDTOS = getAdminProductsService.execute(jti, PageRequest.of(page, size));
+    Page<ProductDTO> productDTOS = getAdminProductsService.execute(jti, PageRequest.of(page, size));
     return ResponseEntity.status(HttpStatus.OK).body(productDTOS);
   }
 

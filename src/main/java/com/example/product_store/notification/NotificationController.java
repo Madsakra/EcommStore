@@ -6,13 +6,12 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(
-    name = "Admin Notification Management",
-    description = "APIs for managing admin's notification for orders")
+@Tag(name = "Admin Notification Management", description = "APIs for managing admin's notification for orders")
 @RestController
 @RequestMapping("/admin")
 public class NotificationController {
@@ -25,13 +24,13 @@ public class NotificationController {
 
   @Operation(
       summary = "Get Notification for orders sold",
-      description =
-          "Get notification for orders sold to customers. Only usable by admins",
+      description = "Get notification for orders sold to customers. Only usable by admins",
       security = @SecurityRequirement(name = "bearerAuth"))
   @GetMapping("/notification")
   public ResponseEntity<NotificationDTO> getNotification() {
 
-    NotificationDTO notificationDTO = getNotificationService.execute(null);
+    String jti = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    NotificationDTO notificationDTO = getNotificationService.execute(jti);
 
     if (notificationDTO == null) {
       return ResponseEntity.noContent().build(); // 204 No Content
