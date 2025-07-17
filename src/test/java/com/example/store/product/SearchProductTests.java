@@ -1,4 +1,4 @@
-package com.example.store;
+package com.example.store.product;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;

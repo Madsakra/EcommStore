@@ -107,7 +107,7 @@ public class RefundServiceTest {
     void testExecute_nullMessage_shouldThrowException(){
         EmptyKafkaMessageException ex = assertThrows(EmptyKafkaMessageException.class,
                 ()-> refundService.execute(null));
-        assertEquals("The current kafka message is empty",ex.getMessage());
+        assertEquals("Current Kafka Message Is Null Or Empty",ex.getMessage());
     }
 
     @Test
@@ -115,7 +115,7 @@ public class RefundServiceTest {
         String kafkaMessage = "";
         EmptyKafkaMessageException ex = assertThrows(EmptyKafkaMessageException.class,
                 ()-> refundService.execute(kafkaMessage));
-        assertEquals("The current kafka message is empty",ex.getMessage());
+        assertEquals("Current Kafka Message Is Null Or Empty",ex.getMessage());
     }
 
 }

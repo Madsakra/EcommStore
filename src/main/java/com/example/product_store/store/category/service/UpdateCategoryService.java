@@ -5,9 +5,9 @@ import com.example.product_store.Command;
 import com.example.product_store.store.category.CategoryRepository;
 import com.example.product_store.store.category.CategoryValidator;
 import com.example.product_store.store.category.UpdateCategoryCommand;
+import com.example.product_store.store.category.dto.CategoryDTO;
 import com.example.product_store.store.category.exceptions.CategoryNotFoundException;
 import com.example.product_store.store.category.model.Category;
-import com.example.product_store.store.category.dto.CategoryDTO;
 import java.util.Optional;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
@@ -29,11 +29,9 @@ public class UpdateCategoryService implements Command<UpdateCategoryCommand, Cat
   @Caching(
       evict = {
         @CacheEvict(cacheNames = CacheConstants.GET_ALL_CATEGORIES, key = CacheConstants.ALL_CATEGORIES_KEY),
-        @CacheEvict(cacheNames = CacheConstants.GET_ALL_PRODUCTS, key = CacheConstants.ALL_PRODUCTS_KEY)
       },
       put = {
         @CachePut(cacheNames = CacheConstants.GET_ALL_CATEGORIES, key = CacheConstants.ALL_CATEGORIES_KEY),
-        @CachePut(cacheNames = CacheConstants.GET_ALL_PRODUCTS, key = CacheConstants.ALL_PRODUCTS_KEY)
       })
   public CategoryDTO execute(UpdateCategoryCommand command) {
 
@@ -42,7 +40,7 @@ public class UpdateCategoryService implements Command<UpdateCategoryCommand, Cat
     if (categoryOptional.isPresent()) {
       Category category = command.getCategory();
       category.setId(command.getId());
-      categoryValidator.execute(category, true);
+      categoryValidator.execute(category);
       categoryRepository.save(category);
       return new CategoryDTO(category);
     }

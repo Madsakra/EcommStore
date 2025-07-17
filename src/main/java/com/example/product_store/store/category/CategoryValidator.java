@@ -15,9 +15,9 @@ public class CategoryValidator {
     this.categoryRepository = categoryRepository;
   }
 
-  public void execute(Category category, boolean isUpdate) {
+  public void execute(Category category) {
 
-    if (category.getCategoryName() == null ||StringUtils.isEmpty(category.getCategoryName())) {
+    if (category.getCategoryName() == null || StringUtils.isEmpty(category.getCategoryName())) {
       throw new CategoryNotValidException();
     }
 

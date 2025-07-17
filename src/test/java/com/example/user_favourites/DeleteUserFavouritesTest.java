@@ -81,7 +81,7 @@ public class DeleteUserFavouritesTest {
         assertThrows(
             ProductNotFoundException.class,
             () -> deleteUserFavouriteService.execute(expectedJti, productId));
-    assertEquals("Product not found with the given id", ex.getMessage());
+    assertEquals("Product not found based on given id.", ex.getMessage());
   }
 
   @Test

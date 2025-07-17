@@ -33,7 +33,7 @@ public class RefundService {
     public void execute(String message) throws JsonProcessingException {
         if (message == null || message.isBlank()) {
             logger.warn("Received null or empty Kafka message, skipping.");
-            throw new EmptyKafkaMessageException("The current kafka message is empty");
+            throw new EmptyKafkaMessageException();
         }
             // Parse the message from debezium
             OutboxEventReceipt receipt = OutboxEventUtil.extractOutboxEvent(message);

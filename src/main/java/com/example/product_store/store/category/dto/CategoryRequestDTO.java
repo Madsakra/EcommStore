@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+
 public class CategoryRequestDTO {
     // PAYLOAD BY USER
     // CAN INCLUDE MORE IN FUTURE

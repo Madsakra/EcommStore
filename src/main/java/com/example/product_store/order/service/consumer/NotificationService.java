@@ -43,7 +43,7 @@ public class NotificationService {
     // if message is empty
     if (message == null || message.isBlank()) {
       logger.warn("Received null or empty Kafka message, throwing empty kafka message exception.");
-      throw new EmptyKafkaMessageException("The current kafka message is empty");
+      throw new EmptyKafkaMessageException();
     }
 
 
@@ -59,7 +59,7 @@ public class NotificationService {
 
       if (!eventType.equals("NotifyAdmin")) {
         logger.warn("Received wrong type of event for Notification Service. Throwing Exception.");
-        throw new WrongKafkaEventException("Received the wrong type of event for this service");
+        throw new WrongKafkaEventException();
       }
       // INPUT BY CLIENT
       List<OrderCreationRequest> requests = receipt.getOrderCreationRequests();

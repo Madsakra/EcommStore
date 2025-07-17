@@ -1,4 +1,4 @@
-package com.example.store;
+package com.example.store.product;
 
 import com.example.product_store.store.product.exceptions.InvalidPageRequestException;
 import com.example.product_store.store.product.model.Product;

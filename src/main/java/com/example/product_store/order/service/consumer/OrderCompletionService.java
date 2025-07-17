@@ -38,7 +38,7 @@ public class OrderCompletionService {
     // if message is empty
     if (message == null || message.isBlank()) {
       logger.warn("Received null or empty Kafka message, throwing empty kafka message exception.");
-      throw new EmptyKafkaMessageException("The current kafka message is empty");
+      throw new EmptyKafkaMessageException();
     }
 
     // Parse the message from debezium
@@ -75,7 +75,7 @@ public class OrderCompletionService {
         break;
       default:
         logger.warn("Unknown event type received: {}", eventType);
-        throw new EmptyKafkaMessageException("Unknown event type received: "+eventType);
+        throw new EmptyKafkaMessageException();
     }
 
     // when accumulator is not read, will just cut off here, allow the next event to come in and process

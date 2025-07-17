@@ -24,7 +24,6 @@ public class DeleteCategoryService implements Command<String, Void> {
   @Caching(
       evict = {
         @CacheEvict(cacheNames = CacheConstants.GET_ALL_CATEGORIES, key = CacheConstants.ALL_CATEGORIES_KEY),
-        @CacheEvict(cacheNames = CacheConstants.GET_ALL_PRODUCTS, key = CacheConstants.ALL_PRODUCTS_KEY)
       })
   public Void execute(String id) {
     Optional<Category> categoryOptional = categoryRepository.findById(id);

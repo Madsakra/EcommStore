@@ -27,7 +27,7 @@ public class RestockServiceTest {
   @Test
   void testExecute_nullMessage_shouldThrowException() {
     EmptyKafkaMessageException ex = assertThrows(EmptyKafkaMessageException.class, () -> restockService.execute(null));
-    assertEquals("The current kafka message is empty", ex.getMessage());
+    assertEquals("Current Kafka Message Is Null Or Empty", ex.getMessage());
   }
 
   @Test
@@ -35,7 +35,7 @@ public class RestockServiceTest {
     String kafkaMessage = "";
     EmptyKafkaMessageException ex =
         assertThrows(EmptyKafkaMessageException.class, () -> restockService.execute(kafkaMessage));
-    assertEquals("The current kafka message is empty", ex.getMessage());
+    assertEquals("Current Kafka Message Is Null Or Empty", ex.getMessage());
   }
 
   @Test

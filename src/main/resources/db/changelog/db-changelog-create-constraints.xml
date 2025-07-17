@@ -1,0 +1,57 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet author="axmen (generated)" id="1750060828006-19">
+        <addForeignKeyConstraint baseColumnNames="account_id" baseTableName="account_roles"
+                                 constraintName="fk_ar_account" deferrable="false" initiallyDeferred="false"
+                                 onDelete="CASCADE" onUpdate="RESTRICT" referencedColumnNames="id"
+                                 referencedTableName="account" validate="true"/>
+    </changeSet>
+    <changeSet author="axmen (generated)" id="1750060828006-20">
+        <addForeignKeyConstraint baseColumnNames="role_id" baseTableName="account_roles" constraintName="fk_ar_role"
+                                 deferrable="false" initiallyDeferred="false" onDelete="CASCADE" onUpdate="RESTRICT"
+                                 referencedColumnNames="role_id" referencedTableName="roles" validate="true"/>
+    </changeSet>
+    <changeSet author="axmen (generated)" id="1750060828006-22">
+        <addForeignKeyConstraint baseColumnNames="customer_id" baseTableName="orders" constraintName="fk_order_customer"
+                                 deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+                                 referencedColumnNames="id" referencedTableName="account" validate="true"/>
+    </changeSet>
+    <changeSet author="axmen (generated)" id="1750060828006-23">
+        <addForeignKeyConstraint baseColumnNames="order_id" baseTableName="order_items"
+                                 constraintName="fk_orderitem_order" deferrable="false" initiallyDeferred="false"
+                                 onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="order_id"
+                                 referencedTableName="orders" validate="true"/>
+    </changeSet>
+    <changeSet author="axmen (generated)" id="1750060828006-24">
+        <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="order_items"
+                                 constraintName="fk_orderitem_product" deferrable="false" initiallyDeferred="false"
+                                 onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id"
+                                 referencedTableName="product" validate="true"/>
+    </changeSet>
+    <changeSet author="axmen (generated)" id="1750060828006-25">
+        <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="product_category"
+                                 constraintName="fk_pc_product" deferrable="false" initiallyDeferred="false"
+                                 onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id"
+                                 referencedTableName="product" validate="true"/>
+    </changeSet>
+    <changeSet author="axmen (generated)" id="1750060828006-26">
+        <addForeignKeyConstraint baseColumnNames="created_by" baseTableName="product" constraintName="fk_pr_product"
+                                 deferrable="false" initiallyDeferred="false" onDelete="CASCADE" onUpdate="RESTRICT"
+                                 referencedColumnNames="id" referencedTableName="account" validate="true"/>
+    </changeSet>
+    <changeSet author="axmen (generated)" id="1750060828006-27">
+        <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="user_favorite"
+                                 constraintName="fk_uf_product" deferrable="false" initiallyDeferred="false"
+                                 onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id"
+                                 referencedTableName="product" validate="true"/>
+    </changeSet>
+    <changeSet author="axmen (generated)" id="1750060828006-28">
+        <addForeignKeyConstraint baseColumnNames="account_id" baseTableName="user_favorite" constraintName="fk_uf_user"
+                                 deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+                                 referencedColumnNames="id" referencedTableName="account" validate="true"/>
+    </changeSet>
+</databaseChangeLog>

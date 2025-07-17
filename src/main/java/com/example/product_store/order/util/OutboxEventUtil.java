@@ -1,17 +1,13 @@
 package com.example.product_store.order.util;
-import com.example.product_store.order.dto.outbox_event.EventPayload;
 import com.example.product_store.order.dto.outbox_event.OutboxEventReceipt;
 import com.example.product_store.order.dto.outbox_event.OutboxEventWrapper;
 import com.example.product_store.order.exceptions.OrderPayloadMalformedException;
-import com.example.product_store.order.model.Outbox;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
 
 public class OutboxEventUtil {
 
@@ -22,22 +18,19 @@ public class OutboxEventUtil {
         // CHECK THE PAYLOAD FOR ANY ERRORS
         if (outboxEventReceipt.getOrderId() == null || outboxEventReceipt.getOrderId().isEmpty()) {
             logger.warn("Current order payload has no order id");
-            throw new OrderPayloadMalformedException(
-                    "Current order does not have an order id tied to it");
+            throw new OrderPayloadMalformedException();
         }
 
         if (outboxEventReceipt.getCustomerId() == null
                 || outboxEventReceipt.getCustomerId().isEmpty()) {
             logger.warn("Current user :{}, is null / empty", outboxEventReceipt.getCustomerId());
-            throw new OrderPayloadMalformedException(
-                    "Current order does not have a customer tied to it");
+            throw new OrderPayloadMalformedException();
         }
 
         if (outboxEventReceipt.getTotalPrice().compareTo(BigDecimal.ZERO) < 0) {
             logger.warn(
                     "Order has a negative sum tied to it :{}", outboxEventReceipt.getTotalPrice());
-            throw new OrderPayloadMalformedException(
-                    "Current order's tabulated costs is negative.");
+            throw new OrderPayloadMalformedException();
         }
     }
 

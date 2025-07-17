@@ -7,6 +7,7 @@ import com.example.product_store.order.exceptions.OrderNotFoundException;
 import com.example.product_store.order.model.Order;
 import com.example.product_store.order.repository.OrderRepository;
 import com.example.product_store.order.service.GetOrderService;
+import com.example.product_store.store.product.ProductErrorMessages;
 import com.example.product_store.store.product.exceptions.UnauthorizedManagement;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -75,7 +76,7 @@ public class GetOrderServiceTest {
         UnauthorizedManagement ex = assertThrows(
                 UnauthorizedManagement.class,
                 ()->getOrderService.execute(jti,expectedOrderId));
-        assertEquals("Unauthorised Management of order.",ex.getMessage());
+        assertEquals(ProductErrorMessages.UNAUTHORIZED_MANAGEMENT.getMessage(),ex.getMessage());
     }
 
 }

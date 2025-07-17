@@ -33,6 +33,7 @@ services:
       - MYSQL_ROOT_PASSWORD=debezium
       - MYSQL_USER=mysqluser
       - MYSQL_PASSWORD=mysqluser
+      - MYSQL_DATABASE=product_store
     networks:
       - shared-net
 

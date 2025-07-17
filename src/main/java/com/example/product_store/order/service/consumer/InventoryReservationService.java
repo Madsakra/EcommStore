@@ -40,7 +40,7 @@ public class InventoryReservationService {
 
     if (message == null || message.isBlank()) {
       logger.warn("Received null or empty Kafka message, throwing empty kafka message exception.");
-      throw new EmptyKafkaMessageException("Received null or empty Kafka message, throwing empty kafka message exception.");
+      throw new EmptyKafkaMessageException();
     }
 
     // EXTRACT THE OUTBOX EVENT

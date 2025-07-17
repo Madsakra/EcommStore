@@ -34,7 +34,7 @@ public class RestockService {
     // if message is empty
     if (message == null || message.isBlank()) {
       logger.warn("Received null or empty Kafka message, throwing empty kafka message exception.");
-      throw new EmptyKafkaMessageException("The current kafka message is empty");
+      throw new EmptyKafkaMessageException();
     }
 
     // EXTRACT THE OUTBOX EVENT
