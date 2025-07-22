@@ -4,6 +4,7 @@ import com.example.product_store.error_response.ErrorResponse;
 import com.example.product_store.error_response.ErrorResponseTemplate;
 import com.example.product_store.authentication.errors.*;
 import com.example.product_store.store.product.exceptions.UnauthorizedManagement;
+import io.jsonwebtoken.JwtException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -93,4 +94,6 @@ public class AuthenticationExceptionHandler {
     return ErrorResponseTemplate.buildResponseError(
         "Unauthorised Management", ex.getMessage(), HttpStatus.UNAUTHORIZED);
   }
+
+
 }

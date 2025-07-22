@@ -16,4 +16,15 @@ public class ErrorResponseTemplate {
 
     return new ResponseEntity<>(response, status);
   }
+
+  // ONLY FOR JWT ERROR
+  // SINCE JWT ERRORS RESIDE IN SERVLET SO HAVE TO THROW AND CATCH
+  public static ErrorResponse buildError(String error, String message, HttpStatus status) {
+    return ErrorResponse.builder()
+            .error(error)
+            .message(message)
+            .status(status.value())
+            .timestamp(LocalDateTime.now().toString())
+            .build();
+  }
 }

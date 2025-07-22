@@ -4,21 +4,38 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class EventAccumulator {
-    private String paymentStatus;
-    private String inventoryStatus;
+    private final AtomicReference<String> paymentStatus = new AtomicReference<>();
+    private final AtomicReference<String> inventoryStatus = new AtomicReference<>();
 
     public boolean hasPaymentEvent() {
-        return paymentStatus != null;
+        return paymentStatus.get() != null;
     }
 
     public boolean hasInventoryEvent() {
-        return inventoryStatus != null;
+        return inventoryStatus.get() != null;
     }
+
     public boolean isReady() {
         return hasPaymentEvent() && hasInventoryEvent();
+    }
+
+    public void setPaymentStatus(String status) {
+        paymentStatus.set(status);
+    }
+
+    public void setInventoryStatus(String status) {
+        inventoryStatus.set(status);
+    }
+
+    public String getPaymentStatus() {
+        return paymentStatus.get();
+    }
+
+    public String getInventoryStatus() {
+        return inventoryStatus.get();
     }
 }

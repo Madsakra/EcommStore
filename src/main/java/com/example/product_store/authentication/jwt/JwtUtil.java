@@ -44,7 +44,7 @@ public class JwtUtil {
   }
 
   public static Claims getClaims(String token) {
-    // This is the correct way to parse a SIGNED token (JWS)
+    // This is the correct way to parse a SIGNED token (JWT)
     return Jwts.parser().verifyWith(getSigningKey()).build().parseSignedClaims(token).getPayload();
   }
 

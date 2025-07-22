@@ -3,6 +3,7 @@ package com.example.product_store;
 
 import com.example.product_store.error_response.ErrorResponse;
 import com.example.product_store.error_response.ErrorResponseTemplate;
+import io.jsonwebtoken.JwtException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,5 +33,6 @@ public class GlobalExceptionHandler {
   public ResponseEntity<ErrorResponse> handleDataIntegrityViolation(DataIntegrityViolationException ex){
     return ErrorResponseTemplate.buildResponseError("Data Integrity violation error", ex.getMessage(),HttpStatus.CONFLICT);
   }
+
 
 }

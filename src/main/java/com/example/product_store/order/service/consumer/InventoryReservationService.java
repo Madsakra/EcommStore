@@ -35,7 +35,7 @@ public class InventoryReservationService {
   }
 
   @Transactional
-  @KafkaListener(topics = "order.events", groupId = "order-service-consumer")
+  @KafkaListener(topics = "order.events", groupId = "order-service-consumer",concurrency = "3")
   public void execute(String message) throws JsonProcessingException {
 
     if (message == null || message.isBlank()) {
