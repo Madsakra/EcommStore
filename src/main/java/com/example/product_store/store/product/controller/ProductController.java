@@ -88,11 +88,13 @@ public class ProductController {
       throw new InvalidPageRequestException("Please check your headers: Size of page is negative");
     }
 
+    // create a product filter object
     ProductFilter productFilter = new ProductFilter();
     productFilter.setMinPrice(minPrice);
     productFilter.setMaxPrice(maxPrice);
     productFilter.setCategoryIds(categoryIds);
 
+    // use to filter to get the products
     Page<ProductDTO> products = getProductsService.execute(productFilter, PageRequest.of(page, size));
     return ResponseEntity.status(HttpStatus.OK).body(products);
   }
@@ -134,17 +136,21 @@ public class ProductController {
       throw new InvalidPageRequestException("Please check your headers: Size of page is negative");
     }
 
+    // SPECIFICALLY FOR SEARCH BY TITLE
+    // IF TITLE IS EMPTY THROW ERROR HERE
     if (title==null || title.isEmpty())
     {
       throw new InvalidPageRequestException("Please check your headers: Title is empty!");
     }
 
+    // create a product filter object
     ProductFilter productFilter = new ProductFilter();
     productFilter.setMinPrice(minPrice);
     productFilter.setMaxPrice(maxPrice);
     productFilter.setCategoryIds(categoryIds);
     productFilter.setTitle(title);
     productFilter.setDescription(description);
+
     Page<ProductDTO> products = searchProductService.execute(productFilter, PageRequest.of(page, size));
     return ResponseEntity.status(HttpStatus.OK).body(products);
   }
@@ -169,6 +175,7 @@ public class ProductController {
   public ResponseEntity<ProductDTO> createProduct(@RequestBody ProductRequestDTO requestDTO) {
 
     // get hold of the current user UUID THROUGH THE JWT, via context provider
+    // if jwt is not present, security filter chain will intercept and throw error instead
     String jti = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
     logger.info("RequestDTO from account:{} are :{}", jti, requestDTO);
@@ -205,6 +212,7 @@ public class ProductController {
     if (size <= 0) {
       throw new InvalidPageRequestException("Please check your headers: Size of page is negative");
     }
+
     // GET HOLD OF THE CURRENT user UUID through JWT, via context provider
     String jti = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     Page<ProductDTO> productDTOS = getAdminProductsService.execute(jti, PageRequest.of(page, size));
@@ -235,6 +243,7 @@ public class ProductController {
   public ResponseEntity<ProductDTO> updateProductDTO(
       @PathVariable("id") String id, @RequestBody ProductRequestDTO requestDTO) {
     // get hold of the current user UUID THROUGH THE JWT, via context provider
+    // No jwt -> error will throw here
     String jti = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     ProductDTO productDTO = updateProductService.execute(jti, new UpdateProductCommand(id, requestDTO));
     return ResponseEntity.status(HttpStatus.OK).body(productDTO);

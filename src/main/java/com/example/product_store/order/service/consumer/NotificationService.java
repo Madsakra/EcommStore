@@ -9,14 +9,13 @@ import com.example.product_store.order.exceptions.WrongKafkaEventException;
 import com.example.product_store.order.service.ProductRetrievalService;
 import com.example.product_store.order.util.OutboxEventUtil;
 import com.example.product_store.store.product.model.Product;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -46,63 +45,67 @@ public class NotificationService {
       throw new EmptyKafkaMessageException();
     }
 
+    // Parse the message from debezium
+    OutboxEventReceipt receipt = OutboxEventUtil.extractOutboxEvent(message);
+    String batchOrderId = receipt.getOrderId();
 
-      // Parse the message from debezium
-      OutboxEventReceipt receipt = OutboxEventUtil.extractOutboxEvent(message);
-      String batchOrderId = receipt.getOrderId();
+    // ENSURE THAT EVENT TYPE IS RELATED TO PAYMENT / INVENTORY
+    // WILL BE PLACED IN SWITCH CASE TO SET THE STATUS LATER ON
+    String eventType = receipt.getEventType();
 
-      // ENSURE THAT EVENT TYPE IS RELATED TO PAYMENT / INVENTORY
-      // WILL BE PLACED IN SWITCH CASE TO SET THE STATUS LATER ON
-      String eventType = receipt.getEventType();
+    logger.info("Notification service received event for order {}: {}", batchOrderId, eventType);
 
-      logger.info("Notification service received event for order {}: {}", batchOrderId, eventType);
+    if (!eventType.equals("NotifyAdmin")) {
+      logger.warn("Received wrong type of event for Notification Service. Throwing Exception.");
+      throw new WrongKafkaEventException();
+    }
+    // INPUT BY CLIENT
+    List<OrderCreationRequest> requests = receipt.getOrderCreationRequests();
+    Map<String, Product> productMap = productRetrievalService.execute(requests);
 
-      if (!eventType.equals("NotifyAdmin")) {
-        logger.warn("Received wrong type of event for Notification Service. Throwing Exception.");
-        throw new WrongKafkaEventException();
-      }
-      // INPUT BY CLIENT
-      List<OrderCreationRequest> requests = receipt.getOrderCreationRequests();
-      Map<String, Product> productMap = productRetrievalService.execute(requests);
+    Map<String, BigDecimal> purchasesMap = new HashMap<>();
 
-      Map<String, BigDecimal> purchasesMap = new HashMap<>();
+    // LOOP THROUGH USER PAYLOAD
+    for (OrderCreationRequest request : requests) {
 
-      // LOOP THROUGH USER PAYLOAD
-      for (OrderCreationRequest request : requests) {
+      // GET THE PRODUCT FORM THE RETRIEVED PRODUCT MAP
+      Product product = productMap.get(request.getId());
+      // ** GET THE ADMIN ID (CreatedBy)
+      String adminId = product.getCreatedBy();
 
-        // GET THE PRODUCT FORM THE RETRIEVED PRODUCT MAP
-        Product product = productMap.get(request.getId());
-        String adminId = product.getCreatedBy();
+      // GET THE COST OF A SINGLE BATCH
+      BigDecimal batchCost = product.getPrice().multiply(BigDecimal.valueOf(request.getQuantity()));
 
-        // GET THE FULL COSTS
-        // DEDUCT FROM USER ACCOUNT IN MICROSERVICE
-        BigDecimal batchCost = product.getPrice().multiply(BigDecimal.valueOf(request.getQuantity()));
+      // Update total cost per admin (O(1) operation)
+      purchasesMap.merge(adminId, batchCost, BigDecimal::add);
+    }
 
-        // Update total cost per admin (O(1) operation)
-        purchasesMap.merge(adminId, batchCost, BigDecimal::add);
-      }
+    // USED TO COMPILE ALL NOTIFICATIONS
+    // SAVE ALL IN 1 GO AT THE END
+    List<Notification> notifications = new ArrayList<>();
 
-      List<Notification> notifications = new ArrayList<>();
+    // SHORT NOTIFICATION
+    // JUST SHOW THE ADMIN HOW MUCH HE EARNED
+    // SAVED IN MYSQL TABLE NOTIFICATION
+    for (Map.Entry<String, BigDecimal> entry : purchasesMap.entrySet()) {
+      String adminId = entry.getKey();
+      BigDecimal totalCost = entry.getValue();
 
-      for (Map.Entry<String, BigDecimal> entry : purchasesMap.entrySet()) {
-        String adminId = entry.getKey();
-        BigDecimal totalCost = entry.getValue();
+      // CONSTRUCT NOTIFICATION
+      // ADD IT INTO NOTIFICATION LIST
+      Notification notification =
+          new Notification(
+              null, adminId, batchOrderId, receipt.getCustomerId(), totalCost, LocalDateTime.now(), "Completed");
+      notifications.add(notification);
 
-        Notification notification =
-            new Notification(
-                null, adminId, batchOrderId, receipt.getCustomerId(), totalCost, LocalDateTime.now(), "Completed");
-        notifications.add(notification);
+      logger.info(
+          "Notification to admin {}: Customer {} just purchased goods of {}. Payment status -> {}",
+          adminId,
+          receipt.getCustomerId(),
+          totalCost,
+          "Completed");
+    }
 
-        logger.info(
-            "Notification to admin {}: Customer {} just purchased goods of {}. Payment status -> {}",
-            adminId,
-            receipt.getCustomerId(),
-            totalCost,
-            "Completed");
-      }
-
-      notificationRepository.saveAll(notifications);
-
-
+    notificationRepository.saveAll(notifications);
   }
 }

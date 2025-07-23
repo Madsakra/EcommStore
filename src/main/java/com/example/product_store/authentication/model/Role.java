@@ -11,6 +11,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Role {
+  // Role entity class
+  // DB OBJECT
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   @Column(name = "role_id", columnDefinition = "CHAR(36)")

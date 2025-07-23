@@ -24,8 +24,11 @@ public class ProductRetrievalService implements Command<List<OrderCreationReques
   @Override
   public Map<String, Product> execute(List<OrderCreationRequest> requests) {
 
-    // --------- FINDING PRODUCTS---------------//
+
     // GO THROUGH THE USER INPUT, EXTRACT ID INTO LIST OF STRINGS
+    // USED IN PRODUCT CHECKER
+    // IF PRODUCT MAP (PRODUCTS FETCHED FROM DB) DOES NOT CONTAIN THE PRODUCTS IN THE LIST BELOW
+    // THROW ERROR (PRODUCTS NOT FOUND)
     List<String> productIDs = requests.stream().map(OrderCreationRequest::getId).toList();
 
     // FIND ALL PRODUCTS IN REPOSITORY
@@ -33,15 +36,19 @@ public class ProductRetrievalService implements Command<List<OrderCreationReques
     // CREATE A MAP {ID: PRODUCT OBJECT}
     // don't have to find in repo later, reduces n(N) query in DB to n(1)
     Map<String, Product> productMap = products.stream().collect(Collectors.toMap(Product::getId, p -> p));
+
+    // CHECK IF PRODUCT MAP FROM DB CONTAIN THE LIST OF PRODUCT IDS ABOVE.
     productChecker(productIDs, productMap);
     return productMap;
   }
+
 
   // CHECK IF THE PRODUCT IDS GIVEN BY CLIENT IS VALID
   // TO INCLUDE THE LIST OF PRODUCTS IDS,
   // AND PRODUCT MAP FOR FASTER FETCHING
   public void productChecker(List<String> productIds, Map<String, Product> productMap) {
-    // 4. Check if any product ID is missing
+
+    // Check if any product ID is missing
     List<String> missingProductIds = productIds.stream().filter(id -> !productMap.containsKey(id)).toList();
 
     if (!missingProductIds.isEmpty()) {

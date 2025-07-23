@@ -13,6 +13,9 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EventPayload {
+
+    // USED WHEN SYSTEM IS TRYING TO EMIT EVENT
+    // Payload column in Outbox_event table
     private String orderId;
     private String customerId;
     private BigDecimal totalPrice;

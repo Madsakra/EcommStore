@@ -9,6 +9,8 @@ import java.util.Set;
 @Data
 public class AccountDTO {
 
+    // RETURN TYPE FOR CONTROLLER
+    // HIDES THE BLOATED INFO OF ACCOUNT ENTITY
     private String id;
     private String username;
     private String email;

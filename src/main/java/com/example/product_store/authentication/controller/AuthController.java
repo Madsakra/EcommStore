@@ -51,7 +51,9 @@ public class AuthController {
             description = "No Roles found",
             content = @Content(schema = @Schema()))
       })
+
   // GET ALL ROLES, DISPLAY ON FRONTEND REGISTRATION AS SELECTION
+  // ACCESSIBLE BY ALL USERS FOR ACCOUNT CREATION
   @GetMapping("/getRoles")
   public ResponseEntity<List<RolesDTO>> getRoles() {
     List<RolesDTO> rolesDTOS = getRolesService.execute(null);
@@ -88,6 +90,7 @@ public class AuthController {
   @PostMapping("/createAccount")
   public ResponseEntity<AccountDTO> createNewUser(
       @RequestBody AccountRequestDTO request) {
+    // RETURNS PARTIAL ACCOUNT INFO (ACCOUNT DTO)
     AccountDTO response = createNewAccountService.execute(request);
     return ResponseEntity.status(HttpStatus.CREATED).body(response);
   }

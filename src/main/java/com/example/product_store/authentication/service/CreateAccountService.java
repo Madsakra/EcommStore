@@ -42,17 +42,13 @@ public class CreateAccountService implements Command<AccountRequestDTO, AccountD
     // CHECK ACCOUNT REPOSITORY
     // USE USERNAME / EMAIL IN PAYLOAD
     // TO CHECK WHETHER ACCOUNT EXIST
-    boolean accountExist =
-        accountRepository.existsByUserNameOrEmail(
-            account.getUsername(), account.getEmail());
+    boolean accountExist = accountRepository.existsByUserNameOrEmail(account.getUsername(), account.getEmail());
 
     // IF ACCOUNT EXIST, THROW ERROR
     // DISPLAY ERROR TO CLIENT THROUGH GLOBAL EXCEPTION HANDLER
     if (accountExist) {
-      logger.warn(
-          "Username / email already exist in db, throwing AccountAlreadyExist error");
-      throw new AccountAlreadyExistsException(
-          "An account with this username or email already exists.");
+      logger.warn("Username / email already exist in db, throwing AccountAlreadyExist error");
+      throw new AccountAlreadyExistsException("An account with this username or email already exists.");
     }
     Set<Role> validatedRoles = roleValidatorUtil.validateRoles(account.getRoles());
 
@@ -63,11 +59,7 @@ public class CreateAccountService implements Command<AccountRequestDTO, AccountD
     // ✅ Then encode the password after validation passes
     Account newAccount =
         new Account(
-            null,
-            account.getUsername(),
-            account.getEmail(),
-            encoder.encode(account.getPassword()),
-            validatedRoles);
+            null, account.getUsername(), account.getEmail(), encoder.encode(account.getPassword()), validatedRoles);
 
     accountRepository.save(newAccount);
 

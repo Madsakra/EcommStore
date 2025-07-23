@@ -21,14 +21,14 @@ public class GetOrderService {
     this.orderRepository = orderRepository;
   }
 
-  // PREVENT USER FROM ACCESSING OTHER USERS RESOURCE'S
-  // INCLUDE USER ID IN PARAMS
+
   public OrderDTO execute(String jti, String id) {
 
     Optional<Order> orderOptional = orderRepository.findById(id);
     if (orderOptional.isPresent()) {
       String customerId = orderOptional.get().getCustomerId();
 
+      // PREVENT USER FROM ACCESSING OTHER USERS RESOURCE'S
       if (!customerId.equals(jti)) {
         logger.warn("Unauthorized attempt to access other user's orders blocked out.");
         throw new UnauthorizedManagement();

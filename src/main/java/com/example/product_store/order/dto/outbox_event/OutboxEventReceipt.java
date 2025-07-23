@@ -11,6 +11,7 @@ import java.util.List;
 
 
 // FOR KAFKA CONNECT / DEBEZIUM TO RECEIVE AND PARSE
+// PAYLOAD COLUMN IN OUTBOX TABLE (Except eventType)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

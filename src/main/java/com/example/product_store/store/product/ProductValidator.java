@@ -4,11 +4,9 @@ import com.example.product_store.store.category.CategoryRepository;
 import com.example.product_store.store.category.dto.CategoryDTO;
 import com.example.product_store.store.product.dto.ProductRequestDTO;
 import com.example.product_store.store.product.exceptions.ProductNotValidException;
-
 import com.example.product_store.store.product.repositories.ProductRepository;
-import org.springframework.stereotype.Component;
-
 import java.math.BigDecimal;
+import org.springframework.stereotype.Component;
 
 @Component
 public class ProductValidator {
@@ -18,46 +16,41 @@ public class ProductValidator {
 
   public ProductValidator(ProductRepository productRepository, CategoryRepository categoryRepository) {
     this.productRepository = productRepository;
-      this.categoryRepository = categoryRepository;
+    this.categoryRepository = categoryRepository;
   }
 
-  public void execute(ProductRequestDTO product, boolean isUpdate) {
+  public void execute(ProductRequestDTO product) {
 
     // PRODUCT TITLE IS NULL / EMPTY
-    if (product.getTitle() == null ||product.getTitle().isBlank()) {
+    if (product.getTitle() == null || product.getTitle().isBlank()) {
       throw new ProductNotValidException("Product Title should not be empty or null!");
     }
 
     // PRODUCT STOCK IS NULL / NEGATIVE
-    if ( product.getStock() == null || product.getStock() < 0) {
+    if (product.getStock() == null || product.getStock() < 0) {
       throw new ProductNotValidException("Product stock should not be null or negative");
     }
 
     // PRODUCT PRICE IS < 0
-    if ( product.getPrice() == null || product.getPrice().compareTo(BigDecimal.valueOf(0))<=0) {
+    if (product.getPrice() == null || product.getPrice().compareTo(BigDecimal.valueOf(0)) <= 0) {
       throw new ProductNotValidException("Product price should not be 0, null or negative");
     }
 
     // DUPLICATE PRODUCT ALREADY EXISTS
-    if (!isUpdate && productRepository.existsByTitleAndPrice(product.getTitle(), product.getPrice())) {
+    if (productRepository.existsByTitleAndPrice(product.getTitle(), product.getPrice())) {
       throw new ProductNotValidException("Duplicate product exists!");
     }
 
     // NO CATEGORIES
-    if (product.getCategories().isEmpty()){
+    if (product.getCategories().isEmpty()) {
       throw new ProductNotValidException("Product does not have any categories!");
     }
 
-
     // CHECK CATEGORY (IF THEY ARE VALID)
-    for (CategoryDTO cat: product.getCategories()){
-        if (!categoryRepository.existsById(cat.getId()))
-        {
-          throw new ProductNotValidException("Failed to create product due to invalid category");
-        }
+    for (CategoryDTO cat : product.getCategories()) {
+      if (!categoryRepository.existsById(cat.getId())) {
+        throw new ProductNotValidException("Failed to create product due to invalid category");
       }
-
-
-
+    }
   }
 }

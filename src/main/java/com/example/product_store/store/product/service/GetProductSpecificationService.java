@@ -1,9 +1,9 @@
 package com.example.product_store.store.product.service;
 
 import com.example.product_store.Command;
+import com.example.product_store.store.product.dto.ProductFilter;
 import com.example.product_store.store.product.exceptions.InvalidPageRequestException;
 import com.example.product_store.store.product.model.Product;
-import com.example.product_store.store.product.dto.ProductFilter;
 import com.example.product_store.store.product.specification.ProductSpecification;
 import java.math.BigDecimal;
 import org.slf4j.Logger;
@@ -23,8 +23,8 @@ public class GetProductSpecificationService implements Command<ProductFilter, Sp
     Specification<Product> spec = ((root, query, criteriaBuilder) -> null);
     logger.info("ProductFilterService: Product Filter fields are: {}", productFilter);
 
-    // IF ENCOUNTER INVALID PAYLOAD
-    // WILL JUST THROW ERROR FROM HERE AND REFUSE TO CONTINUE
+    // MINIMUM PRICE < 0 OR NULL
+    // THROW INVALID PAGE REQUEST EXCEPTION
     if (productFilter.getMinPrice() != null) {
       if (productFilter.getMinPrice().compareTo(BigDecimal.ZERO) < 0) {
         logger.warn(
@@ -35,6 +35,8 @@ public class GetProductSpecificationService implements Command<ProductFilter, Sp
       spec = spec.and(ProductSpecification.hasPriceGreaterThan(productFilter.getMinPrice()));
     }
 
+    // MAX PRICE < 0 OR NULL
+    // THROW INVALID PAGE REQUEST EXCEPTION
     if (productFilter.getMaxPrice() != null) {
       if (productFilter.getMaxPrice().compareTo(BigDecimal.ZERO) < 0) {
         logger.warn(
@@ -45,6 +47,7 @@ public class GetProductSpecificationService implements Command<ProductFilter, Sp
       spec = spec.and(ProductSpecification.hasPriceLessThan(productFilter.getMaxPrice()));
     }
 
+    // IF MINIMUM PRICE > MAX PRICE
     if (productFilter.getMinPrice() != null
         && productFilter.getMaxPrice() != null
         && productFilter.getMinPrice().compareTo(productFilter.getMaxPrice()) > 0) {
@@ -52,18 +55,10 @@ public class GetProductSpecificationService implements Command<ProductFilter, Sp
       throw new InvalidPageRequestException("Please check your headers: min price > max price of product");
     }
 
-    // FILTER BY CATEGORY FIRST (IF HAVE)
+    // FILTER BY CATEGORY (IF PROVIDED BY USER)
+    // WRONG / INVALID CATEGORY ID WILL RETURN EMPTY PAGE
     if (productFilter.getCategoryIds() != null && !productFilter.getCategoryIds().isEmpty()) {
       spec = spec.and(ProductSpecification.hasCategoryIds(productFilter.getCategoryIds()));
-    }
-
-    // FILTER BY PRICE
-    if (productFilter.getMinPrice() != null) {
-      spec = spec.and(ProductSpecification.hasPriceGreaterThan(productFilter.getMinPrice()));
-    }
-
-    if (productFilter.getMaxPrice() != null) {
-      spec = spec.and(ProductSpecification.hasPriceLessThan(productFilter.getMaxPrice()));
     }
 
     return spec;

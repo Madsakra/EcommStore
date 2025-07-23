@@ -12,6 +12,8 @@ import java.io.Serializable;
 @Data
 public class RolesDTO implements Serializable {
 
+    // RETURNED FROM GET ROLES ENDPOINT
+    // IMPLEMENTS SERIALIZABLE FOR CACHING
     private String roleId;
     private String roleName;
 

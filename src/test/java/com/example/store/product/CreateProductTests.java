@@ -40,7 +40,7 @@ public class CreateProductTests {
     // following chain below will return jwt
 
     // do nothing for validator, assume it will pass
-    doNothing().when(productValidator).execute(inputProduct, false);
+    doNothing().when(productValidator).execute(inputProduct);
     when(productRepository.save(any(Product.class))).thenReturn(savedProduct);
 
     // Act
@@ -51,7 +51,7 @@ public class CreateProductTests {
     assertEquals(savedProduct.getId(), result.getId());
     assertEquals(savedProduct.getCreatedBy(), result.getCreatedBy());
 
-    verify(productValidator).execute(inputProduct, false);
+    verify(productValidator).execute(inputProduct);
     verify(productRepository).save(mockedProduct);
   }
 

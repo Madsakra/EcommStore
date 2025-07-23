@@ -1,6 +1,6 @@
 package com.example.product_store.authentication.service;
 
-import com.example.product_store.authentication.dto.CachedUserDetailsDTO;
+import com.example.product_store.authentication.dto.UserDetailsDTO;
 import com.example.product_store.authentication.errors.AccountNotFoundException;
 import com.example.product_store.authentication.model.Account;
 import com.example.product_store.authentication.model.Role;
@@ -24,25 +24,30 @@ public class LoadCachedUserService {
         this.accountRepository = accountRepository;
     }
 
-    // FETCH THE ACCOUNT BACK
-    // FIRST FROM CACHE IF AVAILABLE
+    // WILL RETURN WITH CACHE VALUE IF IT IS AVAILABLE
    @Cacheable(value = "userDetailsCache", key = "#loginIdentifier")
-    public CachedUserDetailsDTO execute(String loginIdentifier) {
+    public UserDetailsDTO execute(String loginIdentifier) {
+        // IF NO CACHE
+       // GO DB AND FETCH
         Optional<Account> optionalAccount =
                 accountRepository.findUserByEmailOrUserName(loginIdentifier);
 
+        // IF NO ACCOUNT IS FOUND IN DB
         if (optionalAccount.isEmpty()) {
             logger.warn("LoginService: Account with identifier: {} not found", loginIdentifier);
             throw new AccountNotFoundException("Account does not exist!");
         }
 
+        // GET THE ACCOUNT IN OPTIONAL
         Account account = optionalAccount.get();
 
+        // CREATE A SET FOR ROLES
+       // USE SET TO PREVENT DUPLICATES
         Set<String> roles = account.getRoles().stream()
                 .map(Role::getRoleName)
                 .collect(Collectors.toSet());
 
-
-        return new CachedUserDetailsDTO(account.getId(),account.getUserName(), account.getPassword(), roles);
+        // RETURN UserDetailsDTO
+        return new UserDetailsDTO(account.getId(),account.getUserName(), account.getPassword(), roles);
     }
 }

@@ -20,10 +20,13 @@ public class KafkaConsumerConfig {
 
     factory.setConsumerFactory(consumerFactory);
 
+    // when processing events that have error -> put them in  a DLQ
     DeadLetterPublishingRecoverer recoverer =
         new DeadLetterPublishingRecoverer(
             kafkaTemplate, (record, ex) -> new TopicPartition("order.events.dlq", record.partition()));
 
+    // when wallet has insufficient funds, won't retry again
+    // just throw error
     DefaultErrorHandler errorHandler = new DefaultErrorHandler(recoverer, new FixedBackOff(0L, 0));
     // Won't retry for wallet not found exception
     errorHandler.addNotRetryableExceptions(WalletNotFoundException.class);

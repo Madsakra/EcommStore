@@ -11,6 +11,7 @@ import java.util.List;
 // CLASS THAT BUILDS FILTER FOR JPA TO PROCESS
 public class ProductSpecification {
 
+    // Add on category id to spec for filter
     public static Specification<Product> hasCategoryIds(List<String> categoryIds) {
         return (root, query, criteriaBuilder) -> {
             Join<Product, Category> join = root.join("categories");
@@ -19,26 +20,26 @@ public class ProductSpecification {
     }
 
 
-    // > THAN PRICE
+    // add on greater than price for filter
     public static Specification<Product> hasPriceGreaterThan(BigDecimal price) {
         return ((root, query, criteriaBuilder) ->
                 criteriaBuilder.greaterThanOrEqualTo(root.get("price"), price)
         );
     }
 
-    // < THAN PRICE
+    // add on less than price for filter
     public static Specification<Product> hasPriceLessThan(BigDecimal price) {
         return (((root, query, criteriaBuilder) ->
                 criteriaBuilder.lessThanOrEqualTo(root.get("price"), price)
         ));
     }
 
-    // FOR SEARCHING TITLE: ADD ON SPECIFICATION
+    // add on title for filter
     public static Specification<Product> titleContains(String title) {
         return (root, query, cb) -> cb.like(cb.lower(root.get("title")), "%" + title.toLowerCase() + "%");
     }
 
-    // FOR SEARCHING DESCRIPTION: ADD ON SPECIFICATION\
+    // add on description for filter
     public static Specification<Product> descriptionContaining(String description){
         return (root, query, cb) -> cb.like(cb.lower(root.get("description")), "%" + description.toLowerCase() + "%");
 

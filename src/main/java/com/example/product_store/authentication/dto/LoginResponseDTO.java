@@ -7,6 +7,7 @@ import java.time.Duration;
 
 @Data
 public class LoginResponseDTO {
+  // TO BE RETURNED FROM LOGIN DTO
   private String token;
   private String type = "bearer";
   private String expiresIn;

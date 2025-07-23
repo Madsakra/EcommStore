@@ -41,15 +41,15 @@ public class UpdateProductService {
       requestDTO.setCreatedBy(jti);
 
       // 3. VALIDATE THE PRODUCT, ANY ERRORS WILL RESULT IN NULL
-      productValidator.execute(requestDTO, true);
+      productValidator.execute(requestDTO);
 
       // 4. CREATE A NEW PRODUCT INSTANCE (WITHOUT THE ID)
       Product product = new Product(requestDTO);
 
       // 5. SET THE ID (DB OBJECT) TO THE ABOVE INSTANCE
       product.setId(command.getId());
-      productRepository.save(product);
-      return new ProductDTO(product);
+      Product savedProduct = productRepository.save(product);
+      return new ProductDTO(savedProduct);
     }
 
     throw new ProductNotFoundException();

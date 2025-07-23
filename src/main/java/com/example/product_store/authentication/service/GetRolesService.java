@@ -21,7 +21,7 @@ public class GetRolesService implements QueryBinder<Void,List<RolesDTO>> {
 
 
     // GET THE ROLES
-    // FOR CLIENT SIDE TO PUT ON SELECT BAR
+    // FOR CLIENT SIDE: Account creation -> select your role
     @Override
     public List<RolesDTO> execute(Void input){
         List<Role> roleList = roleRepository.findAll();

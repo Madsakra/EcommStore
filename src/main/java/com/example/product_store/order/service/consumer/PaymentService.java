@@ -33,8 +33,8 @@ public class PaymentService {
   @Transactional
   @KafkaListener(topics = "order.events", groupId = "payment-service-consumer",concurrency = "3")
   public void execute(String message) throws JsonProcessingException {
-
-    // CHECK IF MESSAGE IS BLANK OR NULL
+    // If kafka is blank
+    // will send to DLQ (done using Kafka consumer config)
     if (message == null || message.isBlank()) {
       logger.warn("Received null or empty Kafka message, throwing empty kafka message exception.");
       throw new EmptyKafkaMessageException();

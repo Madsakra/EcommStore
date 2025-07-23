@@ -11,6 +11,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AccountRequestDTO {
+    // USED FOR ACCOUNT CREATION
     private String username;
     private String email;
     private String password;

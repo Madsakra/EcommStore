@@ -9,7 +9,7 @@ import java.util.Set;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CachedUserDetailsDTO implements Serializable {
+public class UserDetailsDTO implements Serializable {
     private String id;
     private String username;
     private String hashedPassword;

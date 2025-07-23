@@ -13,7 +13,8 @@ import lombok.Data;
 @Data
 public class ProductDTO implements Serializable {
 
-  // returned from the database
+  // PRODUCT DATA RETURNED FROM DATABASE
+  // CONVERT TO DTO FOR STANDARD PRACTICE & ALLOW FOR CACHING
   private String id;
   private String title;
   private String description;

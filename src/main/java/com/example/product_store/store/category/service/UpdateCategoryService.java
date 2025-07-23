@@ -40,6 +40,8 @@ public class UpdateCategoryService implements Command<UpdateCategoryCommand, Cat
     if (categoryOptional.isPresent()) {
       Category category = command.getCategory();
       category.setId(command.getId());
+
+      // VALIDATE THE CATEGORY TO ENSURE NO DUPLICATE NAME (LABEL)
       categoryValidator.execute(category);
       categoryRepository.save(category);
       return new CategoryDTO(category);

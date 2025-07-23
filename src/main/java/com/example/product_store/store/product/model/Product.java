@@ -21,11 +21,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Product {
 
+  // PRODUCT ENTITY
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   @Column(name = "id")
   private String id;
-
   private String title;
   private String description;
   private Integer stock;
@@ -41,12 +41,15 @@ public class Product {
       inverseJoinColumns = @JoinColumn(name = "category_id"))
   private List<Category> categories;
 
+  // USED IN UPDATE / CREATE PRODUCT
+  // CONVERT THEIR REQUEST INTO A PRODUCT TO SAVE IN DB
   public Product(ProductRequestDTO productRequestDTO){
     this.title = productRequestDTO.getTitle();
     this.description = productRequestDTO.getDescription();
     this.stock = productRequestDTO.getStock();
     this.price = productRequestDTO.getPrice();
     this.createdBy = productRequestDTO.getCreatedBy();
+
     // Map CategoryDTOs to Category entities
     if (productRequestDTO.getCategories() != null) {
       this.categories = productRequestDTO.getCategories()

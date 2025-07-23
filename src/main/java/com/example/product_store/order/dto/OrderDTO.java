@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 public class OrderDTO implements Serializable {
+    // TO BE RETURNED TO CLIENT WHEN THEY REQUEST FOR AN ORDER
     private String id;
     private String customerId;
     private BigDecimal totalPrice;

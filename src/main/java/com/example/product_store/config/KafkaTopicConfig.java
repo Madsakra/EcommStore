@@ -7,6 +7,10 @@ import org.springframework.kafka.config.TopicBuilder;
 
 @Configuration
 public class KafkaTopicConfig {
+
+  // KAFKA CONFIG TO DETERMINE THE NUMBER OF PARTITIONS AND REPLICAS
+  // Topic : group of events
+  // replicas: copy of a topic partition that resides on a different broker within a Kafka cluster
   @Bean
   public NewTopic orderCreateTopic() {
     return TopicBuilder.name("order.events").partitions(3).replicas(1).build();

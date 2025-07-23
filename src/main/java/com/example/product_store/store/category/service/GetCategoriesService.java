@@ -21,6 +21,7 @@ public class GetCategoriesService implements QueryBinder<Void, List<CategoryDTO>
   @Override
   @Cacheable(cacheNames = CacheConstants.GET_ALL_CATEGORIES, key = CacheConstants.ALL_CATEGORIES_KEY)
   public List<CategoryDTO> execute(Void input) {
+    // CALL REPOSITORY TO FIND ALL CATEGORY
     List<Category> categoryList = categoryRepository.findAll();
     return categoryList.stream().map(CategoryDTO::new).toList();
   }

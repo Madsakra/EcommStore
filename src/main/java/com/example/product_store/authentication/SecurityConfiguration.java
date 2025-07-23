@@ -23,6 +23,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableMethodSecurity
 public class SecurityConfiguration {
 
+    // WIRES IN INTO CUSTOM LoginUserDetailsService
+    // passes control to DAO Authentication provider
+    // provider will:
+    // verify the password through encoder
+    // returns auth token
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity httpSecurity,
                                                        LoginUserDetailsService userDetailsService,
@@ -63,21 +68,6 @@ public class SecurityConfiguration {
                 exception
                     .authenticationEntryPoint(customAuthenticationEntryPoint())
                     .accessDeniedHandler(customAccessDeniedHandler()))
-        .logout(
-            logout ->
-                logout
-                    .logoutUrl("/auth/logout")
-                    .logoutSuccessHandler(
-                        (request, response, authentication) -> {
-                          response.setStatus(HttpServletResponse.SC_OK);
-                          response.getWriter().write("Logout successful");
-                        })
-                    .invalidateHttpSession(true)
-                    // SERVER CAN ONLY DELETE COOKIES, BUT IF CLIENT KEEPS IT, THEY STILL
-                    // CAN ACCESS
-                    .deleteCookies("JSESSIONID")
-                    .permitAll() // Allow everyone to access logout
-            )
         .addFilterBefore(
             jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
         .build();

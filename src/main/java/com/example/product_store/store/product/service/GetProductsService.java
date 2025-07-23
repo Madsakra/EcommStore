@@ -14,7 +14,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-// NOT USING QUERY BINDER DUE TO DIFF PARAMS
 @Service
 public class GetProductsService {
 
@@ -31,9 +30,10 @@ public class GetProductsService {
 
   public Page<ProductDTO> execute(ProductFilter productFilter, Pageable pageable) {
 
-    // CONVERT THE PRODUCT FILTER (PAYLOAD FROM CLIENT) TO PRODUCT SPECIFICATION FOR JPA TO FILTER
+    // CONVERT THE PRODUCT FILTER (PAYLOAD FROM CLIENT) TO PRODUCT SPECIFICATION
     Specification<Product> spec = getProductSpecificationService.execute(productFilter);
 
+    // GET ALL PRODUCTS WITH THE FILTER SPECIFICATION ABOVE
     Page<Product> products = productRepository.findAll(spec, pageable);
     Page<ProductDTO> productDTOS = products.map(ProductDTO::new);
     logger.info("Returning ProductsDTO at GetProductsService: {}", LocalDateTime.now());

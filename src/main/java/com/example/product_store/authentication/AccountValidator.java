@@ -2,26 +2,14 @@ package com.example.product_store.authentication;
 
 import com.example.product_store.authentication.dto.AccountRequestDTO;
 import com.example.product_store.authentication.errors.AccountNotValidException;
-import com.example.product_store.authentication.errors.InvalidRoleIdException;
-import com.example.product_store.authentication.errors.RoleMismatchException;
-import com.example.product_store.authentication.model.Account;
-import com.example.product_store.authentication.model.Role;
-import com.example.product_store.authentication.repositories.RoleRepository;
 import io.micrometer.common.util.StringUtils;
 
-import java.util.Set;
 
 import org.slf4j.Logger;
 import org.springframework.stereotype.Component;
 
 @Component
 public class AccountValidator {
-
-  private final RoleRepository roleRepository;
-
-  public AccountValidator(RoleRepository roleRepository) {
-    this.roleRepository = roleRepository;
-  }
 
   // USED ONLY WHEN CREATING ACCOUNT
   public void execute(AccountRequestDTO account, Logger logger) {

@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class LoginRequestDTO {
+  // PAYLOAD FOR LOGGING IN
   private String identifier;
   private String password;
 }

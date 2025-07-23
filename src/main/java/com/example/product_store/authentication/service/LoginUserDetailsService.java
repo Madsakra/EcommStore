@@ -1,6 +1,6 @@
 package com.example.product_store.authentication.service;
 
-import com.example.product_store.authentication.dto.CachedUserDetailsDTO;
+import com.example.product_store.authentication.dto.UserDetailsDTO;
 import com.example.product_store.authentication.jwt.MyUserDetails;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,14 +25,18 @@ public class LoginUserDetailsService implements UserDetailsService {
     this.loadCachedUserDetails = loadCachedUserDetails;
   }
 
-  // can log in by email
-  // can log in by username
+  // loginIdentifier can be both email / username
   @Override
   public MyUserDetails loadUserByUsername(String loginIdentifier) throws UsernameNotFoundException {
-    CachedUserDetailsDTO cachedUser = loadCachedUserDetails.execute(loginIdentifier);
-    List<GrantedAuthority> authorities =
-        cachedUser.getRoles().stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+    // Calls loadCachedUserDetails to either get hold of existing cache or UserDetails in mysql
+    // will return a UserDetailsDTO
+    UserDetailsDTO userDetailsDTO = loadCachedUserDetails.execute(loginIdentifier);
 
-    return new MyUserDetails(cachedUser.getId(), cachedUser.getUsername(), cachedUser.getHashedPassword(), authorities);
+    // CONVERT THE ROLES INTO A LIST OF GRANTED AUTHORITIES
+    List<GrantedAuthority> authorities =
+        userDetailsDTO.getRoles().stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+
+    // return a UserDetails Object through instantiation of MyUserDetails
+    return new MyUserDetails(userDetailsDTO.getId(), userDetailsDTO.getUsername(), userDetailsDTO.getHashedPassword(), authorities);
   }
 }

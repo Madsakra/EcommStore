@@ -36,7 +36,7 @@ public class ProductValidatorTest {
     product.setTitle(null); // Explicit null
     ProductNotValidException ex =
         assertThrows(
-            ProductNotValidException.class, () -> validator.execute(product, false));
+            ProductNotValidException.class, () -> validator.execute(product));
     assertEquals("Product Title should not be empty or null!", ex.getMessage());
   }
 
@@ -46,7 +46,7 @@ public class ProductValidatorTest {
     product.setTitle(""); // empty string
     ProductNotValidException ex =
         assertThrows(
-            ProductNotValidException.class, () -> validator.execute(product, false));
+            ProductNotValidException.class, () -> validator.execute(product));
     assertEquals("Product Title should not be empty or null!", ex.getMessage());
   }
 
@@ -57,7 +57,7 @@ public class ProductValidatorTest {
     product.setStock(null); // Null quantity
     ProductNotValidException ex =
         assertThrows(
-            ProductNotValidException.class, () -> validator.execute(product, false));
+            ProductNotValidException.class, () -> validator.execute(product));
     assertEquals("Product stock should not be null or negative", ex.getMessage());
   }
 
@@ -68,7 +68,7 @@ public class ProductValidatorTest {
     product.setStock(-12); // Null quantity
     ProductNotValidException ex =
         assertThrows(
-            ProductNotValidException.class, () -> validator.execute(product, false));
+            ProductNotValidException.class, () -> validator.execute(product));
     assertEquals("Product stock should not be null or negative", ex.getMessage());
   }
 
@@ -81,7 +81,7 @@ public class ProductValidatorTest {
     ; // Null quantity
     ProductNotValidException ex =
         assertThrows(
-            ProductNotValidException.class, () -> validator.execute(product, false));
+            ProductNotValidException.class, () -> validator.execute(product));
     assertEquals("Product price should not be 0, null or negative", ex.getMessage());
   }
 
@@ -94,7 +94,7 @@ public class ProductValidatorTest {
     ; // Null quantity
     ProductNotValidException ex =
         assertThrows(
-            ProductNotValidException.class, () -> validator.execute(product, false));
+            ProductNotValidException.class, () -> validator.execute(product));
     assertEquals("Product price should not be 0, null or negative", ex.getMessage());
   }
 
@@ -107,7 +107,7 @@ public class ProductValidatorTest {
     ; // Null quantity
     ProductNotValidException ex =
         assertThrows(
-            ProductNotValidException.class, () -> validator.execute(product, false));
+            ProductNotValidException.class, () -> validator.execute(product));
     assertEquals("Product price should not be 0, null or negative", ex.getMessage());
   }
 
@@ -127,7 +127,7 @@ public class ProductValidatorTest {
     // ASSERT THROW
     ProductNotValidException ex =
         assertThrows(
-            ProductNotValidException.class, () -> validator.execute(testProduct1, false));
+            ProductNotValidException.class, () -> validator.execute(testProduct1));
 
     assertEquals("Duplicate product exists!", ex.getMessage());
   }
@@ -143,7 +143,7 @@ public class ProductValidatorTest {
     // ASSERT THROW
     ProductNotValidException ex =
         assertThrows(
-            ProductNotValidException.class, () -> validator.execute(testProduct1, false));
+            ProductNotValidException.class, () -> validator.execute(testProduct1));
 
     assertEquals("Product does not have any categories!", ex.getMessage());
   }
@@ -164,7 +164,7 @@ public class ProductValidatorTest {
     // ASSERT THROW
     ProductNotValidException ex =
         assertThrows(
-            ProductNotValidException.class, () -> validator.execute(testProduct1, false));
+            ProductNotValidException.class, () -> validator.execute(testProduct1));
 
     assertEquals("Failed to create product due to invalid category", ex.getMessage());
   }

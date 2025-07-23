@@ -26,21 +26,33 @@ public class LoginService implements Command<LoginRequestDTO, String> {
   @Override
   public String execute(LoginRequestDTO loginRequestDTO) {
 
+    // MEASURING TIME: Time when service gets triggered
     long start = System.currentTimeMillis();
 
+    // CHECK WHETHER payload by client is correct
+    // if wrong throws an error
     checkRequestDTO(loginRequestDTO);
 
+    // MEASURING TIME: After payload checking
     long afterCheck = System.currentTimeMillis();
 
+    // Convert username + password into UsernamePassword Authentication token
     UsernamePasswordAuthenticationToken token =
         new UsernamePasswordAuthenticationToken(loginRequestDTO.getIdentifier(), loginRequestDTO.getPassword());
 
+    // Pass token to manager and let DAO Authentication provider
+    // DAO will pass the username down to LoginUserDetailsService
+    // LoginUserDetailsService will pass username to LoadCachedUserService
+    // LoadCachedUserService will return Authentication object containing UserDetails
     Authentication authentication = manager.authenticate(token);
 
+    // MEASURING TIME: After authentication
     long afterAuth = System.currentTimeMillis();
 
+    // Retrieve JWT token from authentication through the JWTUtil class
     String jwtToken = JwtUtil.generateToken((MyUserDetails) authentication.getPrincipal());
 
+    // MEASURING TIME: after token has been generated
     long afterToken = System.currentTimeMillis();
 
     logger.info(

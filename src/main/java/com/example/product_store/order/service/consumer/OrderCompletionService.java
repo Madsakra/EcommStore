@@ -64,6 +64,10 @@ public class OrderCompletionService {
     EventAccumulator accumulator = orderStatusMap.get(orderId);
 
     // SET THE ACCUMULATOR STATUS
+    // THERE IS A POSSIBILITY THAT 2 EVENTS CAN COME IN AT THE SAME TIME
+    // HENCE USING AN ATOMIC REFERENCE
+    // safely read and write an object reference from multiple threads
+    // no need to use synchronized blocks
     switch (eventType) {
       case "PaymentAccepted":
       case "PaymentDenied":
@@ -134,7 +138,7 @@ public class OrderCompletionService {
     orderStatusMap.remove(orderId);
   }
 
-  // Continue letting kafka send events
+  // Outbox event sender template
   private void sendOutboxEvent(String aggregateType, String eventType, String orderId, EventPayload payload)
       throws JsonProcessingException {
 
@@ -142,6 +146,7 @@ public class OrderCompletionService {
     outboxRepository.save(outbox);
   }
 
+  // Updating order status
   private void updateOrderStatus(String orderId, String status, String message) {
     orderRepository
         .findById(orderId)

@@ -27,6 +27,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
       AccessDeniedException accessDeniedException)
       throws IOException, ServletException {
 
+      // BUILD A RESPONSE ENTITY
       ResponseEntity<ErrorResponse> entity = ErrorResponseTemplate.buildResponseError(
               "Access Denied",
               "You do not have the required permission to access this resource.",
@@ -36,5 +37,6 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
       response.setStatus(401);
       response.setContentType("application/json");
       response.getWriter().write(new ObjectMapper().writeValueAsString(entity.getBody()));
+
   }
 }

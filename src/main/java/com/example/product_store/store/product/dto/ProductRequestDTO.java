@@ -12,7 +12,8 @@ import java.util.List;
 @NoArgsConstructor
 public class ProductRequestDTO {
 
-    // TO BE SENT BY FRONTEND (CLIENT SIDE)
+    // WHEN CLIENT WANTS TO CREATE, UPDATE , DELETE
+    // USE THIS CLASS TO HOLD THEIR PAYLOAD INSTEAD
     private String title;
     private String description;
     private Integer stock;

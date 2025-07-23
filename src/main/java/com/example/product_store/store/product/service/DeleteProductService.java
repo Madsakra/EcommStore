@@ -18,15 +18,17 @@ public class DeleteProductService {
 
   public Void execute(String jti, String id) {
 
-
+    // FIND THE PRODUCT BY ID IN DB FIRST
     Optional<Product> productOptional = productRepository.findById(id);
     if (productOptional.isPresent()) {
-      // This is the actual DB object
+      // IF PRODUCT IS PRESENT
       Product dbProduct = productOptional.get();
-      // if product does not belong to user, throw error
+      // if product does not belong to admin, throw error
       if (!dbProduct.getCreatedBy().matches(jti)) {
         throw new UnauthorizedManagement();
       }
+
+      // otherwise delete and return no content
       productRepository.deleteById(id);
       return null;
     }

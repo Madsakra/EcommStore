@@ -32,15 +32,19 @@ public class SearchProductService {
   // TITLE SEARCHES CAN ALSO BE DYNAMIC
   public Page<ProductDTO> execute(ProductFilter productFilter, Pageable pageable) {
 
+    // CONVERT THE PRODUCT FILTER (PAYLOAD FROM CLIENT) TO PRODUCT SPECIFICATION
     Specification<Product> spec = getProductSpecificationService.execute(productFilter);
     spec = spec.and(ProductSpecification.titleContains(productFilter.getTitle()));
 
+    // ADD DESCRIPTION FILTER IF USER HAS PROVIDED
     if (productFilter.getDescription() != null && !productFilter.getDescription().isBlank()) {
       spec = spec.and(ProductSpecification.descriptionContaining(productFilter.getDescription()));
     }
 
     // use repository to find all products with the filter
     Page<Product> products = productRepository.findAll(spec, pageable);
+
+    // convert products to productDTOs
     Page<ProductDTO> productDTOS = products.map(ProductDTO::new);
     logger.info("Returned ProductDTOS in SearchProductService: {}", productDTOS);
     return productDTOS;

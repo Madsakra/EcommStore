@@ -17,7 +17,9 @@ public interface ProductRepository extends JpaRepository<Product, String>, JpaSp
 
   boolean existsByTitleAndPrice(String title, BigDecimal price);
 
-  // for processing orders
+  // for REDUCING INVENTORY LATER ON
+  // FIND THE PRODUCTS IN THE DB AND RETURN
+  // IN TURN WILL LOCK THE TABLE
   // prevent overselling
   @Lock(LockModeType.PESSIMISTIC_WRITE)
   List<Product> findAllById(Iterable<String> ids);

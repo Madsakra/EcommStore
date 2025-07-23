@@ -8,7 +8,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OrderCreationRequest {
-    // WILL BE USED TOGETHER WITH A LIST
+    // SINGLE PRODUCT FROM CLIENT REQUEST
+    // WILL BE USED IN A LIST
     // ID that user will input
     private String id;
     // quantity that user will input

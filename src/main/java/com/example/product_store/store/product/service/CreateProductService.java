@@ -1,10 +1,10 @@
 package com.example.product_store.store.product.service;
 
-import com.example.product_store.store.product.repositories.ProductRepository;
 import com.example.product_store.store.product.ProductValidator;
 import com.example.product_store.store.product.dto.ProductDTO;
 import com.example.product_store.store.product.dto.ProductRequestDTO;
 import com.example.product_store.store.product.model.Product;
+import com.example.product_store.store.product.repositories.ProductRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -16,33 +16,28 @@ public class CreateProductService {
   private final ProductValidator productValidator;
   public static final Logger logger = LoggerFactory.getLogger(CreateProductService.class);
 
-  public CreateProductService(
-      ProductRepository productRepository, ProductValidator productValidator) {
+  public CreateProductService(ProductRepository productRepository, ProductValidator productValidator) {
     this.productRepository = productRepository;
     this.productValidator = productValidator;
   }
 
   public ProductDTO execute(String jti, ProductRequestDTO requestDTO) {
-
     // set createdBy to current User
     // no need for any checks since it is already done by spring security
     requestDTO.setCreatedBy(jti);
 
-    logger.info(
-        "CreateProductService: The product information before saving into DB: {}",
-        requestDTO);
+    logger.info("CreateProductService: The product information before saving into DB: {}", requestDTO);
 
     // VALIDATE THE PRODUCT
     // ANY ERRORS IN PRODUCT VALIDATOR WILL THROW AND STOP THE OPERATION
-    productValidator.execute(requestDTO, false);
+    productValidator.execute(requestDTO);
 
     // SAVE THE PRODUCT
     Product product = new Product(requestDTO);
     Product savedProduct = productRepository.save(product);
-    logger.info(
-        "CreateProductService: The product information after saving into DB: {}",
-        savedProduct);
+    logger.info("CreateProductService: The product information after saving into DB: {}", savedProduct);
 
+    // return product as a dto
     return new ProductDTO(savedProduct);
   }
 }

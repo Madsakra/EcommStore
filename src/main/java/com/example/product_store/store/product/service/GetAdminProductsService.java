@@ -16,6 +16,7 @@ public class GetAdminProductsService {
     }
 
     // ALLOW THE ADMIN TO VIEW OWN PRODUCTS
+    // ALSO ALLOW FOR SIMPLE PAGINATION
     public Page<ProductDTO> execute(String jti, Pageable pageable){
         Page<ProductDTO> productDTOS = productRepository.findAllByCreatedBy(jti,pageable).map(ProductDTO::new);
         return productDTOS;

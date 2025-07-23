@@ -17,6 +17,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Account {
 
+  // Account Entity class
+  // DB OBJECT
   // WILL NEED A CUSTOM CONSTRUCTOR TO SET THE favouriteProducts as null
   public Account(String id, String userName, String email, String password, Set<Role> roles) {
     this.id = id;

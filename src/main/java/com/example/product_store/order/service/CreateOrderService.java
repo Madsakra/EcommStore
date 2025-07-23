@@ -39,47 +39,66 @@ public class CreateOrderService {
     this.outboxRepository = outboxRepository;
   }
 
+  // enables atomicity
+  // either both repository actions succeed
+  // or both fail and roll back
   @Transactional
   public OrderDTO execute(String jti, List<OrderCreationRequest> orderCreationRequests) throws JsonProcessingException {
 
-      // collector for total costs of products
-      BigDecimal tabulated = BigDecimal.ZERO;
-      List<OrderItem> orderItems = new ArrayList<>();
+    // collector for total costs of products
+    BigDecimal tabulated = BigDecimal.ZERO;
 
-      Order currentOrder = new Order(jti);
-      logger.info("Current Order before loop in CreateOrderService: {}", currentOrder);
+    // due to how OrderItem Entity is being mapped to Order
+    // every Order must be constructed with OrderItem List
+    List<OrderItem> orderItems = new ArrayList<>();
 
-      // Validate and fetch products
-      Map<String, Product> productMap = productRetrievalService.execute(orderCreationRequests);
+    Order currentOrder = new Order(jti);
+    logger.info("Current Order before loop in CreateOrderService: {}", currentOrder);
 
-      for (OrderCreationRequest request : orderCreationRequests) {
-        Product product = productMap.get(request.getId());
-        BigDecimal batchCost = product.getPrice().multiply(BigDecimal.valueOf(request.getQuantity()));
-        tabulated = tabulated.add(batchCost);
-        orderItems.add(new OrderItem(product, request.getQuantity(), currentOrder));
-      }
+    // Validate and fetch products
+    // Convert the products into a map
+    // {id:xxxx, Product(xxx) }
+    // When looping through orderCreationRequest
+    // helps to speed up run time
+    Map<String, Product> productMap = productRetrievalService.execute(orderCreationRequests);
 
-      currentOrder.setTotalPrice(tabulated);
-      currentOrder.setOrderItems(orderItems);
-      currentOrder.setOrderStatus("Processing");
-      currentOrder.setMessage("Order received...processing now.");
+    // Loop through orderCreationRequests
+    for (OrderCreationRequest request : orderCreationRequests) {
+      // Get the product in the product map
+      Product product = productMap.get(request.getId());
 
-      // SAVE ORDER INTO DB -> GET ORDER ID
-      Order savedOrder = orderRepository.save(currentOrder);
+      // Calculate the single batch cost
+      BigDecimal batchCost = product.getPrice().multiply(BigDecimal.valueOf(request.getQuantity()));
 
-      // Create event payload -> store it on the outbox table
-      // pass it to the other services for processing
-      EventPayload payload = new EventPayload(savedOrder, orderCreationRequests);
+      // Add the batch cost to the total (tabulated cost)
+      tabulated = tabulated.add(batchCost);
 
-      // Insert into outbox
-      // debezium will watch this table and transfer event through kafka listener
-      Outbox outbox =
-          new Outbox(null, "order", savedOrder.getId(), "OrderCreated", objectMapper.writeValueAsString(payload));
-      Outbox savedOutbox = outboxRepository.save(outbox);
-      logger.info("Saved outbox event: {}", savedOutbox);
+      // Create an order item and add it into OrderItem list
+      // will be used for constructing order later on
+      orderItems.add(new OrderItem(product, request.getQuantity(), currentOrder));
+    }
 
-      // RETURN TO CLIENT SIDE FOR DISPLAY
-      return new OrderDTO(savedOrder);
+    // continue constructing order
+    currentOrder.setTotalPrice(tabulated);
+    currentOrder.setOrderItems(orderItems);
+    currentOrder.setOrderStatus("Processing");
+    currentOrder.setMessage("Order received...processing now.");
+
+    // SAVE ORDER INTO DB -> GET AUTO GENERATED ORDER ID
+    Order savedOrder = orderRepository.save(currentOrder);
+
+    // Create event payload -> store it on the outbox table
+    // pass it to the other services for processing
+    EventPayload payload = new EventPayload(savedOrder, orderCreationRequests);
+
+    // Insert into outbox
+    // debezium will watch this table and transfer event through kafka listener
+    Outbox outbox =
+        new Outbox(null, "order", savedOrder.getId(), "OrderCreated", objectMapper.writeValueAsString(payload));
+    Outbox savedOutbox = outboxRepository.save(outbox);
+    logger.info("Saved outbox event: {}", savedOutbox);
+
+    // RETURN TO CLIENT SIDE FOR DISPLAY
+    return new OrderDTO(savedOrder);
   }
-
 }

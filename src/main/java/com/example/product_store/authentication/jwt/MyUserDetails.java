@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 @NoArgsConstructor
 public class MyUserDetails implements UserDetails {
 
+  // RETURNED BY LoginUserDetailsService + LoadCachedUser
   private String id;
   private String username;
   private String password;

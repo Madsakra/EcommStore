@@ -11,10 +11,10 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProductFilter {
+    // CLASS TO HOLD FILTER FROM USER
     String title;
     String description;
     List<String> categoryIds;
     BigDecimal minPrice;
     BigDecimal maxPrice;
-
 }

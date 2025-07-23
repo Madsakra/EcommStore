@@ -53,7 +53,7 @@ public class UpdateProductTests {
     when(productRepository.findById(productId)).thenReturn(Optional.of(existingProduct));
 
     // Validator does nothing (no exception = valid)
-    doNothing().when(productValidator).execute(any(ProductRequestDTO.class), eq(true));
+    doNothing().when(productValidator).execute(any(ProductRequestDTO.class));
 
     when(productRepository.save(any(Product.class)))
         .thenAnswer(invocationOnMock -> invocationOnMock.getArgument(0));

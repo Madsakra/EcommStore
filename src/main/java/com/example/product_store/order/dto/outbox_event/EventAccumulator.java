@@ -5,7 +5,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.concurrent.atomic.AtomicReference;
-
+// Specifically used in order completion
+// to receive multiple events at the same time
+// may not be the right implementation
+// but a replacement for microservices
 @Data
 public class EventAccumulator {
     private final AtomicReference<String> paymentStatus = new AtomicReference<>();

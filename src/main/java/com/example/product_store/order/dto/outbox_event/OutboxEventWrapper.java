@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+// FOR DEBEZIUM / KAFKA TO READ AND PARSE
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
