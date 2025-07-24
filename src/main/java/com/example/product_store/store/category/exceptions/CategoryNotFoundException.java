@@ -9,4 +9,9 @@ public class CategoryNotFoundException extends RuntimeException {
   public CategoryNotFoundException() {
     super(CategoryErrorMessages.CATEGORY_NOT_FOUND.getMessage());
   }
+
+  public CategoryNotFoundException(String message)
+  {
+    super(message);
+  }
 }

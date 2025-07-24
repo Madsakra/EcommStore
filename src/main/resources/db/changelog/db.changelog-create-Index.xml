@@ -41,5 +41,11 @@
         </createIndex>
     </changeSet>
 
+    <changeSet author="axmen" id="1750060828006-42">
+        <createIndex indexName="idx_product_title"
+                     tableName="product">
+            <column name="title"/>
+        </createIndex>
+    </changeSet>
 
 </databaseChangeLog>

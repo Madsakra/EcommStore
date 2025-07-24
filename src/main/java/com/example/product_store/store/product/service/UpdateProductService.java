@@ -40,7 +40,7 @@ public class UpdateProductService {
       ProductRequestDTO requestDTO = command.getRequestDTO();
       requestDTO.setCreatedBy(jti);
 
-      // 3. VALIDATE THE PRODUCT, ANY ERRORS WILL RESULT IN NULL
+      // 3. VALIDATE THE PRODUCT, ANY ERRORS WILL RESULT IN EXCEPTION
       productValidator.execute(requestDTO);
 
       // 4. CREATE A NEW PRODUCT INSTANCE (WITHOUT THE ID)
